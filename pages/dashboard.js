@@ -3,9 +3,6 @@ import Navbar from "../components/Navbar";
 import TopGradient from "../components/TopGradient";
 import BottomGradient from "../components/BottomGradient";
 import { useAccount, useContractRead, useNetwork } from "wagmi";
-import SwapEthToWeth from "../components/SwapEthToWeth";
-import SwapWethToDAI from "../components/SwapWethToDAI";
-import Deposit from "../components/Deposit";
 import addresses from "../constants/contract.json";
 import abi from "../constants/lendingpool.json";
 
@@ -21,31 +18,63 @@ import DepositDialog from "../components/DepositDialog";
 export default function Dashboard() {
     const { isConnected } = useAccount();
     const { chain } = useNetwork();
+    const [isLoadingTokens, setIsLoadingTokens] = useState(true);
 
-    const [liqduitityResult, setLiquidityResult] = useState({});
     const [sendEthToWethModal, setSendEthToWethModal] = useState(false);
     const [sendWethToDaiModal, setSendWethToDaiModal] = useState(false);
     const [depositModal, setDepositModal] = useState(false);
 
-    useEffect(() => {
-        const lendingPoolAddress = addresses[chain?.id].LendingPool[0];
-    }, []);
+    const [tokenMarketData, setTokenMarketData] = useState([]);
 
-    // useContractRead({
-    //     address: lendingPoolAddress,
-    //     abi,
-    //     functionName: "getAvailableTokens",
-    //     onSuccess(data) {
-    //         console.log(data);
-    //     },
-    //     enabled: isConnected,
-    // });
+    const chainId = "31337";
+    const lendingPoolAddress = addresses[chainId].LendingPool[0];
+
+    useContractRead({
+        address: lendingPoolAddress,
+        abi,
+        functionName: "getAvailableTokens",
+        onSuccess(data) {
+            setIsLoadingTokens(false);
+            setTokenMarketData(data);
+        },
+        enabled: isConnected,
+    });
 
     const displayEth = (number) => {
         if (number == undefined) return 0;
         const eth = formatEther(number);
         const val = Math.round(eth * 1e4) / 1e4;
         return val;
+    };
+
+    const displayRay = (number) => {
+        if (number == undefined) return 0;
+
+        const RAY = 10 ** 27; // 10 to the power 27
+        return number / RAY;
+    };
+
+    const displayPercent = (number) => {
+        if (number == undefined) return 0;
+
+        const percent = number * 100;
+        return Math.round(percent * 1e4) / 1e4;
+    };
+
+    const calculateAPY = (token) => {
+        const RAY = 10 ** 27; // 10 to the power 27
+        const SECONDS_PER_YEAR = 31536000;
+
+        const depositAPR = token.liquidityRate / RAY;
+        const variableBorrowAPR = token.variableBorrowRate / RAY;
+        const stableBorrowAPR = token.stableBorrowRate / RAY;
+
+        const depositAPY = (1 + depositAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1;
+        const stableBorrowAPY = (1 + stableBorrowAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1;
+        const variableBorrowAPY =
+            (1 + variableBorrowAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1;
+
+        return { depositAPY, stableBorrowAPY, variableBorrowAPY };
     };
 
     return (
@@ -97,10 +126,7 @@ export default function Dashboard() {
                     </div>
                 </section>
 
-                {/* <SwapEthToWeth />
-                <SwapWethToDAI />
-                <Deposit /> */}
-                <section id="poolLiquidity">
+                {/* <section id="poolLiquidity">
                     <div className="mx-auto mt-10 flex w-full flex-col border border-indigo-500 p-5 shadow md:flex-row md:rounded-full">
                         <div className="bg-indigo-300 p-4 font-bold tracking-tight">
                             Pool Liquidity
@@ -115,6 +141,131 @@ export default function Dashboard() {
                         <div className="bg-indigo-300 p-4 font-bold tracking-tight">
                             Loan to Value {String(liqduitityResult.loanToValue)}
                         </div>
+                    </div>
+                </section> */}
+
+                <section id="tokens">
+                    <div class="relative mt-10 overflow-x-auto shadow-md sm:rounded-lg">
+                        <table class="w-full text-left text-sm text-gray-800">
+                            <thead class="bg-indigo-400 text-xs uppercase text-white">
+                                <tr>
+                                    <th scope="col" class="py-3 px-6">
+                                        Token
+                                    </th>
+                                    <th scope="col" class="py-3 px-6">
+                                        APY
+                                    </th>
+                                    <th scope="col" class="py-3 px-6">
+                                        Stable APY
+                                    </th>
+                                    <th scope="col" class="py-3 px-6">
+                                        Variable APY
+                                    </th>
+                                    <th scope="col" class="py-3 px-6">
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {isLoadingTokens && (
+                                    <tr>
+                                        <td colSpan={5} className="py-4 px-6 font-semibold">
+                                            Loading Tokens ...
+                                        </td>
+                                    </tr>
+                                )}
+                                {tokenMarketData.map((token, index) => {
+                                    const { depositAPY, stableBorrowAPY, variableBorrowAPY } =
+                                        calculateAPY(token);
+
+                                    return (
+                                        <Fragment>
+                                            <tr
+                                                key={index}
+                                                class="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
+                                            >
+                                                <td class="py-4 px-6">
+                                                    {token.tokenSymbol} - {token.tokenName}
+                                                </td>
+                                                <td class="py-4 px-6">
+                                                    {displayPercent(depositAPY)}
+                                                </td>
+                                                <td class="py-4 px-6">
+                                                    {displayPercent(stableBorrowAPY)}
+                                                </td>
+                                                <td class="py-4 px-6">
+                                                    {displayPercent(variableBorrowAPY)}
+                                                </td>
+                                                <td class="py-4 px-6">
+                                                    <a
+                                                        href="#"
+                                                        class="font-medium text-blue-600 hover:underline dark:text-blue-500"
+                                                    >
+                                                        Deposit
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </Fragment>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="mx-auto mt-10 flex w-full p-5">
+                        <table className="table-auto">
+                            <thead>
+                                <tr>
+                                    <th>Token Symbol</th>
+                                    <th>Token Name</th>
+                                    <th>Current Balance</th>
+                                    <th>Derived Balance</th>
+                                    <th>Scaled Balance</th>
+                                    <th>APR</th>
+                                    <th>Stable APR</th>
+                                    <th>Variable APR</th>
+                                    <th>APY</th>
+                                    <th>Stable APY</th>
+                                    <th>Variable APY</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {tokenMarketData.map((token, index) => {
+                                    const { depositAPY, stableBorrowAPY, variableBorrowAPY } =
+                                        calculateAPY(token);
+
+                                    return (
+                                        <Fragment>
+                                            <tr key={index}>
+                                                <td>{token.tokenSymbol}</td>
+                                                <td>{token.tokenName}</td>
+                                                <td>{displayEth(token.currentBalance)}</td>
+                                                <td>{displayEth(token.balanceWithDeriveToken)}</td>
+                                                <td>{displayEth(token.scaledBalance)}</td>
+                                                <td>
+                                                    {displayPercent(
+                                                        displayRay(token.liquidityRate)
+                                                    )}
+                                                </td>
+                                                <td>
+                                                    {displayPercent(
+                                                        displayRay(token.stableBorrowRate)
+                                                    )}
+                                                </td>
+                                                <td>
+                                                    {displayPercent(
+                                                        displayRay(token.variableBorrowRate)
+                                                    )}
+                                                </td>
+                                                <td>{displayPercent(depositAPY)}</td>
+                                                <td>{displayPercent(stableBorrowAPY)}</td>
+                                                <td>{displayPercent(variableBorrowAPY)}</td>
+                                            </tr>
+                                        </Fragment>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
                     </div>
                 </section>
             </div>
