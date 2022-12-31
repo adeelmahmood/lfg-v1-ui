@@ -9,10 +9,7 @@ import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 import { mainnet, polygon, optimism, arbitrum, hardhat, goerli } from "wagmi/chains";
 
-const { chains, provider } = configureChains(
-    [goerli],
-    [alchemyProvider({ apiKey: process.env.ALCHEMY_ID || "" }), publicProvider()]
-);
+const { chains, provider } = configureChains([goerli], [publicProvider()]);
 const { connectors } = getDefaultWallets({
     appName: "Lend for Good",
     chains,
