@@ -20,7 +20,7 @@ export default function Home() {
                             <div>
                                 <h1 className="text-5xl font-bold tracking-tight sm:text-center sm:text-6xl">
                                     Lend tokens to
-                                    <span className="text-indigo-700 pl-3">
+                                    <span className="pl-3 text-indigo-700">
                                         causes you care about
                                     </span>
                                 </h1>
@@ -31,8 +31,8 @@ export default function Home() {
                                 </p>
                                 <div className="mt-6 flex gap-x-4 sm:justify-center">
                                     <Link
-                                        href="/dashboard"
-                                        className="divide-x divide-white inline-block rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
+                                        href="/causes"
+                                        className="inline-block divide-x divide-white rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
                                             leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700"
                                     >
                                         <span className="pr-6">Launch App</span>
@@ -45,10 +45,10 @@ export default function Home() {
                 </section>
 
                 <section id="infoGrid">
-                    <div className="container px-6 mt-10 mx-auto grid gap-4 md:gap-8 grid-cols-1 items-start md:grid-cols-2">
-                        <div className="flex flex-col pb-10 w-full items-center">
+                    <div className="container mx-auto mt-10 grid grid-cols-1 items-start gap-4 px-6 md:grid-cols-2 md:gap-8">
+                        <div className="flex w-full flex-col items-center pb-10">
                             <div className="space-y-5">
-                                <h2 className="max-w-md text-3xl font-bold text-center text-gray-700 lg:text-4xl md:text-left">
+                                <h2 className="max-w-md text-center text-3xl font-bold text-gray-700 md:text-left lg:text-4xl">
                                     Support causes you care about
                                 </h2>
                                 <p className="max-w-md text-center text-gray-700 md:text-left">
@@ -56,16 +56,16 @@ export default function Home() {
                                     lorem cupidatat commodo.
                                 </p>
                                 <div className="flex w-full justify-center md:justify-start">
-                                    <div className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+                                    <div className="rounded border border-gray-400 bg-white py-2 px-4 font-semibold text-gray-800 shadow hover:bg-gray-100">
                                         <a href="#">Learn More</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex flex-col pb-10 w-full items-center">
+                        <div className="flex w-full flex-col items-center pb-10">
                             <div className="space-y-5">
-                                <h2 className="max-w-md text-3xl font-bold text-center text-gray-700 lg:text-4xl md:text-left">
+                                <h2 className="max-w-md text-center text-3xl font-bold text-gray-700 md:text-left lg:text-4xl">
                                     Earn yield from Aave
                                 </h2>
                                 <p className="max-w-md text-center text-gray-700 md:text-left">
@@ -73,16 +73,16 @@ export default function Home() {
                                     lorem cupidatat commodo.
                                 </p>
                                 <div className="flex w-full justify-center md:justify-start">
-                                    <div className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+                                    <div className="rounded border border-gray-400 bg-white py-2 px-4 font-semibold text-gray-800 shadow hover:bg-gray-100">
                                         <a href="#">Learn More</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex flex-col pb-10 w-full items-center">
+                        <div className="flex w-full flex-col items-center pb-10">
                             <div className="space-y-5">
-                                <h2 className="max-w-md text-3xl font-bold text-center text-gray-700 lg:text-4xl md:text-left">
+                                <h2 className="max-w-md text-center text-3xl font-bold text-gray-700 md:text-left lg:text-4xl">
                                     Participate in governance
                                 </h2>
                                 <p className="max-w-md text-center text-gray-700 md:text-left">
@@ -90,16 +90,16 @@ export default function Home() {
                                     lorem cupidatat commodo.
                                 </p>
                                 <div className="flex w-full justify-center md:justify-start">
-                                    <div className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+                                    <div className="rounded border border-gray-400 bg-white py-2 px-4 font-semibold text-gray-800 shadow hover:bg-gray-100">
                                         <a href="#">Learn More</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex flex-col pb-10 w-full items-center">
+                        <div className="flex w-full flex-col items-center pb-10">
                             <div className="space-y-5">
-                                <h2 className="max-w-md text-3xl font-bold text-center text-gray-700 lg:text-4xl md:text-left">
+                                <h2 className="max-w-md text-center text-3xl font-bold text-gray-700 md:text-left lg:text-4xl">
                                     Improve the state of Defi lending
                                 </h2>
                                 <p className="max-w-md text-center text-gray-700 md:text-left">
@@ -107,7 +107,7 @@ export default function Home() {
                                     lorem cupidatat commodo.
                                 </p>
                                 <div className="flex w-full justify-center md:justify-start">
-                                    <div className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+                                    <div className="rounded border border-gray-400 bg-white py-2 px-4 font-semibold text-gray-800 shadow hover:bg-gray-100">
                                         <a href="#">Learn More</a>
                                     </div>
                                 </div>

@@ -126,24 +126,6 @@ export default function Dashboard() {
                     </div>
                 </section>
 
-                {/* <section id="poolLiquidity">
-                    <div className="mx-auto mt-10 flex w-full flex-col border border-indigo-500 p-5 shadow md:flex-row md:rounded-full">
-                        <div className="bg-indigo-300 p-4 font-bold tracking-tight">
-                            Pool Liquidity
-                        </div>
-                        <div className="bg-indigo-300 p-4 font-bold tracking-tight">
-                            Total Collateral {displayEth(liqduitityResult.totalCollateral)} Eth
-                        </div>
-                        <div className="bg-indigo-300 p-4 font-bold tracking-tight">Total Debt</div>
-                        <div className="bg-indigo-300 p-4 font-bold tracking-tight">
-                            Available to Borrow {displayEth(liqduitityResult.availableToBorrow)}
-                        </div>
-                        <div className="bg-indigo-300 p-4 font-bold tracking-tight">
-                            Loan to Value {String(liqduitityResult.loanToValue)}
-                        </div>
-                    </div>
-                </section> */}
-
                 <section id="tokens">
                     <div class="relative mt-10 overflow-x-auto shadow-md sm:rounded-lg">
                         <table class="w-full text-left text-sm text-gray-800">
@@ -182,7 +164,7 @@ export default function Dashboard() {
                                         <Fragment>
                                             <tr
                                                 key={index}
-                                                class="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
+                                                class="border-b bg-white hover:bg-gray-50"
                                             >
                                                 <td class="py-4 px-6">
                                                     {token.tokenSymbol} - {token.tokenName}
@@ -204,62 +186,6 @@ export default function Dashboard() {
                                                         Deposit
                                                     </a>
                                                 </td>
-                                            </tr>
-                                        </Fragment>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div className="mx-auto mt-10 flex w-full p-5">
-                        <table className="table-auto">
-                            <thead>
-                                <tr>
-                                    <th>Token Symbol</th>
-                                    <th>Token Name</th>
-                                    <th>Current Balance</th>
-                                    <th>Derived Balance</th>
-                                    <th>Scaled Balance</th>
-                                    <th>APR</th>
-                                    <th>Stable APR</th>
-                                    <th>Variable APR</th>
-                                    <th>APY</th>
-                                    <th>Stable APY</th>
-                                    <th>Variable APY</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {tokenMarketData.map((token, index) => {
-                                    const { depositAPY, stableBorrowAPY, variableBorrowAPY } =
-                                        calculateAPY(token);
-
-                                    return (
-                                        <Fragment>
-                                            <tr key={index}>
-                                                <td>{token.tokenSymbol}</td>
-                                                <td>{token.tokenName}</td>
-                                                <td>{displayEth(token.currentBalance)}</td>
-                                                <td>{displayEth(token.balanceWithDeriveToken)}</td>
-                                                <td>{displayEth(token.scaledBalance)}</td>
-                                                <td>
-                                                    {displayPercent(
-                                                        displayRay(token.liquidityRate)
-                                                    )}
-                                                </td>
-                                                <td>
-                                                    {displayPercent(
-                                                        displayRay(token.stableBorrowRate)
-                                                    )}
-                                                </td>
-                                                <td>
-                                                    {displayPercent(
-                                                        displayRay(token.variableBorrowRate)
-                                                    )}
-                                                </td>
-                                                <td>{displayPercent(depositAPY)}</td>
-                                                <td>{displayPercent(stableBorrowAPY)}</td>
-                                                <td>{displayPercent(variableBorrowAPY)}</td>
                                             </tr>
                                         </Fragment>
                                     );
