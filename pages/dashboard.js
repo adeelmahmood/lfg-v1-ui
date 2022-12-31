@@ -26,7 +26,7 @@ export default function Dashboard() {
 
     const [tokenMarketData, setTokenMarketData] = useState([]);
 
-    const chainId = "31337";
+    const chainId = "5";
     const lendingPoolAddress = addresses[chainId].LendingPool[0];
 
     useContractRead({
