@@ -14,9 +14,11 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import SendWethToDaiDialog from "../components/SendWethToDaiDialog";
 import DepositDialog from "../components/DepositDialog";
+import { fetchToken } from "@wagmi/core";
+import Web3 from "web3";
 
 export default function Dashboard() {
-    const { isConnected } = useAccount();
+    const { isConnected, address } = useAccount();
     const { chain } = useNetwork();
     const [isLoadingTokens, setIsLoadingTokens] = useState(true);
 
@@ -26,8 +28,14 @@ export default function Dashboard() {
 
     const [tokenMarketData, setTokenMarketData] = useState([]);
 
-    const chainId = "5";
+    const chainId = "31337";
     const lendingPoolAddress = addresses[chainId].LendingPool[0];
+
+    useEffect(() => {
+        const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+
+        console.log("web3", web3);
+    }, []);
 
     useContractRead({
         address: lendingPoolAddress,
@@ -126,24 +134,26 @@ export default function Dashboard() {
                     </div>
                 </section>
 
-                <section id="tokens">
-                    <div class="relative mt-10 overflow-x-auto shadow-md sm:rounded-lg">
-                        <table class="w-full text-left text-sm text-gray-800">
-                            <thead class="bg-indigo-400 text-xs uppercase text-white">
+                <section id="myTokens"></section>
+
+                <section id="marketTokens">
+                    <div className="relative mt-10 overflow-x-auto shadow-md sm:rounded-lg">
+                        <table className="w-full text-left text-sm text-gray-800">
+                            <thead className="bg-indigo-400 text-xs uppercase text-white">
                                 <tr>
-                                    <th scope="col" class="py-3 px-6">
+                                    <th scope="col" className="py-3 px-6">
                                         Token
                                     </th>
-                                    <th scope="col" class="py-3 px-6">
+                                    <th scope="col" className="py-3 px-6">
                                         APY
                                     </th>
-                                    <th scope="col" class="py-3 px-6">
+                                    <th scope="col" className="py-3 px-6">
                                         Stable APY
                                     </th>
-                                    <th scope="col" class="py-3 px-6">
+                                    <th scope="col" className="py-3 px-6">
                                         Variable APY
                                     </th>
-                                    <th scope="col" class="py-3 px-6">
+                                    <th scope="col" className="py-3 px-6">
                                         Action
                                     </th>
                                 </tr>
@@ -164,24 +174,26 @@ export default function Dashboard() {
                                         <Fragment>
                                             <tr
                                                 key={index}
-                                                class="border-b bg-white hover:bg-gray-50"
+                                                className="border-b bg-white hover:bg-gray-50"
                                             >
-                                                <td class="py-4 px-6">
-                                                    {token.tokenSymbol} - {token.tokenName}
+                                                <td className="py-4 px-6">
+                                                    {token.tokenSymbol} - {token.tokenName} -{" "}
+                                                    {displayEth(token.currentBalance)} -{" "}
+                                                    {displayEth(token.balanceWithDeriveToken)}
                                                 </td>
-                                                <td class="py-4 px-6">
+                                                <td className="py-4 px-6">
                                                     {displayPercent(depositAPY)}
                                                 </td>
-                                                <td class="py-4 px-6">
+                                                <td className="py-4 px-6">
                                                     {displayPercent(stableBorrowAPY)}
                                                 </td>
-                                                <td class="py-4 px-6">
+                                                <td className="py-4 px-6">
                                                     {displayPercent(variableBorrowAPY)}
                                                 </td>
-                                                <td class="py-4 px-6">
+                                                <td className="py-4 px-6">
                                                     <a
                                                         href="#"
-                                                        class="font-medium text-blue-600 hover:underline dark:text-blue-500"
+                                                        className="font-medium text-blue-600 hover:underline dark:text-blue-500"
                                                     >
                                                         Deposit
                                                     </a>
