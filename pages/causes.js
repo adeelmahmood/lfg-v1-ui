@@ -2,8 +2,11 @@ import { Fragment } from "react";
 import Navbar from "../components/Navbar";
 import TopGradient from "../components/TopGradient";
 import Link from "next/link";
+import useIsMounted from "../hooks/useIsMounted";
 
 export default function Causes() {
+    const isMounted = useIsMounted();
+
     const causes = [
         {
             title: "Climate Change Technologies",
@@ -58,43 +61,38 @@ export default function Causes() {
                     <div className="mx-auto mt-10 grid grid-cols-1 gap-x-0 gap-y-10 p-5 sm:grid-cols-2 sm:gap-y-10 sm:gap-x-4 md:grid-cols-3 md:gap-y-20">
                         {causes.map((cause, index) => {
                             return (
-                                <Fragment>
-                                    <div
-                                        key={index}
-                                        class="max-w-sm overflow-hidden rounded shadow-lg hover:cursor-pointer hover:shadow-2xl"
-                                    >
-                                        <img
-                                            className="w-full"
-                                            src={`https://picsum.photos/id/${cause.imgId}/200`}
-                                            alt="Sunset in the mountains"
-                                        />
-                                        <div class="px-6 py-4">
-                                            <div class="mb-2 text-xl font-bold">{cause.title}</div>
-                                            <p class="text-base text-gray-700">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                elit. Voluptatibus quia, nulla! Maiores et
-                                                perferendis eaque, exercitationem praesentium nihil.
-                                            </p>
-                                        </div>
-                                        <div class="px-6 pt-2 pb-4">
-                                            <div class="flex items-center rounded border border-gray-200 pl-4">
-                                                <input
-                                                    id={`cause-${index}`}
-                                                    type="checkbox"
-                                                    value={cause.selected}
-                                                    name="bordered-radio"
-                                                    class="h-4 w-4 border-gray-300 bg-gray-100 text-indigo-600 focus:ring-0 focus:ring-indigo-500"
-                                                />
-                                                <label
-                                                    for={`cause-${index}`}
-                                                    class="ml-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300"
-                                                >
-                                                    Select This Cause
-                                                </label>
-                                            </div>
+                                <div
+                                    key={index}
+                                    className="max-w-sm overflow-hidden rounded shadow-lg hover:cursor-pointer hover:shadow-2xl"
+                                >
+                                    <img
+                                        className="w-full"
+                                        src={`https://picsum.photos/id/${cause.imgId}/200`}
+                                        alt="Sunset in the mountains"
+                                    />
+                                    <div className="px-6 py-4">
+                                        <div className="mb-2 text-xl font-bold">{cause.title}</div>
+                                        <p className="text-base text-gray-700">
+                                            Lorem ipsum dolor sit amet, consectetur adipisicing
+                                            elit. Voluptatibus quia, nulla! Maiores et perferendis
+                                            eaque, exercitationem praesentium nihil.
+                                        </p>
+                                    </div>
+                                    <div className="px-6 pt-2 pb-4">
+                                        <div className="flex items-center rounded border border-gray-200 pl-4">
+                                            <input
+                                                id={`cause-${index}`}
+                                                type="checkbox"
+                                                value={cause.selected}
+                                                name="bordered-radio"
+                                                className="h-4 w-4 border-gray-300 bg-gray-100 text-indigo-600 focus:ring-0 focus:ring-indigo-500"
+                                            />
+                                            <label className="ml-2 w-full py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                                Select This Cause
+                                            </label>
                                         </div>
                                     </div>
-                                </Fragment>
+                                </div>
                             );
                         })}
                     </div>

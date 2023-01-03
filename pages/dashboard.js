@@ -14,28 +14,22 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import SendWethToDaiDialog from "../components/SendWethToDaiDialog";
 import DepositDialog from "../components/DepositDialog";
-import { fetchToken } from "@wagmi/core";
-import Web3 from "web3";
 
 export default function Dashboard() {
     const { isConnected, address } = useAccount();
     const { chain } = useNetwork();
     const [isLoadingTokens, setIsLoadingTokens] = useState(true);
+    const [isLoadingPortfolio, setIsLoadingPortfolio] = useState(true);
 
     const [sendEthToWethModal, setSendEthToWethModal] = useState(false);
     const [sendWethToDaiModal, setSendWethToDaiModal] = useState(false);
     const [depositModal, setDepositModal] = useState(false);
 
     const [tokenMarketData, setTokenMarketData] = useState([]);
+    const [portfolioData, setPortfolioData] = useState([]);
 
     const chainId = "31337";
     const lendingPoolAddress = addresses[chainId].LendingPool[0];
-
-    useEffect(() => {
-        const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
-
-        console.log("web3", web3);
-    }, []);
 
     useContractRead({
         address: lendingPoolAddress,
@@ -44,6 +38,18 @@ export default function Dashboard() {
         onSuccess(data) {
             setIsLoadingTokens(false);
             setTokenMarketData(data);
+        },
+        enabled: isConnected,
+    });
+
+    useContractRead({
+        address: lendingPoolAddress,
+        abi,
+        functionName: "getUserBalances",
+        args: [address],
+        onSuccess(data) {
+            setIsLoadingPortfolio(false);
+            setPortfolioData(data);
         },
         enabled: isConnected,
     });
@@ -134,7 +140,53 @@ export default function Dashboard() {
                     </div>
                 </section>
 
-                <section id="myTokens"></section>
+                <section id="portfolio">
+                    <div className="flex-cols mt-10 flex gap-8 md:flex-row">
+                        <table className="w-2/3 text-left text-sm text-gray-800">
+                            <thead className="bg-indigo-400 text-xs uppercase text-white">
+                                <tr>
+                                    <th scope="col" className="py-3 px-6">
+                                        Token
+                                    </th>
+                                    <th scope="col" className="py-3 px-6">
+                                        Deposited Balance
+                                    </th>
+                                    <th scope="col" className="py-3 px-6">
+                                        Compounded Balance
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {isLoadingPortfolio && (
+                                    <tr>
+                                        <td colSpan={5} className="py-4 px-6 font-semibold">
+                                            Loading Data ...
+                                        </td>
+                                    </tr>
+                                )}
+                                {portfolioData.map((token, index) => {
+                                    return (
+                                        <tr
+                                            key={index}
+                                            className="border-b bg-white hover:bg-gray-50"
+                                        >
+                                            <td className="py-4 px-6">
+                                                {token.symbol} - {token.name}
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                {displayEth(token.balance)}
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                {displayEth(token.totalBalance)}
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                        <h2 className="text-2xl">Pool Liquidity</h2>
+                    </div>
+                </section>
 
                 <section id="marketTokens">
                     <div className="relative mt-10 overflow-x-auto shadow-md sm:rounded-lg">
@@ -171,35 +223,31 @@ export default function Dashboard() {
                                         calculateAPY(token);
 
                                     return (
-                                        <Fragment>
-                                            <tr
-                                                key={index}
-                                                className="border-b bg-white hover:bg-gray-50"
-                                            >
-                                                <td className="py-4 px-6">
-                                                    {token.tokenSymbol} - {token.tokenName} -{" "}
-                                                    {displayEth(token.currentBalance)} -{" "}
-                                                    {displayEth(token.balanceWithDeriveToken)}
-                                                </td>
-                                                <td className="py-4 px-6">
-                                                    {displayPercent(depositAPY)}
-                                                </td>
-                                                <td className="py-4 px-6">
-                                                    {displayPercent(stableBorrowAPY)}
-                                                </td>
-                                                <td className="py-4 px-6">
-                                                    {displayPercent(variableBorrowAPY)}
-                                                </td>
-                                                <td className="py-4 px-6">
-                                                    <a
-                                                        href="#"
-                                                        className="font-medium text-blue-600 hover:underline dark:text-blue-500"
-                                                    >
-                                                        Deposit
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        </Fragment>
+                                        <tr
+                                            key={index}
+                                            className="border-b bg-white hover:bg-gray-50"
+                                        >
+                                            <td className="py-4 px-6">
+                                                {token.tokenSymbol} - {token.tokenName}
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                {displayPercent(depositAPY)}
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                {displayPercent(stableBorrowAPY)}
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                {displayPercent(variableBorrowAPY)}
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                <a
+                                                    href="#"
+                                                    className="font-medium text-blue-600 hover:underline dark:text-blue-500"
+                                                >
+                                                    Deposit
+                                                </a>
+                                            </td>
+                                        </tr>
                                     );
                                 })}
                             </tbody>
