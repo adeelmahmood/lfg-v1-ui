@@ -9,7 +9,12 @@ import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 import { mainnet, polygon, optimism, arbitrum, hardhat, goerli } from "wagmi/chains";
 
-const { chains, provider } = configureChains([hardhat], [publicProvider()]);
+const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
+const chainsToUse = [hardhat, goerli, mainnet];
+const chainToUse = chainsToUse.filter((chain) => chain.id == chainId);
+console.log(chainToUse);
+
+const { chains, provider } = configureChains(chainToUse, [publicProvider()]);
 const { connectors } = getDefaultWallets({
     appName: "Lend for Good",
     chains,
