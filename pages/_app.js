@@ -12,7 +12,6 @@ import { mainnet, polygon, optimism, arbitrum, hardhat, goerli } from "wagmi/cha
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
 const chainsToUse = [hardhat, goerli, mainnet];
 const chainToUse = chainsToUse.filter((chain) => chain.id == chainId);
-console.log(chainToUse);
 
 const { chains, provider } = configureChains(chainToUse, [publicProvider()]);
 const { connectors } = getDefaultWallets({

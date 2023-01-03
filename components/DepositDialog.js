@@ -7,13 +7,13 @@ import {
     usePrepareContractWrite,
     useWaitForTransaction,
 } from "wagmi";
-import daiAbi from "../constants/abis/dai.json";
 import addresses from "../constants/contract.json";
 import abi from "../constants/lendingpool.json";
 import { parseEther } from "ethers/lib/utils.js";
 import useIsMounted from "../hooks/useIsMounted";
+import { erc20ABI } from "wagmi";
 
-export default function DepositDialog({ isModelOpen, modelCloseHandler }) {
+export default function DepositDialog({ isModelOpen, modelCloseHandler, token }) {
     let [isOpen, setIsOpen] = useState(isModelOpen || false);
 
     const { isConnected, address } = useAccount();
@@ -25,7 +25,6 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler }) {
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const lendingPoolAddress = addresses[chainId].LendingPool[0];
     const lendingPoolCoreAddress = addresses[chainId].LendingPoolCore[0];
-    const daiAddress = "0x6B175474E89094C44Da98b954EedeAC495271d0F";
     const approveFunctionName = "approve";
     const depositFunctionName = "deposit";
 
@@ -35,8 +34,8 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler }) {
         error: approvePrepareError,
         isError: isApprovePrepareError,
     } = usePrepareContractWrite({
-        address: daiAddress,
-        abi: daiAbi,
+        address: token?.token,
+        abi: erc20ABI,
         functionName: approveFunctionName,
         args: [lendingPoolAddress, parseEther(parsedAmount?.toString())],
         enabled: parsedAmount > 0,
@@ -67,7 +66,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler }) {
         address: lendingPoolAddress,
         abi,
         functionName: depositFunctionName,
-        args: [daiAddress, parseEther(parsedAmount?.toString())],
+        args: [token?.token, parseEther(parsedAmount?.toString())],
         enabled: parsedAmount > 0,
     });
 
@@ -146,8 +145,8 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler }) {
                                     </Dialog.Title>
                                     <div className="mt-2">
                                         <p className="text-sm text-gray-500">
-                                            Transfer some of your weth to dai to deposit in the
-                                            contract
+                                            Transfer your {token?.tokenName} - {token?.tokenSymbol}{" "}
+                                            tokens to deposit in the contract
                                         </p>
                                     </div>
 
@@ -156,7 +155,9 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler }) {
                                             className="block rounded border border-gray-200 bg-white py-2 px-4 leading-tight text-gray-700 focus:outline-none"
                                             id="grid-state"
                                         >
-                                            <option>DAI</option>
+                                            <option value={token?.token}>
+                                                {token?.tokenSymbol}
+                                            </option>
                                         </select>
                                         <input
                                             type="text"

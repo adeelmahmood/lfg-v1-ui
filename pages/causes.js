@@ -37,16 +37,16 @@ export default function Causes() {
 
     return (
         <>
-            <div className="container relative mx-auto p-6">
+            <div className="container mx-auto p-6">
                 <TopGradient />
                 <Navbar />
 
                 <section id="heading">
                     <div className="items-left flex flex-col justify-between rounded border-gray-200 md:mt-6 md:flex-row md:items-center md:border">
-                        <h2 className="px-5 pt-5 text-3xl font-semibold md:p-5 md:text-3xl">
+                        <h2 className="px-5 pt-5 text-4xl font-semibold md:p-5 md:text-3xl">
                             Causes you support
                         </h2>
-                        <div className="flex max-w-xs flex-col space-y-2 space-x-0 px-5 pt-5 md:flex-row md:space-y-0 md:space-x-3 md:p-5">
+                        <div className="hidden max-w-xs md:flex md:p-5">
                             <Link
                                 className="rounded-full border border-gray-400 bg-indigo-500 py-2 px-4 font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
                                 href="/dashboard"
@@ -95,6 +95,14 @@ export default function Causes() {
                                 </div>
                             );
                         })}
+                    </div>
+                    <div className="flex w-full items-center justify-end p-5 md:hidden">
+                        <Link
+                            className="rounded-full border border-gray-400 bg-indigo-500 py-2 px-4 font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+                            href="/dashboard"
+                        >
+                            Next: Deposit Tokens
+                        </Link>
                     </div>
                 </section>
             </div>
