@@ -22,8 +22,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler }) {
     const isMounted = useIsMounted();
     const [isLoading, setIsLoading] = useState(false);
 
-    const { chain } = useNetwork();
-    const chainId = "31337"; // TODOD change this
+    const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const lendingPoolAddress = addresses[chainId].LendingPool[0];
     const lendingPoolCoreAddress = addresses[chainId].LendingPoolCore[0];
     const daiAddress = "0x6B175474E89094C44Da98b954EedeAC495271d0F";

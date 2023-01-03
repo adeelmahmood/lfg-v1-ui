@@ -22,8 +22,7 @@ export default function SendWethToDaiDialog({ isModelOpen, modelCloseHandler }) 
     const isMounted = useIsMounted();
     const [isLoading, setIsLoading] = useState(false);
 
-    const { chain } = useNetwork();
-    const chainId = "31337"; // TODOD change this
+    const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const swapRouterAddress = addresses[chainId].SwapRouter[0];
     const wethAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
     const approveFunctionName = "approve";

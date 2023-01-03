@@ -28,7 +28,7 @@ export default function Dashboard() {
     const [tokenMarketData, setTokenMarketData] = useState([]);
     const [portfolioData, setPortfolioData] = useState([]);
 
-    const chainId = "31337";
+    const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const lendingPoolAddress = addresses[chainId].LendingPool[0];
 
     useContractRead({
