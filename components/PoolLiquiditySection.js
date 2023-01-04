@@ -3,6 +3,7 @@ import { useAccount, useContractRead } from "wagmi";
 import addresses from "../constants/contract.json";
 import abi from "../constants/lendingpool.json";
 import { formatEther, formatUnits } from "ethers/lib/utils.js";
+import { display1e4, displayEth } from "../utils/Math";
 
 export default function PoolLiquiditySection() {
     const { isConnected, address } = useAccount();
@@ -23,19 +24,6 @@ export default function PoolLiquiditySection() {
         },
         enabled: isConnected,
     });
-
-    const displayEth = (number) => {
-        if (number == undefined) return 0;
-        const eth = formatEther(number);
-        const val = Math.round(eth * 1e4) / 1e4;
-        return val;
-    };
-
-    const display1e4 = (number) => {
-        if (number == undefined) return 0;
-        const val = Math.round(number * 1e4) / 1e4;
-        return val / 100;
-    };
 
     return (
         <>

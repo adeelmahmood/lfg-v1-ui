@@ -3,6 +3,7 @@ import { useAccount, useContractRead } from "wagmi";
 import addresses from "../constants/contract.json";
 import abi from "../constants/lendingpool.json";
 import { formatEther } from "ethers/lib/utils.js";
+import { displayEth } from "../utils/Math";
 
 export default function PortfolioSection() {
     const { isConnected, address } = useAccount();
@@ -22,15 +23,11 @@ export default function PortfolioSection() {
             setIsLoading(false);
             setPortfolioData(data);
         },
+        onError(data) {
+            console.log("Error in get user balances", data);
+        },
         enabled: isConnected,
     });
-
-    const displayEth = (number) => {
-        if (number == undefined) return 0;
-        const eth = formatEther(number);
-        const val = Math.round(eth * 1e6) / 1e6;
-        return val;
-    };
 
     return (
         <>

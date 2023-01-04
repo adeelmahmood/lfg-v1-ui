@@ -3,6 +3,7 @@ import { useAccount, useContractRead } from "wagmi";
 import addresses from "../constants/contract.json";
 import abi from "../constants/lendingpool.json";
 import DepositDialog from "../components/DepositDialog";
+import { calculateAPY, displayPercent } from "../utils/Math";
 
 export default function TokensMarketDataSection({ setTokenMarketDataForCaller }) {
     const { isConnected, address } = useAccount();
@@ -24,7 +25,6 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
             setIsLoading(false);
             setTokenMarketData(data);
             setTokenMarketDataForCaller(data);
-            console.log(tokenMarketData);
         },
         enabled: isConnected,
     });
@@ -32,36 +32,6 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
     const showDepositModal = (token) => {
         setSelectedToken(token);
         setDepositModal(!depositModal);
-    };
-
-    const displayRay = (number) => {
-        if (number == undefined) return 0;
-
-        const RAY = 10 ** 27; // 10 to the power 27
-        return number / RAY;
-    };
-
-    const displayPercent = (number) => {
-        if (number == undefined) return 0;
-
-        const percent = number * 100;
-        return Math.round(percent * 1e4) / 1e4;
-    };
-
-    const calculateAPY = (token) => {
-        const RAY = 10 ** 27; // 10 to the power 27
-        const SECONDS_PER_YEAR = 31536000;
-
-        const depositAPR = token.liquidityRate / RAY;
-        const variableBorrowAPR = token.variableBorrowRate / RAY;
-        const stableBorrowAPR = token.stableBorrowRate / RAY;
-
-        const depositAPY = (1 + depositAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1;
-        const stableBorrowAPY = (1 + stableBorrowAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1;
-        const variableBorrowAPY =
-            (1 + variableBorrowAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1;
-
-        return { depositAPY, stableBorrowAPY, variableBorrowAPY };
     };
 
     return (
