@@ -18,7 +18,7 @@ export default function PortfolioSection() {
         address: lendingPoolAddress,
         abi,
         functionName: "getDeposits",
-        args: [address],
+        args: [],
         onSuccess(data) {
             setIsLoading(false);
             setPortfolioData(data);
