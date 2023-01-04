@@ -17,7 +17,7 @@ export default function PortfolioSection() {
     useContractRead({
         address: lendingPoolAddress,
         abi,
-        functionName: "getUserBalances",
+        functionName: "getDeposits",
         args: [address],
         onSuccess(data) {
             setIsLoading(false);
