@@ -39,8 +39,8 @@ export default function PoolLiquiditySection() {
 
     return (
         <>
-            <div className="mx-auto w-full rounded-lg bg-gray-300/20 md:w-1/3">
-                <h2 className="rounded-t-lg bg-slate-600 p-2 px-4 text-xl font-semibold text-white">
+            <div className="mx-auto w-full rounded-lg bg-gray-300/20 shadow-md md:w-1/3">
+                <h2 className="rounded-t-lg bg-slate-600 p-2 px-4 font-semibold text-white">
                     Pool Liquidity
                 </h2>
                 <div className="flex items-center justify-between p-2 px-4 ">

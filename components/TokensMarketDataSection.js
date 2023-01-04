@@ -4,7 +4,7 @@ import addresses from "../constants/contract.json";
 import abi from "../constants/lendingpool.json";
 import DepositDialog from "../components/DepositDialog";
 
-export default function TokensMarketDataSection() {
+export default function TokensMarketDataSection({ setTokenMarketDataForCaller }) {
     const { isConnected, address } = useAccount();
     const [isLoading, setIsLoading] = useState(true);
 
@@ -23,6 +23,8 @@ export default function TokensMarketDataSection() {
         onSuccess(data) {
             setIsLoading(false);
             setTokenMarketData(data);
+            setTokenMarketDataForCaller(data);
+            console.log(tokenMarketData);
         },
         enabled: isConnected,
     });
@@ -70,7 +72,7 @@ export default function TokensMarketDataSection() {
                 token={selectedToken}
             />
 
-            <div className="mt-10 w-full overflow-x-auto shadow-md sm:rounded-lg">
+            <div className="mt-10 w-full overflow-x-auto rounded-lg shadow-md">
                 <table className="w-full text-left text-sm text-gray-800">
                     <thead className="bg-slate-600 text-xs uppercase text-white">
                         <tr>

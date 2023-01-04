@@ -34,7 +34,7 @@ export default function PortfolioSection() {
 
     return (
         <>
-            <div className="w-full overflow-x-auto shadow-md sm:rounded-lg md:w-2/3">
+            <div className="w-full overflow-x-auto rounded-lg shadow-md md:w-2/3">
                 <table className="w-full text-left text-sm text-gray-800">
                     <thead className="bg-slate-600 text-xs uppercase text-white">
                         <tr>

@@ -9,7 +9,7 @@ import {
 } from "wagmi";
 import addresses from "../constants/contract.json";
 import abi from "../constants/lendingpool.json";
-import { parseEther } from "ethers/lib/utils.js";
+import { parseEther, parseUnits } from "ethers/lib/utils.js";
 import useIsMounted from "../hooks/useIsMounted";
 import { erc20ABI } from "wagmi";
 
@@ -17,8 +17,10 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
     let [isOpen, setIsOpen] = useState(isModelOpen || false);
 
     const { isConnected, address } = useAccount();
+
     const [amount, setAmount] = useState("");
     const [parsedAmount, setParsedAmount] = useState(0);
+
     const isMounted = useIsMounted();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -37,7 +39,10 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
         address: token?.token,
         abi: erc20ABI,
         functionName: approveFunctionName,
-        args: [lendingPoolAddress, parseEther(parsedAmount?.toString())],
+        args: [
+            lendingPoolAddress,
+            parseUnits(parsedAmount?.toString(), token?.tokenDecimals?.toNumber()),
+        ],
         enabled: parsedAmount > 0,
     });
 
@@ -66,7 +71,10 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
         address: lendingPoolAddress,
         abi,
         functionName: depositFunctionName,
-        args: [token?.token, parseEther(parsedAmount?.toString())],
+        args: [
+            token?.token,
+            parseUnits(parsedAmount?.toString(), token?.tokenDecimals?.toNumber()),
+        ],
         enabled: parsedAmount > 0,
     });
 

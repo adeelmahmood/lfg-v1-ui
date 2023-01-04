@@ -15,6 +15,8 @@ export default function Dashboard() {
     const [sendWethToDaiModal, setSendWethToDaiModal] = useState(false);
     const [depositModal, setDepositModal] = useState(false);
 
+    const [tokenMarketDataForCaller, setTokenMarketDataForCaller] = useState([]);
+
     return (
         <>
             <div className="container relative mx-auto p-6">
@@ -29,6 +31,7 @@ export default function Dashboard() {
                 <SendWethToDaiDialog
                     isModelOpen={sendWethToDaiModal}
                     modelCloseHandler={() => setSendWethToDaiModal(false)}
+                    tokenMarketDataForCaller={tokenMarketDataForCaller}
                 />
 
                 <DepositDialog
@@ -52,7 +55,7 @@ export default function Dashboard() {
                                 className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 md:rounded-full md:font-semibold"
                                 onClick={() => setSendWethToDaiModal(!sendWethToDaiModal)}
                             >
-                                Send Weth to DAI
+                                Swap Tokens
                             </button>
                         </div>
                     </div>
@@ -66,7 +69,9 @@ export default function Dashboard() {
                 </section>
 
                 <section id="tokensMarketData">
-                    <TokensMarketDataSection />
+                    <TokensMarketDataSection
+                        setTokenMarketDataForCaller={setTokenMarketDataForCaller}
+                    />
                 </section>
 
                 <BottomGradient />

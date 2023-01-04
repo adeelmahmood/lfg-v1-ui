@@ -3,30 +3,39 @@ import { Fragment, useEffect, useState } from "react";
 import {
     useAccount,
     useContractWrite,
-    useNetwork,
     usePrepareContractWrite,
     useWaitForTransaction,
 } from "wagmi";
-import wethAbi from "../constants/abis/weth.json";
 import addresses from "../constants/contract.json";
 import abi from "../constants/swaprouter.json";
 import { parseEther } from "ethers/lib/utils.js";
 import useIsMounted from "../hooks/useIsMounted";
+import { erc20ABI } from "wagmi";
 
-export default function SendWethToDaiDialog({ isModelOpen, modelCloseHandler }) {
+export default function SendWethToDaiDialog({
+    isModelOpen,
+    modelCloseHandler,
+    tokenMarketDataForCaller,
+}) {
     let [isOpen, setIsOpen] = useState(isModelOpen || false);
 
     const { isConnected, address } = useAccount();
-    const [weth, setWeth] = useState("");
-    const [wethAmount, setWethAmount] = useState(0);
+
+    const [amount, setAmount] = useState("");
+    const [parsedAmount, setParsedAmount] = useState(0);
+
+    // WETH as default for FROM
+    const [fromToken, setFromToken] = useState("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2");
+    // DAI as default for TO
+    const [toToken, setToToken] = useState("0x6B175474E89094C44Da98b954EedeAC495271d0F");
+
     const isMounted = useIsMounted();
     const [isLoading, setIsLoading] = useState(false);
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const swapRouterAddress = addresses[chainId].SwapRouter[0];
-    const wethAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
     const approveFunctionName = "approve";
-    const swapFunctionName = "swapWETHForDai";
+    const swapFunctionName = "swap";
 
     // first approve weth transfer
     const {
@@ -34,11 +43,11 @@ export default function SendWethToDaiDialog({ isModelOpen, modelCloseHandler }) 
         error: approvePrepareError,
         isError: isApprovePrepareError,
     } = usePrepareContractWrite({
-        address: wethAddress,
-        abi: wethAbi,
+        address: fromToken,
+        abi: erc20ABI,
         functionName: approveFunctionName,
-        args: [swapRouterAddress, parseEther(wethAmount?.toString())],
-        enabled: wethAmount > 0,
+        args: [swapRouterAddress, parseEther(parsedAmount?.toString())],
+        enabled: parsedAmount > 0,
     });
 
     const {
@@ -66,8 +75,8 @@ export default function SendWethToDaiDialog({ isModelOpen, modelCloseHandler }) 
         address: swapRouterAddress,
         abi,
         functionName: swapFunctionName,
-        args: [parseEther(wethAmount?.toString())],
-        enabled: wethAmount > 0,
+        args: [fromToken, toToken, parseEther(parsedAmount?.toString())],
+        enabled: parsedAmount > 0,
     });
 
     const {
@@ -81,7 +90,7 @@ export default function SendWethToDaiDialog({ isModelOpen, modelCloseHandler }) 
     const { isLoading: isSwapTxLoading, isSuccess } = useWaitForTransaction({
         hash: data?.hash,
         onSuccess(data) {
-            setWeth("");
+            setAmount("");
         },
     });
 
@@ -90,12 +99,12 @@ export default function SendWethToDaiDialog({ isModelOpen, modelCloseHandler }) 
     }, [isApproveLoading, isApproveTxLoading, isSwapLoading, isSwapTxLoading]);
 
     useEffect(() => {
-        if (!isNaN(parseFloat(weth))) {
-            setWethAmount(parseFloat(weth));
+        if (!isNaN(parseFloat(amount))) {
+            setParsedAmount(parseFloat(amount));
         } else {
-            setWethAmount(0);
+            setParsedAmount(0);
         }
-    }, [weth]);
+    }, [amount]);
 
     function closeModal() {
         setIsOpen(false);
@@ -106,6 +115,13 @@ export default function SendWethToDaiDialog({ isModelOpen, modelCloseHandler }) 
     useEffect(() => {
         setIsOpen(isModelOpen);
     }, [isModelOpen]);
+
+    const handleFromTokenChange = (e) => {
+        setFromToken(e.target.value);
+    };
+    const handleToTokenChange = (e) => {
+        setToToken(e.target.value);
+    };
 
     return (
         <>
@@ -134,28 +150,55 @@ export default function SendWethToDaiDialog({ isModelOpen, modelCloseHandler }) 
                                 leaveFrom="opacity-100 scale-100"
                                 leaveTo="opacity-0 scale-95"
                             >
-                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                                     <Dialog.Title
                                         as="h3"
                                         className="text-lg font-medium leading-6 text-gray-900"
                                     >
-                                        Send Weth to DAI
+                                        Swap Tokens
                                     </Dialog.Title>
                                     <div className="mt-2">
                                         <p className="text-sm text-gray-500">
-                                            Transfer some of your weth to dai to deposit in the
-                                            contract
+                                            Transfer from one ERC token to another
                                         </p>
                                     </div>
 
-                                    <div className="mt-3">
+                                    <div className="flex-cols mt-3 flex space-x-4 sm:flex-row">
+                                        <select
+                                            className="block rounded border border-gray-200 bg-white py-2 px-4 leading-tight text-gray-700 focus:outline-none"
+                                            id="fromTokenSelect"
+                                            onChange={handleFromTokenChange}
+                                            defaultValue={fromToken}
+                                        >
+                                            {tokenMarketDataForCaller.map((token, index) => {
+                                                return (
+                                                    <option key={index} value={token?.token}>
+                                                        {token?.tokenSymbol}
+                                                    </option>
+                                                );
+                                            })}
+                                        </select>
                                         <input
                                             type="text"
-                                            placeholder="0.1 WETH"
+                                            placeholder="0.1"
                                             className="max-w-sm appearance-none border border-gray-400 py-2 px-3 leading-tight focus:outline-none"
-                                            value={weth}
-                                            onChange={(e) => setWeth(e.target.value)}
+                                            value={amount}
+                                            onChange={(e) => setAmount(e.target.value)}
                                         />
+                                        <select
+                                            className="block rounded border border-gray-200 bg-white py-2 px-4 leading-tight text-gray-700 focus:outline-none"
+                                            id="toTokenSelect"
+                                            onChange={handleToTokenChange}
+                                            defaultValue={toToken}
+                                        >
+                                            {tokenMarketDataForCaller.map((token, index) => {
+                                                return (
+                                                    <option key={index} value={token?.token}>
+                                                        {token?.tokenSymbol}
+                                                    </option>
+                                                );
+                                            })}
+                                        </select>
                                     </div>
 
                                     <div className="mt-4 flex w-full items-center justify-between">
