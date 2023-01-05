@@ -91,6 +91,7 @@ export default function SendWethToDaiDialog({
         hash: data?.hash,
         onSuccess(data) {
             setAmount("");
+            closeModal();
         },
     });
 
@@ -108,7 +109,6 @@ export default function SendWethToDaiDialog({
 
     function closeModal() {
         setIsOpen(false);
-
         modelCloseHandler?.();
     }
 

@@ -14,9 +14,9 @@ export const displayPercent = (number) => {
     return Math.round(percent * 1e4) / 1e4;
 };
 
-export const displayEth = (number) => {
+export const displayUnits = (number, decimals = 18) => {
     if (number == undefined) return 0;
-    const eth = formatEther(number);
+    const eth = formatUnits(number, decimals);
     const val = Math.round(eth * 1e4) / 1e4;
     return val;
 };

@@ -45,6 +45,7 @@ export default function SendEthToWethDialog({ isModelOpen, modelCloseHandler }) 
     const { isLoading: isTxLoading, isSuccess } = useWaitForTransaction({
         hash: data?.hash,
         onSuccess(data) {
+            closeModal();
             setEther("");
         },
     });
@@ -63,7 +64,6 @@ export default function SendEthToWethDialog({ isModelOpen, modelCloseHandler }) 
 
     function closeModal() {
         setIsOpen(false);
-
         modelCloseHandler?.();
     }
 

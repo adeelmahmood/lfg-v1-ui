@@ -3,17 +3,15 @@ import { Fragment, useEffect, useState } from "react";
 import {
     useAccount,
     useContractWrite,
-    useNetwork,
     usePrepareContractWrite,
     useWaitForTransaction,
 } from "wagmi";
 import addresses from "../constants/contract.json";
 import abi from "../constants/lendingpool.json";
-import { parseEther, parseUnits } from "ethers/lib/utils.js";
+import { parseUnits } from "ethers/lib/utils.js";
 import useIsMounted from "../hooks/useIsMounted";
-import { erc20ABI } from "wagmi";
 
-export default function DepositDialog({ isModelOpen, modelCloseHandler, token }) {
+export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }) {
     let [isOpen, setIsOpen] = useState(isModelOpen || false);
 
     const { isConnected, address } = useAccount();
@@ -21,47 +19,16 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
     const [amount, setAmount] = useState("");
     const [parsedAmount, setParsedAmount] = useState(0);
 
+    const [maxWithdrawl, setMaxWithdral] = useState(false);
+
     const isMounted = useIsMounted();
     const [isLoading, setIsLoading] = useState(false);
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const lendingPoolAddress = addresses[chainId].LendingPool[0];
-    const approveFunctionName = "approve";
-    const depositFunctionName = "deposit";
+    const withdrawFunctionName = "withdraw";
 
-    // first approve token transfer to our contract
-    const {
-        config: approveConfig,
-        error: approvePrepareError,
-        isError: isApprovePrepareError,
-    } = usePrepareContractWrite({
-        address: token?.token,
-        abi: erc20ABI,
-        functionName: approveFunctionName,
-        args: [
-            lendingPoolAddress,
-            parseUnits(parsedAmount?.toString(), token?.tokenDecimals?.toNumber()),
-        ],
-        enabled: parsedAmount > 0,
-    });
-
-    const {
-        write: handleApprove,
-        data: approveData,
-        error: approveEror,
-        isLoading: isApproveLoading,
-        isError: isApproveError,
-    } = useContractWrite(approveConfig);
-
-    const { isLoading: isApproveTxLoading, isSuccess: isApproveSuccess } = useWaitForTransaction({
-        hash: approveData?.hash,
-        onSuccess(data) {
-            // approved, call the swap function
-            handleDeposit?.();
-        },
-    });
-
-    // once approved then deposit
+    // request withdraw
     const {
         config,
         error: prepareError,
@@ -69,23 +36,23 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
     } = usePrepareContractWrite({
         address: lendingPoolAddress,
         abi,
-        functionName: depositFunctionName,
+        functionName: withdrawFunctionName,
         args: [
             token?.token,
             parseUnits(parsedAmount?.toString(), token?.tokenDecimals?.toNumber()),
         ],
-        enabled: parsedAmount > 0,
+        enabled: parsedAmount > 0 || maxWithdrawl,
     });
 
     const {
-        write: handleDeposit,
+        write: handleWithdraw,
         data,
         error,
-        isLoading: isDespoitLoading,
+        isLoading: isWithdrawLoading,
         isError,
     } = useContractWrite(config);
 
-    const { isLoading: isDespoitTxLoading, isSuccess } = useWaitForTransaction({
+    const { isLoading: isWithdrawTxLoading, isSuccess } = useWaitForTransaction({
         hash: data?.hash,
         onSuccess(data) {
             setAmount("");
@@ -94,18 +61,20 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
     });
 
     useEffect(() => {
-        if (!isNaN(parseFloat(amount))) {
-            setParsedAmount(parseFloat(amount));
-        } else {
+        if (maxWithdrawl) {
             setParsedAmount(0);
+        } else {
+            if (!isNaN(parseFloat(amount))) {
+                setParsedAmount(parseFloat(amount));
+            } else {
+                setParsedAmount(0);
+            }
         }
-    }, [amount]);
+    }, [amount, maxWithdrawl]);
 
     useEffect(() => {
-        setIsLoading(
-            isApproveLoading || isApproveTxLoading || isDespoitLoading || isDespoitTxLoading
-        );
-    }, [isApproveLoading, isApproveTxLoading, isDespoitLoading || isDespoitTxLoading]);
+        setIsLoading(isWithdrawLoading || isWithdrawTxLoading);
+    }, [isWithdrawLoading || isWithdrawTxLoading]);
 
     function closeModal() {
         setIsOpen(false);
@@ -148,31 +117,36 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                                         as="h3"
                                         className="text-lg font-medium leading-6 text-gray-900"
                                     >
-                                        Deposit ERC20 Tokens
+                                        Withdraw
                                     </Dialog.Title>
                                     <div className="mt-2">
                                         <p className="text-sm text-gray-500">
-                                            Transfer your {token?.tokenName} - {token?.tokenSymbol}{" "}
-                                            tokens to deposit in the contract
+                                            Withdraw your{" "}
+                                            <span className="font-semibold">
+                                                {token?.name} - {token?.symbol}
+                                            </span>{" "}
+                                            tokens from the contract
                                         </p>
                                     </div>
 
                                     <div className="flex-cols mt-3 flex space-x-4 sm:flex-row">
-                                        <select
-                                            className="block rounded border border-gray-200 bg-white py-2 px-4 leading-tight text-gray-700 focus:outline-none"
-                                            id="grid-state"
-                                        >
-                                            <option value={token?.token}>
-                                                {token?.tokenSymbol}
-                                            </option>
-                                        </select>
                                         <input
                                             type="text"
                                             placeholder="0.1"
-                                            className="max-w-sm appearance-none border border-gray-400 py-2 px-3 leading-tight focus:outline-none"
+                                            className="max-w-sm appearance-none border border-gray-400 py-2 px-3 leading-tight focus:outline-none disabled:bg-gray-200"
                                             value={amount}
+                                            disabled={maxWithdrawl}
                                             onChange={(e) => setAmount(e.target.value)}
                                         />
+                                        <button
+                                            className={`rounded-md border px-3 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 ${
+                                                maxWithdrawl &&
+                                                "bg-indigo-500 text-white hover:bg-indigo-400"
+                                            }`}
+                                            onClick={() => setMaxWithdral(!maxWithdrawl)}
+                                        >
+                                            Max Amount
+                                        </button>
                                     </div>
 
                                     <div className="mt-4 flex w-full items-center justify-between">
@@ -181,10 +155,10 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                                             className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200
                                                 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed 
                                                 disabled:opacity-50"
-                                            onClick={() => handleApprove?.()}
+                                            onClick={() => handleWithdraw?.()}
                                             disabled={!isConnected || isLoading}
                                         >
-                                            Deposit
+                                            Withdraw
                                             {isMounted() && isLoading ? (
                                                 <svg
                                                     className="text-indigo ml-3 h-5 w-5 animate-spin"
@@ -208,20 +182,9 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                                                 </svg>
                                             ) : null}
                                         </button>
-                                        {(isPrepareError ||
-                                            isError ||
-                                            isApprovePrepareError ||
-                                            isApproveError) && (
+                                        {(isPrepareError || isError) && (
                                             <div className="text-red-500">
-                                                Error:{" "}
-                                                {
-                                                    (
-                                                        prepareError ||
-                                                        error ||
-                                                        approveEror ||
-                                                        approvePrepareError
-                                                    )?.message
-                                                }
+                                                Error: {(prepareError || error)?.message}
                                             </div>
                                         )}
                                         {isSuccess && (

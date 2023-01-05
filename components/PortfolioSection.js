@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { useAccount, useContractRead } from "wagmi";
+import { useAccount, useContractRead, useContractWrite } from "wagmi";
 import addresses from "../constants/contract.json";
 import abi from "../constants/lendingpool.json";
-import { formatEther } from "ethers/lib/utils.js";
-import { displayEth } from "../utils/Math";
+import { displayUnits } from "../utils/Math";
+import WithdrawDialog from "./WithdrawDialog";
+import ImageWithFallback from "./ImageWithFallback";
 
 export default function PortfolioSection() {
     const { isConnected, address } = useAccount();
     const [isLoading, setIsLoading] = useState(true);
+
+    const [selectedToken, setSelectedToken] = useState(null);
+    const [withdrawModal, setWithdrawModal] = useState(false);
 
     const [portfolioData, setPortfolioData] = useState([]);
 
@@ -23,28 +27,36 @@ export default function PortfolioSection() {
             setIsLoading(false);
             setPortfolioData(data);
         },
-        onError(data) {
-            console.log("Error in get user balances", data);
-        },
         enabled: isConnected,
     });
 
+    const showWithdrawModal = (token) => {
+        setSelectedToken(token);
+        setWithdrawModal(!withdrawModal);
+    };
+
     return (
         <>
+            <WithdrawDialog
+                isModelOpen={withdrawModal}
+                modelCloseHandler={() => setWithdrawModal(false)}
+                token={selectedToken}
+            />
+
             <div className="w-full overflow-x-auto rounded-lg shadow-md md:w-2/3">
-                <table className="w-full text-left text-sm text-gray-800">
+                <table className="w-full table-auto text-left text-sm text-gray-800">
                     <thead className="bg-slate-600 text-xs uppercase text-white">
                         <tr>
                             <th scope="col" className="py-3 px-6">
                                 Your Deposits
                             </th>
-                            <th scope="col" className="py-3 px-6">
+                            <th scope="col" className="border-l py-3 px-6 text-center">
                                 Deposited Balance
                             </th>
-                            <th scope="col" className="py-3 px-6">
+                            <th scope="col" className="border-l py-3 px-6 text-center">
                                 Compounded Balance
                             </th>
-                            <th scope="col" className="py-3 px-6">
+                            <th scope="col" className="border-l py-3 px-6 text-center">
                                 Action
                             </th>
                         </tr>
@@ -67,15 +79,33 @@ export default function PortfolioSection() {
                         {portfolioData.map((token, index) => {
                             return (
                                 <tr key={index} className="border-b bg-white hover:bg-gray-50">
-                                    <td className="py-4 px-6">
-                                        {token.symbol} - {token.name}
+                                    <td className="py-4 px-6 text-center">
+                                        <div className="flex items-center space-x-2">
+                                            <ImageWithFallback
+                                                width={25}
+                                                height={25}
+                                                src={`https://cdn.jsdelivr.net/npm/cryptocurrency-icons@latest/svg/icon/${token.symbol.toLowerCase()}.svg`}
+                                                fallbackSrc="https://cdn.jsdelivr.net/npm/cryptocurrency-icons@latest/svg/icon/generic.svg"
+                                            />
+                                            <div>
+                                                {token.symbol} - {token.name}
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td className="py-4 px-6">{displayEth(token.balance)}</td>
-                                    <td className="py-4 px-6">{displayEth(token.totalBalance)}</td>
-                                    <td className="py-4 px-6">
+                                    <td className="py-4 px-6 text-center">
+                                        {displayUnits(token.balance, token.decimals)}
+                                    </td>
+                                    <td className="py-4 px-6 text-center">
+                                        {displayUnits(token.totalBalance, token.decimals)}
+                                    </td>
+                                    <td className="py-4 px-6 text-center">
                                         <a
                                             href="#"
                                             className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 hover:bg-gray-100 md:font-semibold"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                showWithdrawModal(token);
+                                            }}
                                         >
                                             Withdraw
                                         </a>

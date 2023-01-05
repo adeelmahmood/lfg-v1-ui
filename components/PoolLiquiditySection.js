@@ -3,7 +3,7 @@ import { useAccount, useContractRead } from "wagmi";
 import addresses from "../constants/contract.json";
 import abi from "../constants/lendingpool.json";
 import { formatEther, formatUnits } from "ethers/lib/utils.js";
-import { display1e4, displayEth } from "../utils/Math";
+import { display1e4, displayUnits } from "../utils/Math";
 
 export default function PoolLiquiditySection() {
     const { isConnected, address } = useAccount();
@@ -33,15 +33,15 @@ export default function PoolLiquiditySection() {
                 </h2>
                 <div className="flex items-center justify-between p-2 px-4 ">
                     <div>Total Collateral</div>
-                    <div>{displayEth(liquidityData.totalCollateral)} ETH</div>
+                    <div>{displayUnits(liquidityData.totalCollateral)} ETH</div>
                 </div>
                 <div className="flex items-center justify-between p-2 px-4 ">
                     <div>Total Debt</div>
-                    <div>{displayEth(liquidityData.totalDebt)} ETH</div>
+                    <div>{displayUnits(liquidityData.totalDebt)} ETH</div>
                 </div>
                 <div className="flex items-center justify-between p-2 px-4 ">
                     <div>Availabe to Borrow</div>
-                    <div>{displayEth(liquidityData.availableToBorrow)} ETH</div>
+                    <div>{displayUnits(liquidityData.availableToBorrow)} ETH</div>
                 </div>
                 <div className="flex items-center justify-between p-2 px-4 ">
                     <div>Loan to Value</div>
