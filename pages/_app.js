@@ -13,10 +13,10 @@ const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
 const chainsToUse = [hardhat, goerli, mainnet];
 const chainToUse = chainsToUse.filter((chain) => chain.id == chainId);
 
-const alchemyApiKey = process.env.NEXT_PUBLIC_ALCHEMY_AP_KEY;
+// const alchemyApiKey = process.env.NEXT_PUBLIC_ALCHEMY_AP_KEY;
 
 const { chains, provider } = configureChains(chainToUse, [
-    alchemyProvider({ apiKey: alchemyApiKey }),
+    // alchemyProvider({ apiKey: alchemyApiKey }),
     publicProvider(),
 ]);
 const { connectors } = getDefaultWallets({
