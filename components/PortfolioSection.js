@@ -27,6 +27,9 @@ export default function PortfolioSection() {
             setIsLoading(false);
             setPortfolioData(data);
         },
+        onError(err) {
+            console.log(err);
+        },
         enabled: isConnected,
     });
 

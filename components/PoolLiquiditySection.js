@@ -22,6 +22,9 @@ export default function PoolLiquiditySection() {
             setIsLoading(false);
             setLiquidityData(data);
         },
+        onError(err) {
+            console.log(err);
+        },
         enabled: isConnected,
     });
 

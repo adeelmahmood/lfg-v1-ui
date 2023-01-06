@@ -57,6 +57,9 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
             setTokenMarketData(data);
             setTokenMarketDataForCaller(data);
         },
+        onError(err) {
+            console.log(err);
+        },
         enabled: isConnected,
     });
 
