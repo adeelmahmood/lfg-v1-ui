@@ -1,1 +1,190 @@
-[{"type":"constructor","payable":false,"inputs":[{"type":"address","name":"_core"}]},{"type":"error","name":"LendingPool__InsufficientAmountForDeposit","inputs":[{"type":"address","name":"user"},{"type":"address","name":"token"},{"type":"uint256","name":"balance"}]},{"type":"error","name":"LendingPool__WithdrawAmountMoreThanBalance","inputs":[]},{"type":"error","name":"LendingPool__WithdrawRequestedWithNoBalance","inputs":[]},{"type":"event","anonymous":false,"name":"DepositMade","inputs":[{"type":"address","name":"user","indexed":true},{"type":"address","name":"token","indexed":true},{"type":"uint256","name":"amount","indexed":false}]},{"type":"event","anonymous":false,"name":"OwnershipTransferred","inputs":[{"type":"address","name":"previousOwner","indexed":true},{"type":"address","name":"newOwner","indexed":true}]},{"type":"event","anonymous":false,"name":"WithdrawlMade","inputs":[{"type":"address","name":"user","indexed":true},{"type":"address","name":"token","indexed":true},{"type":"uint256","name":"amount","indexed":false}]},{"type":"function","name":"deposit","constant":false,"payable":false,"inputs":[{"type":"address","name":"_token"},{"type":"uint256","name":"_amount"}],"outputs":[]},{"type":"function","name":"getAvailableTokens","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"tuple[]","name":"tokensMarketData","components":[{"type":"address","name":"token"},{"type":"string","name":"tokenSymbol"},{"type":"string","name":"tokenName"},{"type":"uint256","name":"tokenDecimals"},{"type":"uint256","name":"currentBalance"},{"type":"uint256","name":"scaledBalance"},{"type":"uint256","name":"liquidityRate"},{"type":"uint256","name":"liquidityIndex"},{"type":"uint256","name":"stableBorrowRate"},{"type":"uint256","name":"variableBorrowRate"},{"type":"uint256","name":"walletBalance"}]}]},{"type":"function","name":"getDeposits","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"tuple[]","components":[{"type":"address","name":"token"},{"type":"string","name":"symbol"},{"type":"string","name":"name"},{"type":"uint256","name":"decimals"},{"type":"uint256","name":"balance"},{"type":"uint256","name":"totalBalance"}]}]},{"type":"function","name":"getLiquidity","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"tuple","components":[{"type":"uint256","name":"totalCollateral"},{"type":"uint256","name":"totalDebt"},{"type":"uint256","name":"availableToBorrow"},{"type":"uint256","name":"loanToValue"}]}]},{"type":"function","name":"owner","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"address"}]},{"type":"function","name":"renounceOwnership","constant":false,"payable":false,"inputs":[],"outputs":[]},{"type":"function","name":"suppliedTokens","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"uint256"}],"outputs":[{"type":"address","name":"token"},{"type":"string","name":"symbol"},{"type":"string","name":"name"},{"type":"uint256","name":"decimals"},{"type":"uint256","name":"balance"},{"type":"uint256","name":"totalBalance"}]},{"type":"function","name":"tokenBalance","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"address","name":"_token"}],"outputs":[{"type":"uint256"}]},{"type":"function","name":"transferOwnership","constant":false,"payable":false,"inputs":[{"type":"address","name":"newOwner"}],"outputs":[]},{"type":"function","name":"userBalance","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"address","name":"_user"},{"type":"address","name":"_token"}],"outputs":[{"type":"uint256"}]},{"type":"function","name":"withdraw","constant":false,"payable":false,"inputs":[{"type":"address","name":"_token"},{"type":"uint256","name":"_amount"}],"outputs":[]}]
+[
+    {
+        "inputs": [{ "internalType": "address", "name": "_core", "type": "address" }],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "inputs": [
+            { "internalType": "address", "name": "user", "type": "address" },
+            { "internalType": "address", "name": "token", "type": "address" },
+            { "internalType": "uint256", "name": "balance", "type": "uint256" }
+        ],
+        "name": "LendingPool__InsufficientAmountForDeposit",
+        "type": "error"
+    },
+    { "inputs": [], "name": "LendingPool__WithdrawAmountMoreThanBalance", "type": "error" },
+    { "inputs": [], "name": "LendingPool__WithdrawRequestedWithNoBalance", "type": "error" },
+    {
+        "anonymous": false,
+        "inputs": [
+            { "indexed": true, "internalType": "address", "name": "user", "type": "address" },
+            { "indexed": true, "internalType": "address", "name": "token", "type": "address" },
+            { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "DepositMade",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "previousOwner",
+                "type": "address"
+            },
+            { "indexed": true, "internalType": "address", "name": "newOwner", "type": "address" }
+        ],
+        "name": "OwnershipTransferred",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            { "indexed": true, "internalType": "address", "name": "user", "type": "address" },
+            { "indexed": true, "internalType": "address", "name": "token", "type": "address" },
+            { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "WithdrawlMade",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            { "internalType": "contract ERC20", "name": "_token", "type": "address" },
+            { "internalType": "uint256", "name": "_amount", "type": "uint256" }
+        ],
+        "name": "deposit",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getAvailableTokens",
+        "outputs": [
+            {
+                "components": [
+                    { "internalType": "address", "name": "token", "type": "address" },
+                    { "internalType": "string", "name": "tokenSymbol", "type": "string" },
+                    { "internalType": "string", "name": "tokenName", "type": "string" },
+                    { "internalType": "uint256", "name": "tokenDecimals", "type": "uint256" },
+                    { "internalType": "uint256", "name": "currentBalance", "type": "uint256" },
+                    { "internalType": "uint256", "name": "scaledBalance", "type": "uint256" },
+                    { "internalType": "uint256", "name": "liquidityRate", "type": "uint256" },
+                    { "internalType": "uint256", "name": "liquidityIndex", "type": "uint256" },
+                    { "internalType": "uint256", "name": "stableBorrowRate", "type": "uint256" },
+                    { "internalType": "uint256", "name": "variableBorrowRate", "type": "uint256" },
+                    { "internalType": "uint256", "name": "walletBalance", "type": "uint256" }
+                ],
+                "internalType": "struct DataTypes.TokenMarketData[]",
+                "name": "tokensMarketData",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getDeposits",
+        "outputs": [
+            {
+                "components": [
+                    { "internalType": "address", "name": "token", "type": "address" },
+                    { "internalType": "string", "name": "symbol", "type": "string" },
+                    { "internalType": "string", "name": "name", "type": "string" },
+                    { "internalType": "uint256", "name": "decimals", "type": "uint256" },
+                    { "internalType": "uint256", "name": "balance", "type": "uint256" },
+                    { "internalType": "uint256", "name": "totalBalance", "type": "uint256" }
+                ],
+                "internalType": "struct DataTypes.TokenMetadata[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getLiquidity",
+        "outputs": [
+            {
+                "components": [
+                    { "internalType": "uint256", "name": "totalCollateral", "type": "uint256" },
+                    { "internalType": "uint256", "name": "totalDebt", "type": "uint256" },
+                    { "internalType": "uint256", "name": "availableToBorrow", "type": "uint256" },
+                    { "internalType": "uint256", "name": "loanToValue", "type": "uint256" }
+                ],
+                "internalType": "struct DataTypes.PoolLiquidity",
+                "name": "",
+                "type": "tuple"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "renounceOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "name": "suppliedTokens",
+        "outputs": [
+            { "internalType": "address", "name": "token", "type": "address" },
+            { "internalType": "string", "name": "symbol", "type": "string" },
+            { "internalType": "string", "name": "name", "type": "string" },
+            { "internalType": "uint256", "name": "decimals", "type": "uint256" },
+            { "internalType": "uint256", "name": "balance", "type": "uint256" },
+            { "internalType": "uint256", "name": "totalBalance", "type": "uint256" }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [{ "internalType": "address", "name": "_token", "type": "address" }],
+        "name": "tokenBalance",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
+        "name": "transferOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            { "internalType": "address", "name": "_user", "type": "address" },
+            { "internalType": "address", "name": "_token", "type": "address" }
+        ],
+        "name": "userBalance",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            { "internalType": "contract ERC20", "name": "_token", "type": "address" },
+            { "internalType": "uint256", "name": "_amount", "type": "uint256" }
+        ],
+        "name": "withdraw",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    }
+]

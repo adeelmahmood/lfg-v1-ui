@@ -58,7 +58,8 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
             setTokenMarketDataForCaller(data);
         },
         onError(err) {
-            console.log(err);
+            console.log(window.ethereum);
+            console.log("Error in retrieving data from contract", lendingPoolAddress, err);
         },
         enabled: isConnected,
     });
