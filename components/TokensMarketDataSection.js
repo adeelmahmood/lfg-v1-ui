@@ -52,6 +52,7 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
         address: lendingPoolAddress,
         abi,
         functionName: "getAvailableTokens",
+        args: [address],
         onSuccess(data) {
             setIsLoading(false);
             setTokenMarketData(data);
