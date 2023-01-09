@@ -3,6 +3,7 @@ import { Fragment, useEffect, useState } from "react";
 import {
     useAccount,
     useContractWrite,
+    useFeeData,
     usePrepareContractWrite,
     useWaitForTransaction,
 } from "wagmi";
@@ -37,6 +38,8 @@ export default function SendWethToDaiDialog({
     const approveFunctionName = "approve";
     const swapFunctionName = "swap";
 
+    const { data: feeData } = useFeeData();
+
     // first approve weth transfer
     const {
         config: approveConfig,
@@ -48,6 +51,9 @@ export default function SendWethToDaiDialog({
         functionName: approveFunctionName,
         args: [swapRouterAddress, parseEther(parsedAmount?.toString())],
         enabled: parsedAmount > 0,
+        overrides: {
+            gasPrice: feeData?.gasPrice,
+        },
     });
 
     const {

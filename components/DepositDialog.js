@@ -43,6 +43,9 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
             parseUnits(parsedAmount?.toString(), token?.tokenDecimals?.toNumber()),
         ],
         enabled: parsedAmount > 0,
+        onError(err) {
+            console.log(err);
+        },
     });
 
     const {
@@ -58,6 +61,9 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
         onSuccess(data) {
             // approved, call the swap function
             handleDeposit?.();
+        },
+        onError(err) {
+            console.log(err);
         },
     });
 
@@ -75,6 +81,9 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
             parseUnits(parsedAmount?.toString(), token?.tokenDecimals?.toNumber()),
         ],
         enabled: parsedAmount > 0,
+        onError(err) {
+            console.log(err);
+        },
     });
 
     const {
@@ -90,6 +99,9 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
         onSuccess(data) {
             setAmount("");
             closeModal();
+        },
+        onError(err) {
+            console.log(err);
         },
     });
 
