@@ -3,7 +3,6 @@ import { Fragment, useEffect, useState } from "react";
 import {
     useAccount,
     useContractWrite,
-    useFeeData,
     usePrepareContractWrite,
     useWaitForTransaction,
 } from "wagmi";
@@ -29,8 +28,6 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
     const lendingPoolAddress = addresses[chainId].LendingPool[0];
     const withdrawFunctionName = "withdraw";
 
-    const { data: feeData } = useFeeData();
-
     // request withdraw
     const {
         config,
@@ -42,15 +39,11 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
         functionName: withdrawFunctionName,
         args: [token?.token, parseEther(parsedAmount?.toString())],
         enabled: parsedAmount > 0 || maxWithdrawl,
-        overrides: {
-            // gasLimit: feeData?.lastBaseFeePerGas,
-        },
         onSettled(data, err) {
-            console.log(token?.token);
-            console.log(
-                parseUnits(parsedAmount?.toString(), token?.tokenDecimals?.toNumber()).toString()
-            );
             console.log(data, err);
+        },
+        onError(err) {
+            console.log("prepare error", err);
         },
     });
 
@@ -67,6 +60,9 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
         onSuccess(data) {
             setAmount("");
             closeModal();
+        },
+        onError(err) {
+            console.log("prepare tx error", err);
         },
     });
 
