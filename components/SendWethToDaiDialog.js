@@ -5,7 +5,6 @@ import {
     useContractWrite,
     usePrepareContractWrite,
     useWaitForTransaction,
-    useFeeData,
 } from "wagmi";
 import addresses from "../constants/contract.json";
 import abi from "../constants/swaprouter.json";
@@ -62,9 +61,6 @@ export default function SendWethToDaiDialog({
         isError: isApproveError,
     } = useContractWrite(approveConfig);
 
-    const { data: feeData } = useFeeData();
-    console.log(feeData?.gasPrice);
-
     const {
         config,
         error: prepareError,
@@ -74,12 +70,9 @@ export default function SendWethToDaiDialog({
         abi,
         functionName: swapFunctionName,
         args: [fromToken, toToken, parseEther(parsedAmount?.toString())],
-        // enabled: parsedAmount > 0,
+        enabled: parsedAmount > 0,
         onSettled(data, error) {
             console.log("Settled", { data, error });
-        },
-        overrides: {
-            gasLimit: feeData?.gasPrice,
         },
     });
 
@@ -94,11 +87,6 @@ export default function SendWethToDaiDialog({
     const { isLoading: isApproveTxLoading, isSuccess: isApproveSuccess } = useWaitForTransaction({
         hash: approveData?.hash,
         onSuccess(data) {
-            console.log("approve completed", data);
-            console.log("fromToken", fromToken);
-            console.log("toToken", toToken);
-            console.log("parsedAmount", parsedAmount);
-            console.log("will be caling handleSwap", handleSwap);
             // approved, call the swap function
             handleSwap?.();
         },
@@ -112,7 +100,6 @@ export default function SendWethToDaiDialog({
     const { isLoading: isSwapTxLoading, isSuccess } = useWaitForTransaction({
         hash: data?.hash,
         onSuccess(data) {
-            console.log("swap completed", data);
             setAmount("");
             closeModal();
         },
@@ -260,12 +247,9 @@ export default function SendWethToDaiDialog({
                                                 </svg>
                                             ) : null}
                                         </button>
-                                        {(isPrepareError ||
-                                            isError ||
-                                            isApprovePrepareError ||
-                                            isApproveError) && (
+                                        {(isError || isApprovePrepareError || isApproveError) && (
                                             <div className="text-red-500">
-                                                Error:{" "}
+                                                Error:
                                                 {
                                                     (
                                                         prepareError ||

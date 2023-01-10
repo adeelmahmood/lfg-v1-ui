@@ -24,9 +24,6 @@ export default function PortfolioSection() {
         functionName: "getDeposits",
         args: [address],
         onSuccess(data) {
-            console.log(data);
-            // console.log(data[0].balance.toString());
-            // console.log(data[0].totalBalance.toString());
             setIsLoading(false);
             setPortfolioData(data);
         },

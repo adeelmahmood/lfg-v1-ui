@@ -3,6 +3,7 @@ import { Fragment, useEffect, useState } from "react";
 import {
     useAccount,
     useContractWrite,
+    useFeeData,
     useNetwork,
     usePrepareContractWrite,
     useWaitForTransaction,
@@ -17,6 +18,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
     let [isOpen, setIsOpen] = useState(isModelOpen || false);
 
     const { isConnected, address } = useAccount();
+    const { data: feeData } = useFeeData();
 
     const [amount, setAmount] = useState("");
     const [parsedAmount, setParsedAmount] = useState(0);
@@ -43,8 +45,14 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
             parseUnits(parsedAmount?.toString(), token?.tokenDecimals?.toNumber()),
         ],
         enabled: parsedAmount > 0,
+        overrides: {
+            // gasLimit: feeData?.lastBaseFeePerGas,
+        },
+        onSettled(data, error) {
+            console.log("Settled", { data, error });
+        },
         onError(err) {
-            console.log(err);
+            console.log("Approve prepare error", err);
         },
     });
 
@@ -63,7 +71,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
             handleDeposit?.();
         },
         onError(err) {
-            console.log(err);
+            console.log("Approve tx error", err);
         },
     });
 
@@ -80,9 +88,12 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
             token?.token,
             parseUnits(parsedAmount?.toString(), token?.tokenDecimals?.toNumber()),
         ],
+        overrides: {
+            // gasLimit: 3e5,
+        },
         enabled: parsedAmount > 0,
         onError(err) {
-            console.log(err);
+            console.log("Deposit prepare error", err);
         },
     });
 
@@ -101,7 +112,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
             closeModal();
         },
         onError(err) {
-            console.log(err);
+            console.log("Deposit tx error", err);
         },
     });
 

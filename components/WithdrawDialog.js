@@ -43,7 +43,7 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
         args: [token?.token, parseEther(parsedAmount?.toString())],
         enabled: parsedAmount > 0 || maxWithdrawl,
         overrides: {
-            gasLimit: feeData?.lastBaseFeePerGas,
+            // gasLimit: feeData?.lastBaseFeePerGas,
         },
         onSettled(data, err) {
             console.log(token?.token);
