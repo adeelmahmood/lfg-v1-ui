@@ -3,12 +3,13 @@ import { Fragment, useEffect, useState } from "react";
 import {
     useAccount,
     useContractWrite,
+    useFeeData,
     usePrepareContractWrite,
     useWaitForTransaction,
 } from "wagmi";
 import addresses from "../constants/contract.json";
 import abi from "../constants/lendingpool.json";
-import { parseUnits } from "ethers/lib/utils.js";
+import { parseEther, parseUnits } from "ethers/lib/utils.js";
 import useIsMounted from "../hooks/useIsMounted";
 
 export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }) {
@@ -28,6 +29,8 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
     const lendingPoolAddress = addresses[chainId].LendingPool[0];
     const withdrawFunctionName = "withdraw";
 
+    const { data: feeData } = useFeeData();
+
     // request withdraw
     const {
         config,
@@ -37,11 +40,18 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
         address: lendingPoolAddress,
         abi,
         functionName: withdrawFunctionName,
-        args: [
-            token?.token,
-            parseUnits(parsedAmount?.toString(), token?.tokenDecimals?.toNumber()),
-        ],
+        args: [token?.token, parseEther(parsedAmount?.toString())],
         enabled: parsedAmount > 0 || maxWithdrawl,
+        overrides: {
+            gasLimit: feeData?.lastBaseFeePerGas,
+        },
+        onSettled(data, err) {
+            console.log(token?.token);
+            console.log(
+                parseUnits(parsedAmount?.toString(), token?.tokenDecimals?.toNumber()).toString()
+            );
+            console.log(data, err);
+        },
     });
 
     const {

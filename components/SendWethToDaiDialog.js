@@ -3,9 +3,9 @@ import { Fragment, useEffect, useState } from "react";
 import {
     useAccount,
     useContractWrite,
-    useFeeData,
     usePrepareContractWrite,
     useWaitForTransaction,
+    useFeeData,
 } from "wagmi";
 import addresses from "../constants/contract.json";
 import abi from "../constants/swaprouter.json";
@@ -38,8 +38,6 @@ export default function SendWethToDaiDialog({
     const approveFunctionName = "approve";
     const swapFunctionName = "swap";
 
-    const { data: feeData } = useFeeData();
-
     // first approve weth transfer
     const {
         config: approveConfig,
@@ -51,8 +49,8 @@ export default function SendWethToDaiDialog({
         functionName: approveFunctionName,
         args: [swapRouterAddress, parseEther(parsedAmount?.toString())],
         enabled: parsedAmount > 0,
-        overrides: {
-            gasPrice: feeData?.gasPrice,
+        onSettled(data, error) {
+            console.log("Settled", { data, error });
         },
     });
 
@@ -64,15 +62,9 @@ export default function SendWethToDaiDialog({
         isError: isApproveError,
     } = useContractWrite(approveConfig);
 
-    const { isLoading: isApproveTxLoading, isSuccess: isApproveSuccess } = useWaitForTransaction({
-        hash: approveData?.hash,
-        onSuccess(data) {
-            // approved, call the swap function
-            handleSwap?.();
-        },
-    });
+    const { data: feeData } = useFeeData();
+    console.log(feeData?.gasPrice);
 
-    // once approve then swap
     const {
         config,
         error: prepareError,
@@ -82,7 +74,13 @@ export default function SendWethToDaiDialog({
         abi,
         functionName: swapFunctionName,
         args: [fromToken, toToken, parseEther(parsedAmount?.toString())],
-        enabled: parsedAmount > 0,
+        // enabled: parsedAmount > 0,
+        onSettled(data, error) {
+            console.log("Settled", { data, error });
+        },
+        overrides: {
+            gasLimit: feeData?.gasPrice,
+        },
     });
 
     const {
@@ -93,11 +91,33 @@ export default function SendWethToDaiDialog({
         isError,
     } = useContractWrite(config);
 
+    const { isLoading: isApproveTxLoading, isSuccess: isApproveSuccess } = useWaitForTransaction({
+        hash: approveData?.hash,
+        onSuccess(data) {
+            console.log("approve completed", data);
+            console.log("fromToken", fromToken);
+            console.log("toToken", toToken);
+            console.log("parsedAmount", parsedAmount);
+            console.log("will be caling handleSwap", handleSwap);
+            // approved, call the swap function
+            handleSwap?.();
+        },
+        onError(err) {
+            console.log("approve errored out", err);
+        },
+    });
+
+    // once approve then swap
+
     const { isLoading: isSwapTxLoading, isSuccess } = useWaitForTransaction({
         hash: data?.hash,
         onSuccess(data) {
+            console.log("swap completed", data);
             setAmount("");
             closeModal();
+        },
+        onError(err) {
+            console.log("swap errored out", err);
         },
     });
 
