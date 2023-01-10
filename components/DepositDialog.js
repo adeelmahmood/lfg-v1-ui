@@ -3,8 +3,6 @@ import { Fragment, useEffect, useState } from "react";
 import {
     useAccount,
     useContractWrite,
-    useFeeData,
-    useNetwork,
     usePrepareContractWrite,
     useWaitForTransaction,
 } from "wagmi";
@@ -18,13 +16,13 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
     let [isOpen, setIsOpen] = useState(isModelOpen || false);
 
     const { isConnected, address } = useAccount();
-    const { data: feeData } = useFeeData();
 
     const [amount, setAmount] = useState("");
     const [parsedAmount, setParsedAmount] = useState(0);
 
     const isMounted = useIsMounted();
     const [isLoading, setIsLoading] = useState(false);
+    const [isApproved, setIsApproved] = useState(false);
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const lendingPoolAddress = addresses[chainId].LendingPool[0];
@@ -45,11 +43,8 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
             parseUnits(parsedAmount?.toString(), token?.tokenDecimals?.toNumber()),
         ],
         enabled: parsedAmount > 0,
-        overrides: {
-            // gasLimit: feeData?.lastBaseFeePerGas,
-        },
         onSettled(data, error) {
-            console.log("Settled", { data, error });
+            console.log("Approve prepare Settled", { data, error });
         },
         onError(err) {
             console.log("Approve prepare error", err);
@@ -67,8 +62,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
     const { isLoading: isApproveTxLoading, isSuccess: isApproveSuccess } = useWaitForTransaction({
         hash: approveData?.hash,
         onSuccess(data) {
-            // approved, call the swap function
-            handleDeposit?.();
+            setIsApproved(true);
         },
         onError(err) {
             console.log("Approve tx error", err);
@@ -88,10 +82,10 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
             token?.token,
             parseUnits(parsedAmount?.toString(), token?.tokenDecimals?.toNumber()),
         ],
-        overrides: {
-            // gasLimit: 3e5,
+        enabled: isApproved && parsedAmount > 0,
+        onSettled(data, error) {
+            console.log("Deposit prepare Settled", { data, error });
         },
-        enabled: parsedAmount > 0,
         onError(err) {
             console.log("Deposit prepare error", err);
         },
@@ -108,7 +102,6 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
     const { isLoading: isDespoitTxLoading, isSuccess } = useWaitForTransaction({
         hash: data?.hash,
         onSuccess(data) {
-            setAmount("");
             closeModal();
         },
         onError(err) {
@@ -132,6 +125,8 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
 
     function closeModal() {
         setIsOpen(false);
+        setAmount("");
+        setIsApproved(false);
         modelCloseHandler?.();
     }
 
@@ -198,17 +193,49 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                                         />
                                     </div>
 
-                                    <div className="mt-4 flex w-full items-center justify-between">
+                                    <div className="mt-4 flex w-full items-center gap-4">
                                         <button
                                             type="button"
-                                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200
+                                            className="inline-flex rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200
                                                 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed 
                                                 disabled:opacity-50"
                                             onClick={() => handleApprove?.()}
-                                            disabled={!isConnected || isLoading}
+                                            disabled={!isConnected || isLoading || isApproved}
+                                        >
+                                            Approve
+                                            {isMounted() && isLoading && !isApproved ? (
+                                                <svg
+                                                    className="text-indigo ml-3 h-5 w-5 animate-spin"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <circle
+                                                        className="opacity-25"
+                                                        cx="12"
+                                                        cy="12"
+                                                        r="10"
+                                                        stroke="currentColor"
+                                                        strokeWidth="4"
+                                                    ></circle>
+                                                    <path
+                                                        className="opacity-75"
+                                                        fill="currentColor"
+                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                    ></path>
+                                                </svg>
+                                            ) : null}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="inline-flex rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200
+                                                focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed 
+                                                disabled:opacity-50"
+                                            onClick={() => handleDeposit?.()}
+                                            disabled={!isConnected || isLoading || !isApproved}
                                         >
                                             Deposit
-                                            {isMounted() && isLoading ? (
+                                            {isMounted() && isLoading && isApproved ? (
                                                 <svg
                                                     className="text-indigo ml-3 h-5 w-5 animate-spin"
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -236,7 +263,6 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                                             isApprovePrepareError ||
                                             isApproveError) && (
                                             <div className="text-red-500">
-                                                Error:{" "}
                                                 {
                                                     (
                                                         prepareError ||

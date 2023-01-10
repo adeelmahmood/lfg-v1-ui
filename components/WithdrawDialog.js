@@ -40,7 +40,7 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
         args: [token?.token, parseEther(parsedAmount?.toString())],
         enabled: parsedAmount > 0 || maxWithdrawl,
         onSettled(data, err) {
-            console.log(data, err);
+            console.log("prepare Settled", { data, error });
         },
         onError(err) {
             console.log("prepare error", err);
@@ -58,11 +58,10 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
     const { isLoading: isWithdrawTxLoading, isSuccess } = useWaitForTransaction({
         hash: data?.hash,
         onSuccess(data) {
-            setAmount("");
             closeModal();
         },
         onError(err) {
-            console.log("prepare tx error", err);
+            console.log("tx error", err);
         },
     });
 
@@ -84,6 +83,8 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
 
     function closeModal() {
         setIsOpen(false);
+        setAmount("");
+        setMaxWithdral(false);
         modelCloseHandler?.();
     }
 

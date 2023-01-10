@@ -17,22 +17,28 @@ export default function Dashboard() {
 
     const [tokenMarketDataForCaller, setTokenMarketDataForCaller] = useState([]);
 
+    const TEST_ENV = process.env.NEXT_PUBLIC_TEST_ENV;
+
     return (
         <>
             <div className="container relative mx-auto p-6">
                 <TopGradient />
                 <Navbar />
 
-                <SendEthToWethDialog
-                    isModelOpen={sendEthToWethModal}
-                    modelCloseHandler={() => setSendEthToWethModal(false)}
-                />
+                {TEST_ENV == "true" && (
+                    <SendEthToWethDialog
+                        isModelOpen={sendEthToWethModal}
+                        modelCloseHandler={() => setSendEthToWethModal(false)}
+                    />
+                )}
 
-                <SendWethToDaiDialog
-                    isModelOpen={sendWethToDaiModal}
-                    modelCloseHandler={() => setSendWethToDaiModal(false)}
-                    tokenMarketDataForCaller={tokenMarketDataForCaller}
-                />
+                {TEST_ENV == "true" && (
+                    <SendWethToDaiDialog
+                        isModelOpen={sendWethToDaiModal}
+                        modelCloseHandler={() => setSendWethToDaiModal(false)}
+                        tokenMarketDataForCaller={tokenMarketDataForCaller}
+                    />
+                )}
 
                 <DepositDialog
                     isModelOpen={depositModal}
@@ -44,20 +50,22 @@ export default function Dashboard() {
                         <h2 className="text-4xl font-semibold sm:max-w-md md:p-5 md:px-5 md:pt-5 md:text-3xl">
                             Dashboard
                         </h2>
-                        <div className="hidden space-y-2 space-x-0 sm:flex sm:flex-col md:flex-row md:space-y-0 md:space-x-3 md:p-5 md:px-5">
-                            <button
-                                className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 md:rounded-full md:font-semibold"
-                                onClick={() => setSendEthToWethModal(!sendEthToWethModal)}
-                            >
-                                Send Eth to Weth
-                            </button>
-                            <button
-                                className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 md:rounded-full md:font-semibold"
-                                onClick={() => setSendWethToDaiModal(!sendWethToDaiModal)}
-                            >
-                                Swap Tokens
-                            </button>
-                        </div>
+                        {TEST_ENV == "true" && (
+                            <div className="hidden space-y-2 space-x-0 sm:flex sm:flex-col md:flex-row md:space-y-0 md:space-x-3 md:p-5 md:px-5">
+                                <button
+                                    className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 md:rounded-full md:font-semibold"
+                                    onClick={() => setSendEthToWethModal(!sendEthToWethModal)}
+                                >
+                                    Send Eth to Weth
+                                </button>
+                                <button
+                                    className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 md:rounded-full md:font-semibold"
+                                    onClick={() => setSendWethToDaiModal(!sendWethToDaiModal)}
+                                >
+                                    Swap Tokens
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </section>
 
