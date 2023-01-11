@@ -82,7 +82,8 @@ export default function Home() {
                                     exercitationem praesentium nihil."
                                 imgSrc="/images/moneyjar.jpg"
                                 imgAltText="Earn yield"
-                                tags={["Aave", "Compound", "Another one"]}
+                                tags={["Aave", "Compound"]}
+                                status={true}
                             />
 
                             <HeroCard
@@ -122,7 +123,7 @@ export default function Home() {
                         </h2>
                         <div className="mt-10 grid grid-cols-1 items-start gap-8 sm:mt-20 sm:grid-cols-2 sm:justify-items-center sm:gap-24">
                             <HeroCard
-                                heading="Zero to low colltareral lending"
+                                heading="Zero to low collateral lending"
                                 description="Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                                     Voluptatibus quia, nulla! Maiores et perferendis eaque,
                                     exercitationem praesentium nihil."
@@ -132,13 +133,13 @@ export default function Home() {
                             />
 
                             <HeroCard
-                                heading="Make payments using Fiat"
+                                heading="Make payments using fiat"
                                 description="Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                                     Voluptatibus quia, nulla! Maiores et perferendis eaque,
                                     exercitationem praesentium nihil."
                                 imgSrc="/images/credit-card-computer.jpg"
                                 imgAltText="Earn yield"
-                                tags={["Crypto On/Off Ramp"]}
+                                tags={["Buy Crypto"]}
                             />
 
                             <HeroCard

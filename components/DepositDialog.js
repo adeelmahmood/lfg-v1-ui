@@ -8,7 +8,7 @@ import {
 } from "wagmi";
 import addresses from "../constants/contract.json";
 import abi from "../constants/lendingpool.json";
-import { parseEther, parseUnits } from "ethers/lib/utils.js";
+import { parseUnits } from "ethers/lib/utils.js";
 import useIsMounted from "../hooks/useIsMounted";
 import { erc20ABI } from "wagmi";
 

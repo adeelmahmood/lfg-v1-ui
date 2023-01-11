@@ -1,4 +1,4 @@
-export default function HeroCard({ heading, description, imgSrc, imgAltText, tags }) {
+export default function HeroCard({ heading, description, imgSrc, imgAltText, tags, status }) {
     return (
         <>
             <div className="w-full space-y-5 overflow-hidden rounded shadow-lg">
@@ -19,6 +19,12 @@ export default function HeroCard({ heading, description, imgSrc, imgAltText, tag
                             </span>
                         );
                     })}
+
+                    {status && (
+                        <span className="mr-2 mb-2 inline-block rounded-full bg-green-800 px-3 py-1 text-sm font-semibold text-white">
+                            Completed
+                        </span>
+                    )}
                 </div>
             </div>
         </>

@@ -1,6 +1,6 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
-import { HomeIcon, CodeBracketIcon } from "@heroicons/react/24/solid";
+import { ArrowPathIcon } from "@heroicons/react/24/solid";
 
 const Navbar = ({}) => {
     return (
@@ -8,7 +8,7 @@ const Navbar = ({}) => {
             <div className="flex items-center justify-between">
                 <div className="pt-2">
                     <Link href="/" className="focus:outline-none">
-                        <CodeBracketIcon className="mb-2 inline h-6" fill="#4F46E5" />
+                        <ArrowPathIcon className="mb-2 inline h-6" fill="#4F46E5" />
                         <span className="px-2 text-2xl font-bold tracking-tighter text-indigo-600 hover:text-indigo-800">
                             Lending Marketplace
                         </span>
