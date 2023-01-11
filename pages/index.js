@@ -20,12 +20,22 @@ export default function Home() {
                 <section id="hero">
                     <div className="mx-auto w-full max-w-screen-xl pt-10 pb-10 sm:pt-20">
                         <div className="grid grid-cols-1 gap-12 sm:grid-cols-12 sm:gap-8">
-                            <div className="col-span-7 flex flex-col items-center justify-center">
+                            <div className="flex flex-col items-center justify-center sm:col-span-7">
                                 <h1 className="text-5xl font-bold tracking-tight sm:text-center md:text-6xl md:tracking-normal">
                                     <span className="text-indigo-700">Enter</span> the Social
                                     Marketplace for
-                                    <span className="pl-3 text-indigo-700">Lending</span>
+                                    <span className="pl-2 text-indigo-700">Lending</span>
                                 </h1>
+                                <div className="overflow:hidden mt-10 flex sm:hidden">
+                                    <div className="relative">
+                                        <div className="absolute -inset-0.5 rounded-lg bg-gradient-to-br from-stone-700 to-stone-300 opacity-75 blur-sm"></div>
+                                        <img
+                                            src="/images/garden-entrance.jpg"
+                                            alt="Social markplace for lending"
+                                            className="relative aspect-square w-full max-w-sm rounded-lg object-cover object-center shadow-lg"
+                                        />
+                                    </div>
+                                </div>
                                 <p className="mt-6 text-lg leading-8 text-gray-600 sm:text-center">
                                     Lend your crypto assets to earn yield from Aave. Interact with
                                     borrowers and get involved in the governance of the protocol.
@@ -45,13 +55,13 @@ export default function Home() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="overflow:hidden col-span-5 row-start-1 sm:col-start-8">
+                            <div className="overflow:hidden hidden sm:col-span-5 sm:col-start-8 sm:flex">
                                 <div className="relative">
                                     <div className="absolute -inset-0.5 rounded-lg bg-gradient-to-br from-stone-700 to-stone-300 opacity-75 blur-sm"></div>
                                     <img
                                         src="/images/garden-entrance.jpg"
                                         alt="Social markplace for lending"
-                                        className="relative aspect-square h-96 w-full rounded-lg object-cover object-center shadow-lg md:h-full"
+                                        className="relative aspect-square w-full rounded-lg object-cover object-center shadow-lg sm:h-full"
                                     />
                                 </div>
                             </div>
@@ -147,8 +157,10 @@ export default function Home() {
                     </div>
                 </section>
 
+                <BottomGradient />
+
                 <div className="container mx-auto mt-20">
-                    <div className="flex items-center justify-end gap-x-4">
+                    <div className="flex items-center justify-center gap-x-4 sm:justify-end">
                         <Link
                             href="/dashboard"
                             className="rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
@@ -161,8 +173,6 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-
-                <BottomGradient />
             </div>
         </>
     );

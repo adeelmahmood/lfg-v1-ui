@@ -22,7 +22,7 @@ const Navbar = ({}) => {
                         Learn More
                     </a>
                 </div>
-                <div className="hidden md:block">
+                <div className="hidden sm:flex">
                     <ConnectButton />
                 </div>
             </div>
