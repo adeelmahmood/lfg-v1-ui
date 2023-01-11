@@ -21,7 +21,7 @@ export default function Dashboard() {
 
     return (
         <>
-            <div className="container relative mx-auto p-6">
+            <div className="relative mx-auto p-6 lg:container">
                 <TopGradient />
                 <Navbar />
 
@@ -46,20 +46,20 @@ export default function Dashboard() {
                 />
 
                 <section id="heading">
-                    <div className="mt-5 flex items-center justify-between sm:items-end md:flex-row md:items-center">
-                        <h2 className="text-4xl font-semibold sm:max-w-md md:p-5 md:px-5 md:pt-5 md:text-3xl">
+                    <div className="mt-5 flex items-center justify-between p-5 shadow sm:items-end md:flex-row md:items-center">
+                        <h2 className="px-5 text-4xl font-semibold sm:max-w-md md:text-3xl">
                             Dashboard
                         </h2>
                         {TEST_ENV == "true" && (
-                            <div className="hidden space-y-2 space-x-0 sm:flex sm:flex-col md:flex-row md:space-y-0 md:space-x-3 md:p-5 md:px-5">
+                            <div className="hidden space-y-2 space-x-0 sm:flex sm:flex-row sm:space-y-0 sm:space-x-3">
                                 <button
-                                    className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 md:rounded-full md:font-semibold"
+                                    className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 hover:bg-gray-100 md:font-semibold"
                                     onClick={() => setSendEthToWethModal(!sendEthToWethModal)}
                                 >
                                     Send Eth to Weth
                                 </button>
                                 <button
-                                    className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 md:rounded-full md:font-semibold"
+                                    className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 hover:bg-gray-100 md:font-semibold"
                                     onClick={() => setSendWethToDaiModal(!sendWethToDaiModal)}
                                 >
                                     Swap Tokens
@@ -70,7 +70,10 @@ export default function Dashboard() {
                 </section>
 
                 <section id="portfolio">
-                    <div className="items-left mt-10 flex flex-col gap-8 md:mt-6 md:flex-row md:items-start">
+                    <h2 className="mt-10 mb-5 text-4xl font-semibold text-slate-700 sm:max-w-md md:mt-5 md:text-3xl">
+                        Your Deposits
+                    </h2>
+                    <div className="items-left flex flex-col gap-8 md:mt-6 md:flex-row md:items-start">
                         <PortfolioSection />
                         <PoolLiquiditySection />
                     </div>

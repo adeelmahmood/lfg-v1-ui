@@ -78,26 +78,23 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                 token={selectedToken}
             />
 
-            <div className="mt-10 w-full overflow-x-auto rounded-lg shadow-md">
-                <table className="w-full table-fixed text-left text-sm text-gray-800">
+            <h2 className="mt-10 mb-5 text-4xl font-semibold text-slate-700 sm:max-w-md md:text-3xl">
+                Tokens Available to Supply
+            </h2>
+            <div className="max-w-4xl overflow-x-auto rounded-lg shadow-md">
+                <table className="w-full text-left text-sm text-gray-800">
                     <thead className="bg-slate-600 text-xs uppercase text-white">
                         <tr>
-                            <th scope="col" className="w-[23%] py-3 px-6">
+                            <th scope="col" className="py-3 px-6">
                                 Token
                             </th>
-                            <th scope="col" className="w-[16%] border-l py-3 px-6 text-center">
+                            <th scope="col" className="border-l py-3 px-6 text-center">
                                 Wallet Balance
                             </th>
-                            <th scope="col" className="w-[16%] border-l py-3 px-6 text-center">
+                            <th scope="col" className="border-l py-3 px-6 text-center">
                                 APY
                             </th>
-                            <th scope="col" className="w-[16%] border-l py-3 px-6 text-center">
-                                Stable APY
-                            </th>
-                            <th scope="col" className="w-[16%] border-l py-3 px-6 text-center">
-                                Variable APY
-                            </th>
-                            <th scope="col" className="w-[13%] border-l py-3 px-6 text-center">
+                            <th scope="col" className="border-l py-3 px-6 text-center">
                                 Action
                             </th>
                         </tr>
@@ -146,12 +143,6 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                                     </td>
                                     <td className="py-4 px-6 text-center">
                                         {displayPercent(depositAPY)}
-                                    </td>
-                                    <td className="py-4 px-6 text-center">
-                                        {displayPercent(stableBorrowAPY)}
-                                    </td>
-                                    <td className="py-4 px-6 text-center">
-                                        {displayPercent(variableBorrowAPY)}
                                     </td>
                                     <td className="py-4 px-6 text-center">
                                         <a
