@@ -166,24 +166,19 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                                         as="h3"
                                         className="text-lg font-medium leading-6 text-gray-900"
                                     >
-                                        Deposit ERC20 Tokens
+                                        Deposit {token?.tokenSymbol} Tokens
                                     </Dialog.Title>
                                     <div className="mt-2">
                                         <p className="text-sm text-gray-500">
-                                            Transfer your {token?.tokenName} - {token?.tokenSymbol}{" "}
+                                            Transfer your{" "}
+                                            <span className="pr-1 font-bold">
+                                                {token?.tokenName}
+                                            </span>
                                             tokens to deposit in the contract
                                         </p>
                                     </div>
 
-                                    <div className="flex-cols mt-3 flex space-x-4 sm:flex-row">
-                                        <select
-                                            className="block rounded border border-gray-200 bg-white py-2 px-4 leading-tight text-gray-700 focus:outline-none"
-                                            id="grid-state"
-                                        >
-                                            <option value={token?.token}>
-                                                {token?.tokenSymbol}
-                                            </option>
-                                        </select>
+                                    <div className="mt-3">
                                         <input
                                             type="text"
                                             placeholder="0.1"

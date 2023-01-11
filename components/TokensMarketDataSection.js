@@ -5,7 +5,6 @@ import abi from "../constants/lendingpool.json";
 import DepositDialog from "../components/DepositDialog";
 import { calculateAPY, displayPercent, displayUnits } from "../utils/Math";
 import ImageWithFallback from "./ImageWithFallback";
-import { ChevronUpIcon } from "@heroicons/react/24/solid";
 import { Switch } from "@headlessui/react";
 
 export default function TokensMarketDataSection({ setTokenMarketDataForCaller }) {
@@ -17,40 +16,11 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
 
     const [isShowZeroBalanceTokens, setIsShowZeroBalanceTokens] = useState(false);
 
-    const [allowAddTokensToMM, setAllowAddTokensToMM] = useState(false);
-
     const [tokenMarketData, setTokenMarketData] = useState([]);
     const [filteredTokenMarketData, setFilteredTokenMarketData] = useState([]);
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const lendingPoolAddress = addresses[chainId].LendingPool[0];
-
-    const addTokenToMetaMask = async (token) => {
-        if (!allowAddTokensToMM || !window.ethereum) return;
-
-        try {
-            const wasAdded = await window.ethereum?.request({
-                method: "wallet_watchAsset",
-                params: {
-                    type: "ERC20", // Initially only supports ERC20, but eventually more!
-                    options: {
-                        address: token?.token, // The address that the token is at.
-                        symbol: token?.tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
-                        decimals: token?.tokenDecimals?.toNumber(), // The number of decimals in the token
-                        //   image: tokenImage, // A string url of the token logo
-                    },
-                },
-            });
-
-            if (wasAdded) {
-                console.log("Token added");
-            } else {
-                console.log("Not added!");
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
 
     useContractRead({
         address: lendingPoolAddress,
@@ -110,7 +80,7 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                 {filteredTokenMarketData.map((token, index) => {
                     const { depositAPY, stableBorrowAPY, variableBorrowAPY } = calculateAPY(token);
                     return (
-                        <div className="w-full rounded-lg shadow">
+                        <div className="w-full rounded-lg shadow" key={index}>
                             <div className="flex items-center space-x-2 rounded-t-lg bg-gray-100 p-3">
                                 <ImageWithFallback
                                     width={32}
@@ -190,17 +160,6 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                                             />
                                             <div>
                                                 {token.tokenSymbol} - {token.tokenName}
-                                                <a
-                                                    href="#"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        addTokenToMetaMask(token);
-                                                    }}
-                                                >
-                                                    {allowAddTokensToMM && (
-                                                        <ChevronUpIcon className="mb-2 inline h-4 pl-2" />
-                                                    )}
-                                                </a>
                                             </div>
                                         </div>
                                     </td>
@@ -227,14 +186,6 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                         })}
                     </tbody>
                 </table>
-            </div>
-            <div className="mt-8 p-2">
-                <button
-                    className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 hover:bg-gray-100 md:font-semibold"
-                    onClick={() => setAllowAddTokensToMM(!allowAddTokensToMM)}
-                >
-                    Add Tokens to MetaMask
-                </button>
             </div>
         </>
     );

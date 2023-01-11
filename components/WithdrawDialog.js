@@ -1,4 +1,4 @@
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Switch, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
 import {
     useAccount,
@@ -136,24 +136,28 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
                                         </p>
                                     </div>
 
-                                    <div className="flex-cols mt-3 flex space-x-4 sm:flex-row">
+                                    <div className="mt-3">
                                         <input
                                             type="text"
                                             placeholder="0.1"
-                                            className="max-w-sm appearance-none border border-gray-400 py-2 px-3 leading-tight focus:outline-none disabled:bg-gray-200"
+                                            className="max-w-xs appearance-none border border-gray-400 py-2 px-3 leading-tight focus:outline-none disabled:bg-gray-200"
                                             value={amount}
                                             disabled={maxWithdrawl}
                                             onChange={(e) => setAmount(e.target.value)}
                                         />
-                                        <button
-                                            className={`rounded-md border px-3 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 ${
-                                                maxWithdrawl &&
-                                                "bg-indigo-500 text-white hover:bg-indigo-400"
-                                            }`}
-                                            onClick={() => setMaxWithdral(!maxWithdrawl)}
-                                        >
-                                            Max Amount
-                                        </button>
+                                    </div>
+
+                                    <div className="mt-3">
+                                        <div className="mb-4 flex items-center">
+                                            <Switch
+                                                checked={maxWithdrawl}
+                                                onChange={setMaxWithdral}
+                                                className={`${
+                                                    maxWithdrawl ? "bg-indigo-600" : "bg-gray-200"
+                                                } h-6 w-8 rounded-full`}
+                                            />
+                                            <div className="ml-2 text-gray-600">Max amount</div>
+                                        </div>
                                     </div>
 
                                     <div className="mt-4 flex w-full items-center justify-between">

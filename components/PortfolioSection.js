@@ -49,7 +49,7 @@ export default function PortfolioSection() {
             <div className="grid grid-cols-1 gap-y-4 sm:hidden">
                 {portfolioData.map((token, index) => {
                     return (
-                        <div className="w-full rounded-lg shadow">
+                        <div className="w-full rounded-lg shadow" key={index}>
                             <div className="flex items-center space-x-2 rounded-t-lg bg-gray-100 p-3">
                                 <ImageWithFallback
                                     width={32}
