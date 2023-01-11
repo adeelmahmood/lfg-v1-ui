@@ -70,7 +70,7 @@ export default function Home() {
                 </section>
 
                 <section id="lendersHeroSection">
-                    <div className="container mx-auto mt-10 max-w-screen-xl">
+                    <div className="container mx-auto mt-10 max-w-screen-lg">
                         <h2 className="text-left text-5xl font-bold tracking-tight md:text-center md:text-6xl md:tracking-normal">
                             What can you do as a Lender?
                         </h2>
@@ -87,8 +87,7 @@ export default function Home() {
 
                             <HeroCard
                                 heading="Interact with borrowers and other lenders"
-                                description="Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                                    Voluptatibus quia, nulla! Maiores et perferendis eaque,
+                                description="Maiores et perferendis eaque,
                                     exercitationem praesentium nihil."
                                 imgSrc="/images/hands.jpg"
                                 imgAltText="Earn yield"
@@ -98,8 +97,7 @@ export default function Home() {
                             <HeroCard
                                 heading="Learn about the work that borrowers are doing"
                                 description="Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                                    Voluptatibus quia, nulla! Maiores et perferendis eaque,
-                                    exercitationem praesentium nihil."
+                                    Voluptatibus quia, nulla."
                                 imgSrc="/images/taking-notes.jpg"
                                 imgAltText="Earn yield"
                                 tags={["Learn", "Get Involved"]}
@@ -107,8 +105,7 @@ export default function Home() {
 
                             <HeroCard
                                 heading="Vote on borrowing proposals"
-                                description="Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                                    Voluptatibus quia, nulla! Maiores et perferendis eaque,
+                                description="Maiores et perferendis eaque,
                                     exercitationem praesentium nihil."
                                 imgSrc="/images/vote.jpg"
                                 imgAltText="Earn yield"
@@ -119,7 +116,7 @@ export default function Home() {
                 </section>
 
                 <section id="borrowersHeroSection">
-                    <div className="container mx-auto mt-20 max-w-screen-xl">
+                    <div className="container mx-auto mt-20 max-w-screen-lg">
                         <h2 className="text-left text-5xl font-bold tracking-tight md:text-center md:text-6xl md:tracking-normal">
                             What can you do as a Borrower?
                         </h2>
@@ -146,8 +143,7 @@ export default function Home() {
 
                             <HeroCard
                                 heading="Find ongoing support from investors"
-                                description="Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                                    Voluptatibus quia, nulla! Maiores et perferendis eaque,
+                                description="Maiores et perferendis eaque,
                                     exercitationem praesentium nihil."
                                 imgSrc="/images/piggybank.jpg"
                                 imgAltText="Earn yield"

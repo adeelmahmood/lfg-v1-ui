@@ -46,7 +46,47 @@ export default function PortfolioSection() {
                 token={selectedToken}
             />
 
-            <div className="w-full overflow-x-auto rounded-lg shadow-md md:w-2/3">
+            <div className="grid grid-cols-1 gap-y-4 sm:hidden">
+                {portfolioData.map((token, index) => {
+                    return (
+                        <div className="w-full rounded-lg shadow">
+                            <div className="flex items-center space-x-2 rounded-t-lg bg-gray-100 p-3">
+                                <ImageWithFallback
+                                    width={32}
+                                    height={32}
+                                    src={`https://cdn.jsdelivr.net/npm/cryptocurrency-icons@latest/svg/icon/${token.symbol.toLowerCase()}.svg`}
+                                    fallbackSrc="https://cdn.jsdelivr.net/npm/cryptocurrency-icons@latest/svg/icon/generic.svg"
+                                />
+                                <div className="font-semibold">
+                                    {token.symbol} - {token.name}
+                                </div>
+                            </div>
+                            <div className="mt-2 flex items-center justify-between p-2 px-4">
+                                <div>Deposited Balance</div>
+                                <div>{displayUnits(token.balance, token.decimals)}</div>
+                            </div>
+                            <div className="flex items-center justify-between p-2 px-4">
+                                <div>Compounded Balance</div>
+                                <div>{displayUnits(token.totalBalance, token.decimals)}</div>
+                            </div>
+                            <div className="mb-2 flex items-center justify-start p-2 px-4">
+                                <a
+                                    href="#"
+                                    className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 hover:bg-gray-100 md:font-semibold"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        showWithdrawModal(token);
+                                    }}
+                                >
+                                    Withdraw
+                                </a>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+
+            <div className="hidden w-full overflow-x-auto rounded-lg shadow-md sm:flex md:w-2/3">
                 <table className="w-full table-auto text-left text-sm text-gray-800">
                     <thead className="bg-slate-600 text-xs uppercase text-white">
                         <tr>
