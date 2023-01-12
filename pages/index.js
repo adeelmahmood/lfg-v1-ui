@@ -113,8 +113,25 @@ export default function Home() {
                                 tags={["Governance"]}
                             />
                         </div>
+                        <div className="mt-20">
+                            <h2 className="text-left text-3xl font-bold tracking-tight md:text-center md:text-4xl md:tracking-normal">
+                                Ready to start lending in the protocol?
+                            </h2>
+                            <div className="mt-6 flex gap-x-4 sm:justify-center">
+                                <Link
+                                    href="/dashboard"
+                                    className="inline-block divide-x divide-white rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
+                                            leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700"
+                                >
+                                    <span className="pr-6">Launch App</span>
+                                    <span className="pl-6">Connect Wallet</span>
+                                </Link>
+                            </div>
+                        </div>
                     </div>
                 </section>
+
+                <div className="mt-20 h-1 bg-gradient-to-r from-indigo-200 to-indigo-100" />
 
                 <section id="borrowersHeroSection">
                     <div className="container mx-auto mt-20 max-w-screen-lg">
@@ -151,25 +168,27 @@ export default function Home() {
                                 tags={["Investors", "Support"]}
                             />
                         </div>
+                        <div className="mt-20">
+                            <h2 className="text-left text-3xl font-bold tracking-tight md:text-center md:text-4xl md:tracking-normal">
+                                Ready to sign up and request a loan?
+                            </h2>
+                            <div className="mt-6 flex gap-x-4 sm:justify-center">
+                                <Link
+                                    href="/borrower"
+                                    className="inline-block divide-x divide-white rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
+                                            leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700"
+                                >
+                                    <span className="pr-6">Request Loan</span>
+                                    <span className="pl-6">Sign Up</span>
+                                </Link>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
-                <BottomGradient />
+                <div className="mt-20 h-1 bg-gradient-to-r from-indigo-200 to-indigo-100" />
 
-                <div className="container mx-auto mt-20">
-                    <div className="flex items-center justify-center gap-x-4 sm:justify-end">
-                        <Link
-                            href="/dashboard"
-                            className="rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
-                                            leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700"
-                        >
-                            Launch App
-                        </Link>
-                        <div className="sm:hidden">
-                            <ConnectButton />
-                        </div>
-                    </div>
-                </div>
+                <BottomGradient />
             </div>
         </>
     );

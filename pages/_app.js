@@ -8,6 +8,9 @@ import { configureChains, createClient, WagmiConfig } from "wagmi";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 import { mainnet, polygon, optimism, arbitrum, hardhat, goerli } from "wagmi/chains";
+import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { SessionContextProvider } from "@supabase/auth-helpers-react";
+import { useState } from "react";
 
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
 const chainsToUse = [hardhat, goerli, mainnet];
@@ -20,7 +23,7 @@ const { chains, provider } = configureChains(chainToUse, [
     publicProvider(),
 ]);
 const { connectors } = getDefaultWallets({
-    appName: "Lend for Good",
+    appName: "Lending Marketplace",
     chains,
 });
 const wagmiClient = createClient({
@@ -30,6 +33,8 @@ const wagmiClient = createClient({
 });
 
 export default function App({ Component, pageProps }) {
+    const [supabase] = useState(() => createBrowserSupabaseClient());
+
     return (
         <>
             <Head>
@@ -39,7 +44,12 @@ export default function App({ Component, pageProps }) {
             </Head>
             <WagmiConfig client={wagmiClient}>
                 <RainbowKitProvider chains={chains}>
-                    <Component {...pageProps} />
+                    <SessionContextProvider
+                        supabaseClient={supabase}
+                        initialSession={pageProps.initialSession}
+                    >
+                        <Component {...pageProps} />
+                    </SessionContextProvider>
                 </RainbowKitProvider>
             </WagmiConfig>
         </>
