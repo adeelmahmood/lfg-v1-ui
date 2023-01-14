@@ -21,6 +21,7 @@ export default function Borrower() {
         if (router.query.redirectedFrom) {
             url = `${url}login-redirect?redirectedFrom=${encodeURI(router.query.redirectedFrom)}`;
         }
+        console.log(url);
         return url;
     };
 
