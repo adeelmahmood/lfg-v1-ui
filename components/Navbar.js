@@ -50,6 +50,20 @@ const Navbar = ({}) => {
                     </div>
                 </div>
             </div>
+            {user && (
+                <div className="flex items-center justify-between px-4 py-2 shadow sm:hidden">
+                    <div className="font-semibold">Welcome, {user?.user_metadata.full_name}</div>
+                    <button
+                        onClick={async () => {
+                            await supabase.auth.signOut();
+                            router.push("/");
+                        }}
+                        className="rounded-lg p-2 shadow hover:bg-stone-200"
+                    >
+                        Sign out
+                    </button>
+                </div>
+            )}
         </>
     );
 };
