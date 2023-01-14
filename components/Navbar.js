@@ -2,10 +2,17 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
 import { ArrowPathIcon } from "@heroicons/react/24/solid";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { useRouter } from "next/router";
 
 const Navbar = ({}) => {
     const supabase = useSupabaseClient();
     const user = useUser();
+    const router = useRouter();
+
+    const supbaseSignout = () => {
+        supabase.auth.signOut();
+        router.push("/");
+    };
 
     return (
         <>
@@ -35,7 +42,7 @@ const Navbar = ({}) => {
                         )}
                         {user && (
                             <button
-                                onClick={() => supabase.auth.signOut()}
+                                onClick={supbaseSignout}
                                 className="rounded-lg p-2 shadow hover:bg-stone-200"
                             >
                                 Sign out

@@ -28,11 +28,11 @@ export default function Home() {
                                 </h1>
                                 <div className="overflow:hidden mt-10 flex sm:hidden">
                                     <div className="relative">
-                                        <div className="absolute -inset-0.5 rounded-lg bg-gradient-to-br from-stone-700 to-stone-300 opacity-75 blur-sm"></div>
+                                        <div className="absolute -inset-0.5 rounded-lg bg-gradient-to-br from-yellow-600 to-green-300 opacity-75 blur-sm"></div>
                                         <img
-                                            src="/images/garden-entrance.jpg"
+                                            src="/images/eth-garden-ent.png"
                                             alt="Social markplace for lending"
-                                            className="relative aspect-square w-full max-w-sm rounded-lg object-cover object-center shadow-lg"
+                                            className="aspect-square relative max-w-xs rounded-lg object-cover object-center shadow-lg"
                                         />
                                     </div>
                                 </div>
@@ -57,11 +57,11 @@ export default function Home() {
                             </div>
                             <div className="overflow:hidden hidden sm:col-span-5 sm:col-start-8 sm:flex">
                                 <div className="relative">
-                                    <div className="absolute -inset-0.5 rounded-lg bg-gradient-to-br from-stone-700 to-stone-300 opacity-75 blur-sm"></div>
+                                    <div className="absolute -inset-0.5 rounded-lg bg-gradient-to-br from-yellow-600 to-green-300 opacity-75 blur-sm"></div>
                                     <img
-                                        src="/images/garden-entrance.jpg"
+                                        src="/images/eth-garden-ent.png"
                                         alt="Social markplace for lending"
-                                        className="relative aspect-square w-full rounded-lg object-cover object-center shadow-lg sm:h-full"
+                                        className="aspect-square relative rounded-lg object-cover object-center shadow-lg sm:h-full"
                                     />
                                 </div>
                             </div>
