@@ -6,7 +6,7 @@ export default function LoginRedirect() {
     const user = useUser();
 
     if (user) {
-        router.push(router.query.redirectedFrom ?? "/");
+        router.replace(router.query.redirectedFrom ?? "/");
     }
 
     return (
