@@ -9,11 +9,6 @@ const Navbar = ({}) => {
     const user = useUser();
     const router = useRouter();
 
-    const supbaseSignout = () => {
-        supabase.auth.signOut();
-        router.push("/");
-    };
-
     return (
         <>
             <div className="flex items-center justify-between">
@@ -42,7 +37,10 @@ const Navbar = ({}) => {
                         )}
                         {user && (
                             <button
-                                onClick={supbaseSignout}
+                                onClick={async () => {
+                                    await supabase.auth.signOut();
+                                    router.push("/");
+                                }}
                                 className="rounded-lg p-2 shadow hover:bg-stone-200"
                             >
                                 Sign out
