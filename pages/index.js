@@ -1,11 +1,9 @@
 import { Inter } from "@next/font/google";
-import { useAccount } from "wagmi";
 import Link from "next/link";
 import TopGradient from "../components/TopGradient";
 import BottomGradient from "../components/BottomGradient";
 import Navbar from "../components/Navbar";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import Image from "next/image";
 import HeroCard from "../components/HeroCard";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -174,7 +172,7 @@ export default function Home() {
                             </h2>
                             <div className="mt-6 flex gap-x-4 sm:justify-center">
                                 <Link
-                                    href="/borrower-start"
+                                    href="/borrower/gen-info"
                                     className="inline-block divide-x divide-white rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
                                             leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700"
                                 >
