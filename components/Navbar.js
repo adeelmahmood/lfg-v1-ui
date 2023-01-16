@@ -19,8 +19,8 @@ const Navbar = ({}) => {
                 <div className="flex items-center justify-between px-4 py-3 sm:p-0">
                     <div>
                         <Link href="/" className="focus:outline-none">
-                            <ArrowPathIcon className="mb-2 inline h-6" fill="#4F46E5" />
-                            <span className="px-2 text-2xl font-bold tracking-tighter text-indigo-600 hover:text-indigo-800">
+                            <ArrowPathIcon className="mb-2 inline h-6 fill-current text-gray-600" />
+                            <span className="px-2 text-2xl font-bold tracking-tighter text-gray-600 hover:text-indigo-700">
                                 Lending Marketplace
                             </span>
                         </Link>

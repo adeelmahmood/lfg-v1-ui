@@ -2,8 +2,12 @@ export default function HeroCard({ heading, description, imgSrc, imgAltText, tag
     return (
         <>
             <div className="w-full space-y-5 overflow-hidden rounded shadow-lg">
-                <div className="aspect-w-4 aspect-h-2">
-                    <img className="object-cover object-center" src={imgSrc} alt={imgAltText} />
+                <div className="relative bg-red-400 pb-2/3">
+                    <img
+                        className="absolute h-full w-full object-cover object-center"
+                        src={imgSrc}
+                        alt={imgAltText}
+                    />
                 </div>
                 <div className="px-6 py-4">
                     <div className="mb-2 text-xl font-bold">{heading}</div>

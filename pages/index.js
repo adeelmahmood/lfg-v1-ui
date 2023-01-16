@@ -11,20 +11,20 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
     return (
         <>
-            <div className="container relative mx-auto p-6">
-                <TopGradient />
-                <Navbar />
+            <TopGradient />
+            <Navbar />
 
+            <div className="container mx-auto p-6">
                 <section id="hero">
                     <div className="mx-auto w-full max-w-screen-xl pt-10 pb-10 sm:pt-20">
-                        <div className="grid grid-cols-1 gap-12 sm:grid-cols-12 sm:gap-8">
-                            <div className="flex flex-col items-center justify-center sm:col-span-7">
-                                <h1 className="text-5xl font-bold tracking-tight sm:text-center md:text-6xl md:tracking-normal">
+                        <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-8">
+                            <div className="flex flex-col items-center justify-center md:col-span-7">
+                                <h1 className="text-5xl font-bold tracking-tight md:text-center md:text-6xl md:tracking-normal">
                                     <span className="text-indigo-700">Enter</span> the Social
                                     Marketplace for
                                     <span className="pl-2 text-indigo-700">Lending</span>
                                 </h1>
-                                <div className="overflow:hidden mt-10 flex sm:hidden">
+                                <div className="overflow:hidden mt-10 flex md:hidden">
                                     <div className="relative">
                                         <div className="absolute -inset-0.5 rounded-lg bg-gradient-to-br from-yellow-600 to-green-300 opacity-75 blur-sm"></div>
                                         <img
@@ -46,20 +46,20 @@ export default function Home() {
                                         className="rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
                                             leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700"
                                     >
-                                        Launch App
+                                        Login
                                     </Link>
-                                    <div className="sm:hidden">
+                                    <div className="">
                                         <ConnectButton />
                                     </div>
                                 </div>
                             </div>
-                            <div className="overflow:hidden hidden sm:col-span-5 sm:col-start-8 sm:flex">
+                            <div className="overflow:hidden hidden md:col-span-5 md:col-start-8 md:flex">
                                 <div className="relative -z-10">
                                     <div className="absolute -inset-0.5 rounded-lg bg-gradient-to-br from-yellow-600 to-green-300 opacity-75 blur-sm"></div>
                                     <img
                                         src="/images/eth-garden-ent.png"
                                         alt="Social markplace for lending"
-                                        className="aspect-square relative rounded-lg object-cover object-center shadow-lg sm:h-full"
+                                        className="aspect-square relative rounded-lg object-cover object-center shadow-lg md:h-full"
                                     />
                                 </div>
                             </div>
