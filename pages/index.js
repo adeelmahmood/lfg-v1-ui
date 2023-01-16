@@ -54,7 +54,7 @@ export default function Home() {
                                 </div>
                             </div>
                             <div className="overflow:hidden hidden sm:col-span-5 sm:col-start-8 sm:flex">
-                                <div className="relative">
+                                <div className="relative -z-10">
                                     <div className="absolute -inset-0.5 rounded-lg bg-gradient-to-br from-yellow-600 to-green-300 opacity-75 blur-sm"></div>
                                     <img
                                         src="/images/eth-garden-ent.png"
