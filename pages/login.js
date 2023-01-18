@@ -28,10 +28,10 @@ export default function Borrower() {
 
     return (
         <>
-            <div className="container relative  mx-auto p-6">
-                <TopGradient />
-                <Navbar />
+            <TopGradient />
+            <Navbar />
 
+            <div className="container mx-auto p-6">
                 <div className="mt-10 grid w-full grid-cols-1 lg:grid-cols-12">
                     <div className="col-span-1 lg:col-span-7">
                         <div className="flex flex-col items-center justify-center p-5">

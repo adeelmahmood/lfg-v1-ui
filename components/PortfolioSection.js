@@ -72,7 +72,7 @@ export default function PortfolioSection() {
                             <div className="mb-2 flex items-center justify-start p-2 px-4">
                                 <a
                                     href="#"
-                                    className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 hover:bg-gray-100 md:font-semibold"
+                                    className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 shadow hover:bg-gray-100 md:font-semibold"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         showWithdrawModal(token);

@@ -20,7 +20,7 @@ const Navbar = ({}) => {
                     <div>
                         <Link href="/" className="focus:outline-none">
                             <ArrowPathIcon className="mb-2 inline h-6 fill-current text-gray-600" />
-                            <span className="px-2 text-2xl font-bold tracking-tighter text-gray-600 hover:text-indigo-700">
+                            <span className="px-2 text-2xl font-bold tracking-tighter text-indigo-700">
                                 Lending Marketplace
                             </span>
                         </Link>
@@ -47,9 +47,9 @@ const Navbar = ({}) => {
                         >
                             Become a Lender
                         </a>
-                        <span className="mx-2 hidden w-0.5 bg-stone-500/50 sm:block"></span>
+                        <span className="mx-2 hidden w-0.5 bg-gray-600/25 sm:block"></span>
                         <a
-                            href="/borrower/gen-info"
+                            href="/borrower/dashboard"
                             className="block rounded px-2 py-1 font-semibold text-indigo-600 hover:bg-indigo-500 hover:text-white"
                         >
                             Become a Borrower

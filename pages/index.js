@@ -5,10 +5,13 @@ import BottomGradient from "../components/BottomGradient";
 import Navbar from "../components/Navbar";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import HeroCard from "../components/HeroCard";
+import { useUser } from "@supabase/auth-helpers-react";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+    const user = useUser();
+
     return (
         <>
             <TopGradient />
@@ -41,13 +44,15 @@ export default function Home() {
                                     the work the borrowers are doing.
                                 </p>
                                 <div className="mt-6 flex gap-x-4 sm:justify-center">
-                                    <Link
-                                        href="/dashboard"
-                                        className="rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
+                                    {!user && (
+                                        <Link
+                                            href="/dashboard"
+                                            className="rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
                                             leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700"
-                                    >
-                                        Login
-                                    </Link>
+                                        >
+                                            Login
+                                        </Link>
+                                    )}
                                     <div className="">
                                         <ConnectButton />
                                     </div>
@@ -118,11 +123,10 @@ export default function Home() {
                             <div className="mt-6 flex gap-x-4 sm:justify-center">
                                 <Link
                                     href="/dashboard"
-                                    className="inline-block divide-x divide-white rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
+                                    className="inline-block rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
                                             leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700"
                                 >
-                                    <span className="pr-6">Launch App</span>
-                                    <span className="pl-6">Connect Wallet</span>
+                                    Become a Lender
                                 </Link>
                             </div>
                         </div>
@@ -168,16 +172,15 @@ export default function Home() {
                         </div>
                         <div className="mt-20">
                             <h2 className="text-left text-3xl font-bold tracking-tight md:text-center md:text-4xl md:tracking-normal">
-                                Ready to sign up and request a loan?
+                                Ready to sign up and submit a loan proposal?
                             </h2>
                             <div className="mt-6 flex gap-x-4 sm:justify-center">
                                 <Link
-                                    href="/borrower/gen-info"
-                                    className="inline-block divide-x divide-white rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
+                                    href="/borrower/dashboard"
+                                    className="inline-block rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
                                             leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700"
                                 >
-                                    <span className="pr-6">Request Loan</span>
-                                    <span className="pl-6">Sign Up</span>
+                                    Become a Borrower
                                 </Link>
                             </div>
                         </div>

@@ -9,19 +9,23 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google-cloud/documentai": "^6.2.0",
     "@headlessui/react": "^1.7.7",
     "@heroicons/react": "^2.0.13",
     "@next/font": "13.1.1",
     "@rainbow-me/rainbowkit": "^0.8.1",
+    "@stripe/stripe-js": "^1.46.0",
     "@supabase/auth-helpers-nextjs": "^0.5.2",
     "@supabase/auth-helpers-react": "^0.3.1",
     "@supabase/auth-ui-react": "^0.2.6",
     "@supabase/supabase-js": "^2.4.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "ethers": "^5.7.2",
+    "micro": "^10.0.1",
     "next": "13.1.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "stripe": "^11.6.0",
     "wagmi": "^0.9.6"
   },
   "devDependencies": {
