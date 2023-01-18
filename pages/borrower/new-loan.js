@@ -85,9 +85,9 @@ export default function NewLoan() {
                     </div>
 
                     <div className="w-full max-w-2xl rounded-xl bg-white shadow-md">
-                        <div className="mt-8 flex flex-col items-center justify-center">
-                            <h2 className="text-4xl font-bold">Submit A Loan Proposal</h2>
-                            <p className="mt-6 mb-8 max-w-2xl px-8 text-center leading-8 text-gray-600">
+                        <div className="mt-8 flex flex-col">
+                            <h2 className="px-8 text-4xl font-bold">Submit A Loan Proposal</h2>
+                            <p className="mt-6 mb-8 max-w-2xl px-8 text-left leading-8 text-gray-600">
                                 Submitting a loan proposal is different from requesting a loan. As
                                 our process allows borrowers to provide all the necessary
                                 information and then lenders to vote on the proposal. Once the
