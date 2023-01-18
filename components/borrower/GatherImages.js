@@ -21,7 +21,7 @@ export default function GatherImages({ loanProposal, setLoanProposal, handle, ..
                     </div>
                     {/* <img src={urls.regular} className="aspect-square object-cover object-center" /> */}
                     <a
-                        className="credit text-sm text-gray-600"
+                        className="text-sm text-gray-600"
                         target="_blank"
                         href={`https://unsplash.com/@${user.username}`}
                     >
