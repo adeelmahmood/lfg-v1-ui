@@ -4,7 +4,7 @@ import { createApi } from "unsplash-js";
 
 export default function GatherImages({ loanProposal, setLoanProposal, handle, ...rest }) {
     const unsplashApi = createApi({
-        accessKey: "WVR6FtS0oi4SiEdZ4U4YxGvJm3dXFhYXUmTeg9NjdzA",
+        accessKey: process.env.NEXT_PUBLIC_UNSPLASH_API_KEY,
     });
 
     const PhotoComp = ({ photo }) => {
