@@ -1,12 +1,16 @@
-export default function TellUsAboutYourself({
-    loanProposal,
-    setLoanProposal,
-    handleNext,
-    ...rest
-}) {
+import { ArrowLongRightIcon } from "@heroicons/react/24/solid";
+import { useEffect, useState } from "react";
+
+export default function TellUsAboutYourself({ loanProposal, setLoanProposal, handle, ...rest }) {
+    const [isCompleted, setIsCompleted] = useState(false);
+
+    useEffect(() => {
+        setIsCompleted(loanProposal.title && loanProposal.reasoning);
+    }, [loanProposal.title, loanProposal.reasoning]);
+
     return (
         <>
-            <div className="w-full max-w-2xl bg-white/25 px-8 pt-6 pb-8 shadow-md" {...rest}>
+            <div className="mb-8 w-full max-w-2xl px-8 pt-6" {...rest}>
                 <h2 className="text-3xl font-bold">Tell us about yourself</h2>
                 <div className="mt-6">
                     <label className="mb-2 block text-sm font-bold text-gray-800">
@@ -44,16 +48,13 @@ export default function TellUsAboutYourself({
                         value={loanProposal.reasoning}
                     ></textarea>
                 </div>
-                <div className="mt-4 flex items-center justify-between">
-                    <a href="#" className="text-xs font-semibold text-indigo-700">
-                        Need help filling this out?
-                    </a>
+                <div className="mt-4">
                     <button
-                        className="rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
-                                            leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700"
-                        onClick={handleNext}
+                        className="w-full rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        onClick={handle}
+                        disabled={!isCompleted}
                     >
-                        Next
+                        Next <ArrowLongRightIcon className="inline h-6 fill-current text-white" />
                     </button>
                 </div>
             </div>

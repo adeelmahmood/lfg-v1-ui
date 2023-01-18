@@ -1,60 +1,65 @@
+import { useState } from "react";
 import getStripe from "../../utils/Stripe";
+import { ArrowLongRightIcon } from "@heroicons/react/24/solid";
 
-export default function VerifyIdentity({
-    loanProposal,
-    setLoanProposal,
-    handlePrev,
-    handleNext,
-    ...rest
-}) {
+export default function VerifyIdentity({ loanProposal, setLoanProposal, handle, ...rest }) {
+    const [isCompleted, setIsCompleted] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+
     const startVerification = async () => {
+        setIsLoading(true);
+        setError(null);
+
         const stripe = await getStripe();
 
         const response = await fetch("/api/stripe/verifyIdentity", { method: "POST" });
         const session = await response.json();
 
-        const { error } = await stripe.verifyIdentity(session.clientSecret);
-        if (error && error.message) {
-            alert(error.message);
+        const { error: err } = await stripe.verifyIdentity(session.clientSecret);
+        if (err?.message) {
+            setError(err.message);
+        } else if (err?.type == "user_action" && err?.code == "consent_declined") {
+            setError("User declined the consent");
+        } else if (err?.type == "user_action" && err?.code == "session_cancelled") {
+            // do nothing
         } else {
             // verification completed
-            console.log("verification completed successfully");
+            setIsCompleted(true);
+            setLoanProposal({
+                ...loanProposal,
+                identityVerified: true,
+            });
         }
+        setIsLoading(false);
     };
 
     return (
         <>
-            <div className="w-full max-w-2xl bg-white/25 px-8 pt-6 pb-8 shadow-md" {...rest}>
-                <h2 className="text-3xl font-bold">Verify your identity </h2>
-                <div className="mt-6">
+            <div className="mb-8 w-full max-w-2xl px-8 pt-6" {...rest}>
+                <h2 className="text-3xl font-bold">Verify your identity</h2>
+                <div className="mt-6 mb-10">
                     <button
-                        className="mt-2 rounded-lg border border-gray-400 bg-gray-100 py-1 px-4 text-gray-800 shadow hover:bg-gray-100 md:font-semibold"
+                        className="mt-2 rounded-lg border border-gray-400 bg-gray-100 py-1 px-4 text-gray-800 shadow hover:bg-gray-100 disabled:cursor-not-allowed  disabled:opacity-50 md:font-semibold"
                         onClick={startVerification}
+                        disabled={isLoading}
                     >
                         Start Verification
                     </button>
+                    {error && <p className="mt-2 text-red-600">{error}</p>}
+                    {loanProposal.identityVerified && (
+                        <p className="mt-2 font-semibold text-teal-500">Verification Submitted</p>
+                    )}
                 </div>
 
-                <div className="mt-4 flex items-center justify-between">
-                    <a href="#" className="text-xs font-semibold text-indigo-700">
-                        Need help filling this out?
-                    </a>
-                    <div>
-                        <button
-                            className="rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
-                                            leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700"
-                            onClick={handlePrev}
-                        >
-                            Prev
-                        </button>
-                        <button
-                            className="ml-4 rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
-                                            leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700"
-                            onClick={handleNext}
-                        >
-                            Next
-                        </button>
-                    </div>
+                <div className="mt-4">
+                    <button
+                        className="w-full rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        onClick={handle}
+                        disabled={!loanProposal.identityVerified}
+                    >
+                        Next <ArrowLongRightIcon className="inline h-6 fill-current text-white" />
+                    </button>
                 </div>
             </div>
         </>
