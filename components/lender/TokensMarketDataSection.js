@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useAccount, useContractRead } from "wagmi";
-import addresses from "../constants/contract.json";
-import abi from "../constants/lendingpool.json";
-import DepositDialog from "../components/DepositDialog";
-import { calculateAPY, displayPercent, displayUnits } from "../utils/Math";
-import ImageWithFallback from "./ImageWithFallback";
+import addresses from "../../constants/contract.json";
+import abi from "../../constants/lendingpool.json";
+import { calculateAPY, displayPercent, displayUnits } from "../../utils/Math";
+import ImageWithFallback from "../ImageWithFallback";
 import { Switch } from "@headlessui/react";
+import DepositDialog from "./DepositDialog";
 
 export default function TokensMarketDataSection({ setTokenMarketDataForCaller }) {
     const { isConnected, address } = useAccount();

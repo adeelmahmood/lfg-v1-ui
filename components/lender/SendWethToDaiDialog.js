@@ -1,4 +1,4 @@
-import { Dialog, Switch, Transition } from "@headlessui/react";
+import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
 import {
     useAccount,
@@ -6,12 +6,17 @@ import {
     usePrepareContractWrite,
     useWaitForTransaction,
 } from "wagmi";
-import addresses from "../constants/contract.json";
-import abi from "../constants/lendingpool.json";
-import { parseEther, parseUnits } from "ethers/lib/utils.js";
-import useIsMounted from "../hooks/useIsMounted";
+import addresses from "../../constants/contract.json";
+import abi from "../../constants/swaprouter.json";
+import { parseEther } from "ethers/lib/utils.js";
+import useIsMounted from "../../hooks/useIsMounted";
+import { erc20ABI } from "wagmi";
 
-export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }) {
+export default function SendWethToDaiDialog({
+    isModelOpen,
+    modelCloseHandler,
+    tokenMarketDataForCaller,
+}) {
     let [isOpen, setIsOpen] = useState(isModelOpen || false);
 
     const { isConnected, address } = useAccount();
@@ -19,78 +24,117 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
     const [amount, setAmount] = useState("");
     const [parsedAmount, setParsedAmount] = useState(0);
 
-    const [maxWithdrawl, setMaxWithdral] = useState(false);
+    // WETH as default for FROM
+    const [fromToken, setFromToken] = useState("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2");
+    // DAI as default for TO
+    const [toToken, setToToken] = useState("0x6B175474E89094C44Da98b954EedeAC495271d0F");
 
     const isMounted = useIsMounted();
     const [isLoading, setIsLoading] = useState(false);
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
-    const lendingPoolAddress = addresses[chainId].LendingPool[0];
-    const withdrawFunctionName = "withdraw";
+    const swapRouterAddress = addresses[chainId].SwapRouter[0];
+    const approveFunctionName = "approve";
+    const swapFunctionName = "swap";
 
-    // request withdraw
+    // first approve weth transfer
+    const {
+        config: approveConfig,
+        error: approvePrepareError,
+        isError: isApprovePrepareError,
+    } = usePrepareContractWrite({
+        address: fromToken,
+        abi: erc20ABI,
+        functionName: approveFunctionName,
+        args: [swapRouterAddress, parseEther(parsedAmount?.toString())],
+        enabled: parsedAmount > 0,
+        onSettled(data, error) {
+            console.log("Settled", { data, error });
+        },
+    });
+
+    const {
+        write: handleApprove,
+        data: approveData,
+        error: approveEror,
+        isLoading: isApproveLoading,
+        isError: isApproveError,
+    } = useContractWrite(approveConfig);
+
     const {
         config,
         error: prepareError,
         isError: isPrepareError,
     } = usePrepareContractWrite({
-        address: lendingPoolAddress,
+        address: swapRouterAddress,
         abi,
-        functionName: withdrawFunctionName,
-        args: [token?.token, parseEther(parsedAmount?.toString())],
-        enabled: parsedAmount > 0 || maxWithdrawl,
-        onSettled(data, err) {
-            console.log("prepare Settled", { data, error });
-        },
-        onError(err) {
-            console.log("prepare error", err);
+        functionName: swapFunctionName,
+        args: [fromToken, toToken, parseEther(parsedAmount?.toString())],
+        enabled: parsedAmount > 0,
+        onSettled(data, error) {
+            console.log("Settled", { data, error });
         },
     });
 
     const {
-        write: handleWithdraw,
+        write: handleSwap,
         data,
         error,
-        isLoading: isWithdrawLoading,
+        isLoading: isSwapLoading,
         isError,
     } = useContractWrite(config);
 
-    const { isLoading: isWithdrawTxLoading, isSuccess } = useWaitForTransaction({
+    const { isLoading: isApproveTxLoading, isSuccess: isApproveSuccess } = useWaitForTransaction({
+        hash: approveData?.hash,
+        onSuccess(data) {
+            // approved, call the swap function
+            handleSwap?.();
+        },
+        onError(err) {
+            console.log("approve errored out", err);
+        },
+    });
+
+    // once approve then swap
+
+    const { isLoading: isSwapTxLoading, isSuccess } = useWaitForTransaction({
         hash: data?.hash,
         onSuccess(data) {
+            setAmount("");
             closeModal();
         },
         onError(err) {
-            console.log("tx error", err);
+            console.log("swap errored out", err);
         },
     });
 
     useEffect(() => {
-        if (maxWithdrawl) {
-            setParsedAmount(0);
-        } else {
-            if (!isNaN(parseFloat(amount))) {
-                setParsedAmount(parseFloat(amount));
-            } else {
-                setParsedAmount(0);
-            }
-        }
-    }, [amount, maxWithdrawl]);
+        setIsLoading(isApproveLoading || isApproveTxLoading || isSwapLoading || isSwapTxLoading);
+    }, [isApproveLoading, isApproveTxLoading, isSwapLoading, isSwapTxLoading]);
 
     useEffect(() => {
-        setIsLoading(isWithdrawLoading || isWithdrawTxLoading);
-    }, [isWithdrawLoading || isWithdrawTxLoading]);
+        if (!isNaN(parseFloat(amount))) {
+            setParsedAmount(parseFloat(amount));
+        } else {
+            setParsedAmount(0);
+        }
+    }, [amount]);
 
     function closeModal() {
         setIsOpen(false);
-        setAmount("");
-        setMaxWithdral(false);
         modelCloseHandler?.();
     }
 
     useEffect(() => {
         setIsOpen(isModelOpen);
     }, [isModelOpen]);
+
+    const handleFromTokenChange = (e) => {
+        setFromToken(e.target.value);
+    };
+    const handleToTokenChange = (e) => {
+        setToToken(e.target.value);
+    };
 
     return (
         <>
@@ -119,45 +163,55 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
                                 leaveFrom="opacity-100 scale-100"
                                 leaveTo="opacity-0 scale-95"
                             >
-                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                                     <Dialog.Title
                                         as="h3"
                                         className="text-lg font-medium leading-6 text-gray-900"
                                     >
-                                        Withdraw
+                                        Swap Tokens
                                     </Dialog.Title>
                                     <div className="mt-2">
                                         <p className="text-sm text-gray-500">
-                                            Withdraw your{" "}
-                                            <span className="font-semibold">
-                                                {token?.name} - {token?.symbol}
-                                            </span>{" "}
-                                            tokens from the contract
+                                            Transfer from one ERC token to another
                                         </p>
                                     </div>
 
-                                    <div className="mt-3">
+                                    <div className="flex-cols mt-3 flex space-x-4 sm:flex-row">
+                                        <select
+                                            className="block rounded border border-gray-200 bg-white py-2 px-4 leading-tight text-gray-700 focus:outline-none"
+                                            id="fromTokenSelect"
+                                            onChange={handleFromTokenChange}
+                                            defaultValue={fromToken}
+                                        >
+                                            {tokenMarketDataForCaller.map((token, index) => {
+                                                return (
+                                                    <option key={index} value={token?.token}>
+                                                        {token?.tokenSymbol}
+                                                    </option>
+                                                );
+                                            })}
+                                        </select>
                                         <input
                                             type="text"
                                             placeholder="0.1"
-                                            className="max-w-xs appearance-none border border-gray-400 py-2 px-3 leading-tight focus:outline-none disabled:bg-gray-200"
+                                            className="max-w-sm appearance-none border border-gray-400 py-2 px-3 leading-tight focus:outline-none"
                                             value={amount}
-                                            disabled={maxWithdrawl}
                                             onChange={(e) => setAmount(e.target.value)}
                                         />
-                                    </div>
-
-                                    <div className="mt-3">
-                                        <div className="mb-4 flex items-center">
-                                            <Switch
-                                                checked={maxWithdrawl}
-                                                onChange={setMaxWithdral}
-                                                className={`${
-                                                    maxWithdrawl ? "bg-indigo-600" : "bg-gray-200"
-                                                } h-6 w-8 rounded-full`}
-                                            />
-                                            <div className="ml-2 text-gray-600">Max amount</div>
-                                        </div>
+                                        <select
+                                            className="block rounded border border-gray-200 bg-white py-2 px-4 leading-tight text-gray-700 focus:outline-none"
+                                            id="toTokenSelect"
+                                            onChange={handleToTokenChange}
+                                            defaultValue={toToken}
+                                        >
+                                            {tokenMarketDataForCaller.map((token, index) => {
+                                                return (
+                                                    <option key={index} value={token?.token}>
+                                                        {token?.tokenSymbol}
+                                                    </option>
+                                                );
+                                            })}
+                                        </select>
                                     </div>
 
                                     <div className="mt-4 flex w-full items-center justify-between">
@@ -166,10 +220,10 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
                                             className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200
                                                 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed 
                                                 disabled:opacity-50"
-                                            onClick={() => handleWithdraw?.()}
+                                            onClick={() => handleApprove?.()}
                                             disabled={!isConnected || isLoading}
                                         >
-                                            Withdraw
+                                            Swap
                                             {isMounted() && isLoading ? (
                                                 <svg
                                                     className="text-indigo ml-3 h-5 w-5 animate-spin"
@@ -193,9 +247,17 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
                                                 </svg>
                                             ) : null}
                                         </button>
-                                        {(isPrepareError || isError) && (
+                                        {(isError || isApprovePrepareError || isApproveError) && (
                                             <div className="text-red-500">
-                                                Error: {(prepareError || error)?.message}
+                                                Error:
+                                                {
+                                                    (
+                                                        prepareError ||
+                                                        error ||
+                                                        approveEror ||
+                                                        approvePrepareError
+                                                    )?.message
+                                                }
                                             </div>
                                         )}
                                         {isSuccess && (

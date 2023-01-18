@@ -5,19 +5,19 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
     const [isCompleted, setIsCompleted] = useState(false);
 
     useEffect(() => {
-        setIsCompleted(loanProposal.title && loanProposal.reasoning);
-    }, [loanProposal.title, loanProposal.reasoning]);
+        setIsCompleted(loanProposal.title && loanProposal.reasoning && loanProposal.business);
+    }, [loanProposal.title, loanProposal.reasoning, loanProposal.business]);
 
     return (
         <>
             <div className="mb-8 w-full max-w-2xl px-8 pt-6" {...rest}>
-                <h2 className="text-3xl font-bold">Tell us about yourself</h2>
+                <h2 className="text-3xl font-bold text-gray-700">Tell us about yourself</h2>
                 <div className="mt-6">
-                    <label className="mb-2 block text-sm font-bold text-gray-800">
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
                         A title for your loan proposal
                     </label>
                     <input
-                        className="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+                        className="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         id="title"
                         type="text"
                         placeholder="Title for loan proposal"
@@ -32,12 +32,29 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                     />
                 </div>
                 <div className="mt-4 flex flex-col">
-                    <label className="mb-2 block text-sm font-bold  text-gray-800">
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                        Tell us about your business or the work that you do
+                    </label>
+                    <textarea
+                        className="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        rows={10}
+                        placeholder="Your business or work"
+                        onChange={(e) => {
+                            setLoanProposal({
+                                ...loanProposal,
+                                business: e.target.value,
+                            });
+                        }}
+                        value={loanProposal.business}
+                    ></textarea>
+                </div>
+                <div className="mt-4 flex flex-col">
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
                         Detailed reasoning for the loan proposal
                     </label>
                     <textarea
-                        className="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-                        rows={15}
+                        className="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        rows={10}
                         placeholder="Reasoning for the loan"
                         onChange={(e) => {
                             setLoanProposal({

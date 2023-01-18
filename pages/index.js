@@ -38,10 +38,13 @@ export default function Home() {
                                     </div>
                                 </div>
                                 <p className="mt-6 text-lg leading-8 text-gray-600 sm:text-center">
-                                    Lend your crypto assets to earn yield from Aave. Interact with
-                                    borrowers and get involved in the governance of the protocol.
-                                    Review and vote on the loan proposals by borrowers. Learn about
-                                    the work the borrowers are doing.
+                                    Unlock the power of your digital assets. Our platform allows you
+                                    to lend and borrow a variety of cryptocurrencies with ease and
+                                    security. Enjoy competitive interest rates and flexible terms on
+                                    your loans, all while keeping your assets in your own wallet.
+                                </p>
+                                <p className="text-lg leading-8 text-gray-600 sm:text-center">
+                                    Sign up now and start earning on your digital assets today!
                                 </p>
                                 <div className="mt-6 flex gap-x-4 sm:justify-center">
                                     {!user && (

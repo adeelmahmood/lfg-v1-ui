@@ -7,9 +7,9 @@ import {
     usePrepareContractWrite,
     useWaitForTransaction,
 } from "wagmi";
-import wethAbi from "../constants/abis/weth.json";
+import wethAbi from "../../constants/abis/weth.json";
 import { parseEther } from "ethers/lib/utils.js";
-import useIsMounted from "../hooks/useIsMounted";
+import useIsMounted from "../../hooks/useIsMounted";
 
 export default function SendEthToWethDialog({ isModelOpen, modelCloseHandler }) {
     let [isOpen, setIsOpen] = useState(isModelOpen || false);

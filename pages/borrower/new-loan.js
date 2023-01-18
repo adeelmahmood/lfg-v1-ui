@@ -3,7 +3,8 @@ import Navbar from "../../components/Navbar";
 import TopGradient from "../../components/TopGradient";
 import TellUsAboutYourself from "../../components/borrower/TellUsAboutYourself";
 import VerifyIdentity from "../../components/borrower/VerifyIdentity";
-import Review from "../../components/borrower/Review";
+import LoanInformation from "../../components/borrower/LoanInformation";
+import ReviewAndSubmit from "../../components/borrower/ReviewAndSubmit";
 
 export default function NewLoan() {
     const [loanProposal, setLoanProposal] = useState({
@@ -86,7 +87,9 @@ export default function NewLoan() {
 
                     <div className="w-full max-w-2xl rounded-xl bg-white shadow-md">
                         <div className="mt-8 flex flex-col">
-                            <h2 className="px-8 text-4xl font-bold">Submit A Loan Proposal</h2>
+                            <h2 className="px-8 text-4xl font-bold text-gray-700">
+                                Submit A Loan Proposal
+                            </h2>
                             <p className="mt-6 mb-8 max-w-2xl px-8 text-left leading-8 text-gray-600">
                                 Submitting a loan proposal is different from requesting a loan. As
                                 our process allows borrowers to provide all the necessary
@@ -111,8 +114,16 @@ export default function NewLoan() {
                                 />
                             )}
 
+                            {stage == "LoanInformation" && (
+                                <LoanInformation
+                                    loanProposal={loanProposal}
+                                    setLoanProposal={setLoanProposal}
+                                    handle={stageCompleted}
+                                />
+                            )}
+
                             {stage == "ReviewAndSubmit" && (
-                                <Review
+                                <ReviewAndSubmit
                                     loanProposal={loanProposal}
                                     setLoanProposal={setLoanProposal}
                                     handle={stageCompleted}

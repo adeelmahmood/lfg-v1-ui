@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useAccount, useContractRead, useContractWrite } from "wagmi";
-import addresses from "../constants/contract.json";
-import abi from "../constants/lendingpool.json";
-import { displayUnits } from "../utils/Math";
+import addresses from "../../constants/contract.json";
+import abi from "../../constants/lendingpool.json";
+import { displayUnits } from "../../utils/Math";
 import WithdrawDialog from "./WithdrawDialog";
-import ImageWithFallback from "./ImageWithFallback";
+import ImageWithFallback from "../ImageWithFallback";
 
 export default function PortfolioSection() {
     const { isConnected, address } = useAccount();

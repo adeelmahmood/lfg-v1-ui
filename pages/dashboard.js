@@ -3,12 +3,12 @@ import TopGradient from "../components/TopGradient";
 import BottomGradient from "../components/BottomGradient";
 
 import { useState } from "react";
-import SendEthToWethDialog from "../components/SendEthToWethDialog";
-import SendWethToDaiDialog from "../components/SendWethToDaiDialog";
-import DepositDialog from "../components/DepositDialog";
-import PortfolioSection from "../components/PortfolioSection";
-import TokensMarketDataSection from "../components/TokensMarketDataSection";
-import PoolLiquiditySection from "../components/PoolLiquiditySection";
+import SendEthToWethDialog from "../components/lender/SendEthToWethDialog";
+import SendWethToDaiDialog from "../components/lender/SendWethToDaiDialog";
+import DepositDialog from "../components/lender/DepositDialog";
+import PortfolioSection from "../components/lender/PortfolioSection";
+import TokensMarketDataSection from "../components/lender/TokensMarketDataSection";
+import PoolLiquiditySection from "../components/lender/PoolLiquiditySection";
 
 export default function Dashboard() {
     const [sendEthToWethModal, setSendEthToWethModal] = useState(false);

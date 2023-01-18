@@ -37,7 +37,7 @@ export default function VerifyIdentity({ loanProposal, setLoanProposal, handle, 
     return (
         <>
             <div className="mb-8 w-full max-w-2xl px-8 pt-6" {...rest}>
-                <h2 className="text-3xl font-bold">Verify your identity</h2>
+                <h2 className="text-3xl font-bold text-gray-700">Verify your identity</h2>
                 <div className="mt-6 mb-10">
                     <button
                         className="mt-2 rounded-lg border border-gray-400 bg-gray-100 py-1 px-4 text-gray-800 shadow hover:bg-gray-100 disabled:cursor-not-allowed  disabled:opacity-50 md:font-semibold"
