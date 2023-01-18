@@ -7,6 +7,7 @@ import LoanInformation from "../../components/borrower/LoanInformation";
 import ReviewAndSubmit from "../../components/borrower/ReviewAndSubmit";
 import GetStarted from "../../components/borrower/GetStarted";
 import GatherImages from "../../components/borrower/GatherImages";
+import Tagline from "../../components/borrower/Tagline";
 
 export default function NewLoan() {
     const [loanProposal, setLoanProposal] = useState({
@@ -23,6 +24,12 @@ export default function NewLoan() {
             title: "Get Started",
             completed: false,
             component: GetStarted,
+        },
+        {
+            href: "Tagline",
+            title: "Tagline",
+            completed: false,
+            component: Tagline,
         },
         {
             href: "ProvideYourInfo",

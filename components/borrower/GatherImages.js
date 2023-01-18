@@ -1,15 +1,11 @@
 import { ArrowLongRightIcon } from "@heroicons/react/24/solid";
 import { Fragment, useEffect, useState } from "react";
-import { createApi } from "unsplash-js";
 
 export default function GatherImages({ loanProposal, setLoanProposal, handle, ...rest }) {
-    const unsplashApi = createApi({
-        accessKey: process.env.NEXT_PUBLIC_UNSPLASH_API_KEY,
-    });
+    const appName = process.env.NEXT_PUBLIC_APP_NAME;
 
     const PhotoComp = ({ photo }) => {
         const { user, urls } = photo;
-
         return (
             <Fragment>
                 <div>
@@ -23,7 +19,7 @@ export default function GatherImages({ loanProposal, setLoanProposal, handle, ..
                     <a
                         className="text-sm text-gray-600"
                         target="_blank"
-                        href={`https://unsplash.com/@${user.username}`}
+                        href={`https://unsplash.com/@${user.username}?utm_source=${appName}&utm_medium=referral`}
                     >
                         by {user.name}
                     </a>
@@ -34,13 +30,14 @@ export default function GatherImages({ loanProposal, setLoanProposal, handle, ..
 
     const [photos, setPhotos] = useState(null);
 
+    const fetchImages = async (query) => {
+        const resp = await fetch(`/api/unsplash/search?query=${loanProposal.title}`);
+        const response = await resp.json();
+        setPhotos(response);
+    };
+
     useEffect(() => {
-        unsplashApi.search
-            .getPhotos({ query: loanProposal.title, orientation: "squarish", perPage: 6 })
-            .then((result) => {
-                setPhotos(result.response ? result.response : result);
-            })
-            .catch((e) => console.log("unable to fetch images", e));
+        fetchImages(loanProposal.title);
     }, []);
 
     return (
