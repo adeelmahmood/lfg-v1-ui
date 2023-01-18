@@ -27,6 +27,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "stripe": "^11.6.0",
+    "unsplash-js": "^7.0.15",
     "wagmi": "^0.9.6"
   },
   "devDependencies": {

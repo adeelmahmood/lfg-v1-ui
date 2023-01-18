@@ -1,10 +1,12 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Navbar from "../../components/Navbar";
 import TopGradient from "../../components/TopGradient";
-import TellUsAboutYourself from "../../components/borrower/TellUsAboutYourself";
+import ProvideYourInfo from "../../components/borrower/ProvideYourInfo";
 import VerifyIdentity from "../../components/borrower/VerifyIdentity";
 import LoanInformation from "../../components/borrower/LoanInformation";
 import ReviewAndSubmit from "../../components/borrower/ReviewAndSubmit";
+import GetStarted from "../../components/borrower/GetStarted";
+import GatherImages from "../../components/borrower/GatherImages";
 
 export default function NewLoan() {
     const [loanProposal, setLoanProposal] = useState({
@@ -13,28 +15,44 @@ export default function NewLoan() {
         identityVerified: false,
     });
 
-    const [stage, setStage] = useState("ProvideYourInfo");
+    const [stage, setStage] = useState("GetStarted");
 
     const [stages, setStages] = useState([
+        {
+            href: "GetStarted",
+            title: "Get Started",
+            completed: false,
+            component: GetStarted,
+        },
         {
             href: "ProvideYourInfo",
             title: "Provide Your Information",
             completed: false,
+            component: ProvideYourInfo,
         },
         {
             href: "VerifyIdentity",
             title: "Verify Your Identity",
             completed: false,
+            component: VerifyIdentity,
         },
         {
             href: "LoanInformation",
             title: "Loan Information",
             completed: false,
+            component: LoanInformation,
+        },
+        {
+            href: "GatherImages",
+            title: "Business Images",
+            completed: false,
+            component: GatherImages,
         },
         {
             href: "ReviewAndSubmit",
             title: "Review And Submit",
             completed: false,
+            component: ReviewAndSubmit,
         },
     ]);
 
@@ -51,9 +69,9 @@ export default function NewLoan() {
         let href = e.target.href;
         href = href.indexOf("/") != -1 ? href.substring(href.lastIndexOf("/") + 1) : href;
         const targetStage = stages.find((s) => s.href == href);
-        if (targetStage?.completed) {
-            setStage(targetStage.href);
-        }
+        // if (targetStage?.completed) {
+        setStage(targetStage.href);
+        // }
     };
 
     return (
@@ -87,48 +105,21 @@ export default function NewLoan() {
 
                     <div className="w-full max-w-2xl rounded-xl bg-white shadow-md">
                         <div className="mt-8 flex flex-col">
-                            <h2 className="px-8 text-4xl font-bold text-gray-700">
-                                Submit A Loan Proposal
-                            </h2>
-                            <p className="mt-6 mb-8 max-w-2xl px-8 text-left leading-8 text-gray-600">
-                                Submitting a loan proposal is different from requesting a loan. As
-                                our process allows borrowers to provide all the necessary
-                                information and then lenders to vote on the proposal. Once the
-                                proposal has sufficient votes, the loan proposal is approved and the
-                                funds are disbursed.
-                            </p>
-
-                            {stage == "ProvideYourInfo" && (
-                                <TellUsAboutYourself
-                                    loanProposal={loanProposal}
-                                    setLoanProposal={setLoanProposal}
-                                    handle={stageCompleted}
-                                />
-                            )}
-
-                            {stage == "VerifyIdentity" && (
-                                <VerifyIdentity
-                                    loanProposal={loanProposal}
-                                    setLoanProposal={setLoanProposal}
-                                    handle={stageCompleted}
-                                />
-                            )}
-
-                            {stage == "LoanInformation" && (
-                                <LoanInformation
-                                    loanProposal={loanProposal}
-                                    setLoanProposal={setLoanProposal}
-                                    handle={stageCompleted}
-                                />
-                            )}
-
-                            {stage == "ReviewAndSubmit" && (
-                                <ReviewAndSubmit
-                                    loanProposal={loanProposal}
-                                    setLoanProposal={setLoanProposal}
-                                    handle={stageCompleted}
-                                />
-                            )}
+                            {stages.map((s) => {
+                                if (!s.component) {
+                                    return <div>Component for {s.href} not defined</div>;
+                                }
+                                const Comp = s.component;
+                                if (Comp && s.href == stage) {
+                                    return (
+                                        <Comp
+                                            loanProposal={loanProposal}
+                                            setLoanProposal={setLoanProposal}
+                                            handle={stageCompleted}
+                                        />
+                                    );
+                                }
+                            })}
                         </div>
                     </div>
                 </div>

@@ -1,7 +1,7 @@
 import { ArrowLongRightIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 
-export default function TellUsAboutYourself({ loanProposal, setLoanProposal, handle, ...rest }) {
+export default function ProvideYourInfo({ loanProposal, setLoanProposal, handle, ...rest }) {
     const [isCompleted, setIsCompleted] = useState(false);
 
     useEffect(() => {
@@ -10,7 +10,7 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
 
     return (
         <>
-            <div className="mb-8 w-full max-w-2xl px-8 pt-6" {...rest}>
+            <div className="mb-8 w-full max-w-2xl px-8" {...rest}>
                 <h2 className="text-3xl font-bold text-gray-700">Tell us about yourself</h2>
                 <div className="mt-6">
                     <label className="mb-2 block text-sm font-medium text-gray-700">

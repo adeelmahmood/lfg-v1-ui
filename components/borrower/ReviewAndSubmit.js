@@ -6,7 +6,7 @@ export default function ReviewAndSubmit({ loanProposal, setLoanProposal, handle,
 
     return (
         <>
-            <div className="w-full max-w-2xl bg-white/25 px-8 pt-6 pb-8 shadow-md" {...rest}>
+            <div className="mb-8 w-full max-w-2xl px-8" {...rest}>
                 <h2 className="text-3xl font-bold text-gray-700">Review and Submit</h2>
 
                 <div className="mt-6 mb-10">
