@@ -30,18 +30,9 @@ export default function GetStarted({ loanProposal, setLoanProposal, handle, ...r
                     override with your personalized content.
                 </p>
 
-                <h3 className="mt-6 text-3xl font-bold text-gray-500">
-                    Will I get the money right away?
-                </h3>
-                <p className="mt-2 mb-8 max-w-2xl text-left leading-8 text-gray-600">
-                    No. All we are doing here is creating a proposal and then its up to community
-                    and other factors that will detemrine when the proposal is completed and the
-                    money is disbursed.
-                </p>
-
                 <div className="mt-4">
                     <p className="mt-2 mb-6 max-w-2xl text-left leading-8 text-gray-600">
-                        Think of it as writing a blog for your business and the current needs
+                        Think of it as writing a blog for your business and your current needs
                     </p>
                     <button
                         className="w-full rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"

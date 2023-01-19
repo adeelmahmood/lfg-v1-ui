@@ -15,6 +15,7 @@ export default async function (req, res) {
         return;
     }
 
+    const action = req.body.action || "tagline";
     const description = req.body.description || "";
     if (description.trim().length === 0) {
         res.status(400).json({
@@ -25,13 +26,37 @@ export default async function (req, res) {
         return;
     }
 
-    try {
-        const completion = await openai.createCompletion({
-            model: "text-davinci-003",
-            prompt: generatePrompt(description),
-            temperature: 0.6,
+    if (action != "tagline" && action != "summarize") {
+        res.status(400).json({
+            error: {
+                message: "Please enter a valid action (tagline or summarize)",
+            },
         });
-        res.status(200).json({ result: completion.data.choices[0].text });
+        return;
+    }
+
+    try {
+        let completion;
+
+        if (action == "tagline") {
+            completion = await openai.createCompletion({
+                model: "text-davinci-003",
+                prompt: generateTaglinePrompt(description),
+                temperature: 0.6,
+            });
+        } else if (action == "summarize") {
+            completion = await openai.createCompletion({
+                model: "text-davinci-003",
+                prompt: generateReSummarizePrompt(description),
+                temperature: 0.3,
+                max_tokens: 150,
+                top_p: 1,
+                frequency_penalty: 0,
+                presence_penalty: 0,
+            });
+        }
+
+        res.status(200).json({ result: completion?.data?.choices[0].text });
     } catch (error) {
         // Consider adjusting the error handling logic for your use case
         if (error.response) {
@@ -48,11 +73,19 @@ export default async function (req, res) {
     }
 }
 
-function generatePrompt(description) {
+function generateTaglinePrompt(description) {
     return `Write a tagline for given description of a business
 
 Description: an ice cream shop
 Tagline: We serve up smiles with every scoop!
 Description: ${description}
 Tagline:`;
+}
+
+function generateReSummarizePrompt(description) {
+    return `Please rewrite the following description of a business in a formal and elegant manner, making sure to convey the company's mission, values, and the products or services they offer:
+
+${description}
+
+`;
 }

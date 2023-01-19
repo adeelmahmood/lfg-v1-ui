@@ -8,12 +8,14 @@ import ReviewAndSubmit from "../../components/borrower/ReviewAndSubmit";
 import GetStarted from "../../components/borrower/GetStarted";
 import GatherImages from "../../components/borrower/GatherImages";
 import Tagline from "../../components/borrower/Tagline";
+import BusinessInformation from "../../components/borrower/BusinessInformation";
 
-export default function NewLoan() {
+export default function LoanProposal() {
     const [loanProposal, setLoanProposal] = useState({
-        title: "",
-        reasoning: "",
-        identityVerified: false,
+        business_title: "",
+        business_tagline: "",
+        tagline_manual_picked: false,
+        tagline_gen_picked: false,
     });
 
     const [stage, setStage] = useState("GetStarted");
@@ -27,21 +29,21 @@ export default function NewLoan() {
         },
         {
             href: "Tagline",
-            title: "Tagline",
+            title: "Business Title",
             completed: false,
             component: Tagline,
+        },
+        {
+            href: "BusinessInformation",
+            title: "Business Information",
+            completed: false,
+            component: BusinessInformation,
         },
         {
             href: "ProvideYourInfo",
             title: "Provide Your Information",
             completed: false,
             component: ProvideYourInfo,
-        },
-        {
-            href: "VerifyIdentity",
-            title: "Verify Your Identity",
-            completed: false,
-            component: VerifyIdentity,
         },
         {
             href: "LoanInformation",
@@ -54,6 +56,12 @@ export default function NewLoan() {
             title: "Business Images",
             completed: false,
             component: GatherImages,
+        },
+        {
+            href: "VerifyIdentity",
+            title: "Verify Your Identity",
+            completed: false,
+            component: VerifyIdentity,
         },
         {
             href: "ReviewAndSubmit",
