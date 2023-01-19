@@ -1,164 +1,22 @@
-import { ArrowLongRightIcon, CheckBadgeIcon, CheckIcon } from "@heroicons/react/24/solid";
-import { useEffect, useState } from "react";
+import InputWithAISuggestedOption from "./InputWithAISuggestedOption";
 
 export default function Tagline({ loanProposal, setLoanProposal, handle, ...rest }) {
-    const [isCompleted, setIsCompleted] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [title, setTitle] = useState(loanProposal.business_title);
-    const [tagline, setTagline] = useState(loanProposal.business_tagline);
-    const [usingManualTagline, setUsingManualTagline] = useState(
-        loanProposal.tagline_manual_picked
-    );
-    const [usingGenTagline, setUsingGenTagline] = useState(loanProposal.tagline_gen_picked);
-    const [error, setError] = useState();
-
-    const handleGenerateTagline = async () => {
-        try {
-            setIsLoading(true);
-            setError(null);
-
-            const response = await fetch("/api/openai/generate", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ description: title }),
-            });
-
-            const data = await response.json();
-            if (response.status !== 200) {
-                throw data.error || new Error(`Request failed with status ${response.status}`);
-            }
-
-            setTagline(data.result);
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        setIsCompleted((usingManualTagline && title) || (usingGenTagline && tagline));
-    }, [title, tagline, usingManualTagline, usingGenTagline]);
-
-    const handleNext = () => {
-        setLoanProposal({
-            ...loanProposal,
-            business_title: title,
-            business_tagline: tagline,
-            tagline_manual_picked: usingManualTagline,
-            tagline_gen_picked: usingGenTagline,
-        });
-        handle?.();
-    };
-
     return (
         <>
-            <div className="mb-8 w-full max-w-2xl px-8" {...rest}>
-                <h2 className="text-3xl font-bold text-gray-700">Lets come up with a tagline</h2>
-                <div className="mt-6">
-                    <label className="mb-2 block text-sm font-medium text-gray-700">
-                        Provide a short description of your business or organization
-                    </label>
-                    <input
-                        className="mb-3 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                        id="title"
-                        type="text"
-                        placeholder="Description of your business"
-                        onChange={(e) => setTitle(e.target.value)}
-                        value={title}
-                        required
-                    />
-                    <button
-                        className={`inline-flex rounded-lg border ${
-                            usingManualTagline
-                                ? "border-teal-500 bg-teal-700 text-white"
-                                : "border-gray-400 bg-white text-gray-800 hover:bg-gray-100"
-                        } py-2 px-4 shadow disabled:cursor-not-allowed  disabled:opacity-50`}
-                        onClick={() => {
-                            setUsingManualTagline(true);
-                            setUsingGenTagline(false);
-                        }}
-                        disabled={!title}
-                    >
-                        Use this Tagline
-                        {usingManualTagline && (
-                            <CheckIcon className="ml-2 inline h-6 fill-current text-white" />
-                        )}
-                    </button>
-                </div>
-                <div class="mt-10 flex items-center">
-                    <div class="flex-grow border-t border-gray-400"></div>
-                    <span class="mx-4 flex-shrink text-gray-400">OR</span>
-                    <div class="flex-grow border-t border-gray-400"></div>
-                </div>
-                <div className="mt-10">
-                    <label className="mb-3 block text-sm font-medium text-gray-700">
-                        Based on your description above, let us generate a tagline for you
-                    </label>
-                    <button
-                        className="inline-flex rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 shadow hover:bg-gray-100 disabled:cursor-not-allowed  disabled:opacity-50"
-                        onClick={handleGenerateTagline}
-                        disabled={!title || isLoading}
-                    >
-                        Generate
-                        {isLoading && (
-                            <svg
-                                className="text-indigo ml-3 h-5 w-5 animate-spin"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                            >
-                                <circle
-                                    className="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    strokeWidth="4"
-                                ></circle>
-                                <path
-                                    className="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                ></path>
-                            </svg>
-                        )}
-                    </button>
-                </div>
-                {error && <p className="mt-2 text-red-400">{error}</p>}
-                {tagline && (
-                    <div className="mt-8">
-                        <p className="mb-2 text-2xl font-medium text-gray-700">{tagline}</p>
-                        <button
-                            className={`inline-flex rounded-lg border ${
-                                usingGenTagline
-                                    ? "border-teal-400 bg-teal-700 text-white"
-                                    : "border-gray-400 bg-white text-gray-800 hover:bg-gray-100"
-                            } py-2 px-4 shadow disabled:cursor-not-allowed  disabled:opacity-50`}
-                            onClick={() => {
-                                setUsingManualTagline(false);
-                                setUsingGenTagline(true);
-                            }}
-                        >
-                            Use this Tagline
-                            {usingGenTagline && (
-                                <CheckIcon className="ml-2 inline h-6 fill-current text-white" />
-                            )}
-                        </button>
-                    </div>
-                )}
-                <div className="mt-10">
-                    <button
-                        className="w-full rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
-                        onClick={handleNext}
-                        disabled={!isCompleted}
-                    >
-                        Next <ArrowLongRightIcon className="inline h-6 fill-current text-white" />
-                    </button>
-                </div>
-            </div>
+            <InputWithAISuggestedOption
+                data={loanProposal}
+                setData={setLoanProposal}
+                handle={handle}
+                fieldName="business_title"
+                genFieldName="business_tagline"
+                manualPickFieldName="tagline_manual_picked"
+                genPickFieldName="tagline_gen_picked"
+                heading="Lets come up with a tagline"
+                inputType="text"
+                label="Provide a short description of your business or organization"
+                placeHolder="Short description of your business"
+                generateAction="tagline"
+            />
         </>
     );
 }

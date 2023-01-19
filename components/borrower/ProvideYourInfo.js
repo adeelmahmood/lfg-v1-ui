@@ -1,12 +1,8 @@
-import { ArrowLongRightIcon } from "@heroicons/react/24/solid";
-import { useEffect, useState } from "react";
+import { ArrowLongRightIcon, ArrowLongLeftIcon } from "@heroicons/react/24/solid";
+import { useState } from "react";
 
 export default function ProvideYourInfo({ loanProposal, setLoanProposal, handle, ...rest }) {
     const [isCompleted, setIsCompleted] = useState(false);
-
-    useEffect(() => {
-        setIsCompleted(loanProposal.title && loanProposal.reasoning && loanProposal.business);
-    }, [loanProposal.title, loanProposal.reasoning, loanProposal.business]);
 
     return (
         <>
@@ -24,11 +20,10 @@ export default function ProvideYourInfo({ loanProposal, setLoanProposal, handle,
                         onChange={(e) => {
                             setLoanProposal({
                                 ...loanProposal,
-                                title: e.target.value,
+                                business_title: e.target.value,
                             });
                         }}
-                        value={loanProposal.title}
-                        required
+                        value={loanProposal.business_title}
                     />
                 </div>
                 <div className="mt-4 flex flex-col">
@@ -42,10 +37,10 @@ export default function ProvideYourInfo({ loanProposal, setLoanProposal, handle,
                         onChange={(e) => {
                             setLoanProposal({
                                 ...loanProposal,
-                                business: e.target.value,
+                                business_description: e.target.value,
                             });
                         }}
-                        value={loanProposal.business}
+                        value={loanProposal.business_description}
                     ></textarea>
                 </div>
                 <div className="mt-4 flex flex-col">
@@ -59,17 +54,20 @@ export default function ProvideYourInfo({ loanProposal, setLoanProposal, handle,
                         onChange={(e) => {
                             setLoanProposal({
                                 ...loanProposal,
-                                reasoning: e.target.value,
+                                loan_reasoning: e.target.value,
                             });
                         }}
-                        value={loanProposal.reasoning}
+                        value={loanProposal.loan_reasoning}
                     ></textarea>
                 </div>
-                <div className="mt-4">
+                <div className="mt-4 flex items-center justify-between">
+                    <button className="rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 disabled:cursor-not-allowed disabled:opacity-50">
+                        <ArrowLongLeftIcon className="inline h-6 fill-current text-white" /> Prev
+                    </button>
+
                     <button
-                        className="w-full rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
                         onClick={handle}
-                        disabled={!isCompleted}
                     >
                         Next <ArrowLongRightIcon className="inline h-6 fill-current text-white" />
                     </button>

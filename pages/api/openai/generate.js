@@ -16,7 +16,7 @@ export default async function (req, res) {
     }
 
     const action = req.body.action || "tagline";
-    const description = req.body.description || "";
+    const description = req.body.text || "";
     if (description.trim().length === 0) {
         res.status(400).json({
             error: {
@@ -26,7 +26,7 @@ export default async function (req, res) {
         return;
     }
 
-    if (action != "tagline" && action != "summarize") {
+    if (!["tagline", "summarize", "emphasize"].includes(action)) {
         res.status(400).json({
             error: {
                 message: "Please enter a valid action (tagline or summarize)",
@@ -50,6 +50,16 @@ export default async function (req, res) {
                 prompt: generateReSummarizePrompt(description),
                 temperature: 0.3,
                 max_tokens: 150,
+                top_p: 1,
+                frequency_penalty: 0,
+                presence_penalty: 0,
+            });
+        } else if (action == "emphasize") {
+            completion = await openai.createCompletion({
+                model: "text-davinci-003",
+                prompt: generateEmphasizePrompt(description),
+                temperature: 0.7,
+                max_tokens: 256,
                 top_p: 1,
                 frequency_penalty: 0,
                 presence_penalty: 0,
@@ -84,6 +94,14 @@ Tagline:`;
 
 function generateReSummarizePrompt(description) {
     return `Please rewrite the following description of a business in a formal and elegant manner, making sure to convey the company's mission, values, and the products or services they offer:
+
+${description}
+
+`;
+}
+
+function generateEmphasizePrompt(description) {
+    return `Please rewrite the following reason for a loan in a formal and elegant manner, making sure the company's mission and value are highlighted, and that the lenders to be able to develop a sense of compassion towards the need for money:
 
 ${description}
 

@@ -9,13 +9,23 @@ import GetStarted from "../../components/borrower/GetStarted";
 import GatherImages from "../../components/borrower/GatherImages";
 import Tagline from "../../components/borrower/Tagline";
 import BusinessInformation from "../../components/borrower/BusinessInformation";
+import LoanReason from "../../components/borrower/LoanReason";
 
 export default function LoanProposal() {
     const [loanProposal, setLoanProposal] = useState({
         business_title: "",
         business_tagline: "",
+        business_description: "",
+        business_gen_description: "",
+        loan_reasoning: "",
+        loan_gen_reasoning: "",
         tagline_manual_picked: false,
         tagline_gen_picked: false,
+        description_manual_picked: false,
+        description_gen_picked: false,
+        reasoning_manual_picked: false,
+        reasoning_gen_picked: false,
+        amount: 0,
     });
 
     const [stage, setStage] = useState("GetStarted");
@@ -40,8 +50,14 @@ export default function LoanProposal() {
             component: BusinessInformation,
         },
         {
+            href: "LoanReasoning",
+            title: "Reason for Loan",
+            completed: false,
+            component: LoanReason,
+        },
+        {
             href: "ProvideYourInfo",
-            title: "Provide Your Information",
+            title: "Provide Your Information (experimental page)",
             completed: false,
             component: ProvideYourInfo,
         },
@@ -71,10 +87,15 @@ export default function LoanProposal() {
         },
     ]);
 
+    const prevStage = () => {
+        const current = stages.find((s) => s.href == stage);
+        const previous = stages[stages.findIndex((s) => s.href == stage) - 1];
+        setStage(previous.href);
+    };
+
     const stageCompleted = () => {
         const current = stages.find((s) => s.href == stage);
         const next = stages[stages.findIndex((s) => s.href == stage) + 1];
-
         current.completed = true;
         setStage(next.href);
     };
@@ -106,7 +127,7 @@ export default function LoanProposal() {
                                             stage == s.href
                                                 ? "font-semibold text-indigo-700"
                                                 : s.completed
-                                                ? "font-normal text-teal-500"
+                                                ? "font-normal text-indigo-500"
                                                 : "font-normal text-gray-500"
                                         }`}
                                         onClick={handleNav}
