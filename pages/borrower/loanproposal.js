@@ -4,12 +4,12 @@ import TopGradient from "../../components/TopGradient";
 import ProvideYourInfo from "../../components/borrower/ProvideYourInfo";
 import VerifyIdentity from "../../components/borrower/VerifyIdentity";
 import LoanInformation from "../../components/borrower/LoanInformation";
-import ReviewAndSubmit from "../../components/borrower/ReviewAndSubmit";
 import GetStarted from "../../components/borrower/GetStarted";
 import GatherImages from "../../components/borrower/GatherImages";
 import Tagline from "../../components/borrower/Tagline";
 import BusinessInformation from "../../components/borrower/BusinessInformation";
 import LoanReason from "../../components/borrower/LoanReason";
+import Preview from "../../components/borrower/Preview";
 
 export default function LoanProposal() {
     const [loanProposal, setLoanProposal] = useState({
@@ -25,6 +25,9 @@ export default function LoanProposal() {
         description_gen_picked: false,
         reasoning_manual_picked: false,
         reasoning_gen_picked: false,
+        banner_image: "",
+        banner_image_metadata: {},
+        identity_verification_requested: false,
         amount: 0,
     });
 
@@ -80,10 +83,10 @@ export default function LoanProposal() {
             component: VerifyIdentity,
         },
         {
-            href: "ReviewAndSubmit",
-            title: "Review And Submit",
+            href: "Preview",
+            title: "Preview And Submit",
             completed: false,
-            component: ReviewAndSubmit,
+            component: Preview,
         },
     ]);
 
@@ -119,9 +122,10 @@ export default function LoanProposal() {
                 <div className="flex">
                     <div className="hidden w-64 md:block">
                         <div className="mt-10 flex flex-col space-y-6 px-6">
-                            {stages.map((s) => {
+                            {stages.map((s, index) => {
                                 return (
                                     <a
+                                        key={index}
                                         href={s.href}
                                         className={`${
                                             stage == s.href
@@ -141,7 +145,7 @@ export default function LoanProposal() {
 
                     <div className="w-full max-w-2xl rounded-xl bg-white shadow-md">
                         <div className="mt-8 flex flex-col">
-                            {stages.map((s) => {
+                            {stages.map((s, index) => {
                                 if (!s.component) {
                                     return <div>Component for {s.href} not defined</div>;
                                 }
@@ -149,6 +153,7 @@ export default function LoanProposal() {
                                 if (Comp && s.href == stage) {
                                     return (
                                         <Comp
+                                            key={index}
                                             loanProposal={loanProposal}
                                             setLoanProposal={setLoanProposal}
                                             handle={stageCompleted}
