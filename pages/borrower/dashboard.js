@@ -120,7 +120,8 @@ export default function BorrowerGenInfo() {
                                 </div>
                                 <div className="flex flex-col items-start space-y-2 px-4 pb-4">
                                     <div className="rounded-lg px-2 py-1">
-                                        Loan Status: {p.status}
+                                        <span className="">Proposal Status:</span>
+                                        <span className="font-semibold"> {p.status}</span>
                                     </div>
                                     {isVerified(p) ? (
                                         <div className="flex items-center rounded-lg bg-teal-500 px-2 py-1 font-semibold text-white">
