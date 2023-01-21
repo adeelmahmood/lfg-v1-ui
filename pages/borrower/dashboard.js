@@ -63,7 +63,7 @@ export default function BorrowerGenInfo() {
                 <div className="mt-8 mb-4 flex items-center justify-between">
                     <h2 className="text-4xl font-bold">Borrower Dashboard</h2>
                     <a
-                        href="/borrower/loanproposal"
+                        href="/borrower/create"
                         className="rounded-lg border border-gray-400 bg-indigo-500 py-2 px-4 text-white hover:bg-indigo-700 md:font-semibold"
                     >
                         Create New Loan Proposal
