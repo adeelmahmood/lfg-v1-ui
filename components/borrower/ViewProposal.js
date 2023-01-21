@@ -1,7 +1,11 @@
-import { useUser } from "@supabase/auth-helpers-react";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { useEffect, useState } from "react";
 
 export default function ViewProposal({ loanProposal, ...rest }) {
+    const supabase = useSupabaseClient();
     const user = useUser();
+
+    const [bannerImage, setBannerImage] = useState();
 
     let USDollar = new Intl.NumberFormat("en-US", {
         style: "currency",
@@ -12,6 +16,22 @@ export default function ViewProposal({ loanProposal, ...rest }) {
         if (genFlag) return genValue;
         if (manFlag) return value;
     };
+
+    useEffect(() => {
+        const loadImage = async () => {
+            let bImage = loanProposal.banner_image;
+            if (bImage && !bImage.startsWith("http")) {
+                const { data, error } = await supabase.storage
+                    .from("loanproposals")
+                    .getPublicUrl(bImage);
+                if (data) {
+                    bImage = data.publicUrl;
+                }
+            }
+            setBannerImage(bImage);
+        };
+        if (user) loadImage();
+    }, [user]);
 
     return (
         <>
@@ -40,7 +60,7 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                 <div className="relative mt-6 pb-2/3 shadow-lg">
                     <img
                         className="absolute h-full w-full rounded-xl object-cover object-center"
-                        src={loanProposal.banner_image}
+                        src={bannerImage}
                         alt=""
                     />
                 </div>
