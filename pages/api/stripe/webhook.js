@@ -47,6 +47,9 @@ const handler = async (req, res) => {
                     console.log("Unable to update identity verification results", error.message);
                     // do something else
                 }
+                break;
+            default:
+                console.log(`Unhandled event type ${event.type}`);
         }
 
         res.json({ received: true });
