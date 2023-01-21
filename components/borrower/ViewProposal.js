@@ -16,7 +16,7 @@ export default function ViewProposal({ loanProposal, ...rest }) {
     };
 
     const displayDate = (date) => {
-        return new Date(date).toLocaleDateString("en-us", {
+        return (date ? new Date(date) : new Date()).toLocaleDateString("en-us", {
             weekday: "long",
             year: "numeric",
             month: "short",

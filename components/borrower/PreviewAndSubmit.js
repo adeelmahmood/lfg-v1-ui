@@ -6,31 +6,30 @@ import ViewProposal from "./ViewProposal";
 
 export default function PreviewAndSubmit({ loanProposal, setLoanProposal, handle, ...rest }) {
     const supabase = useSupabaseClient();
-    const router = useRouter();
     const user = useUser();
 
     const [error, setError] = useState();
 
-    let USDollar = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-    });
-
-    const getSelected = (value, genValue, manFlag, genFlag) => {
-        if (genFlag) return genValue;
-        if (manFlag) return value;
-    };
-
     const handleNext = async () => {
-        const { data, error } = await supabase.from(SUPABASE_TABLE_LOAN_PROPOSALS).insert({
-            ...loanProposal,
-            user_id: user.id,
-            status: "Created",
-        });
+        const { data, error } = await supabase
+            .from(SUPABASE_TABLE_LOAN_PROPOSALS)
+            .insert({
+                ...loanProposal,
+                user_id: user.id,
+                status: "Created",
+            })
+            .select("id")
+            .single();
         if (error) {
             setError(error.message);
         } else {
-            router.push("/borrower/dashboard");
+            // add persisted record id
+            setLoanProposal({
+                ...loanProposal,
+                id: data.id,
+            });
+
+            handle?.();
         }
     };
 
@@ -38,6 +37,7 @@ export default function PreviewAndSubmit({ loanProposal, setLoanProposal, handle
         <>
             <div className="mb-8 w-full max-w-2xl px-8" {...rest}>
                 <h2 className="text-3xl font-bold text-gray-700">Preview Loan Proposal</h2>
+                <div className="mt-5 flex-grow border-t border-gray-400"></div>
 
                 {error && <p className="mt-5 text-red-500">{error}</p>}
 

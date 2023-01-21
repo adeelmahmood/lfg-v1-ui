@@ -120,11 +120,11 @@ export default function InputWithAISuggestedOption({
                     <div className="flex-grow border-t border-gray-400"></div>
                 </div>
                 <div className="mt-10">
-                    <label className="mb-3 block text-sm font-medium text-gray-700">
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
                         Based on your description above, let us generate a {fieldName} for you
                     </label>
                     <button
-                        className="inline-flex rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 shadow hover:bg-gray-100 disabled:cursor-not-allowed  disabled:opacity-50"
+                        className="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
                         onClick={handleGenerate}
                         disabled={!value || isLoading}
                     >
@@ -170,7 +170,8 @@ export default function InputWithAISuggestedOption({
                                 setUsingGen(true);
                             }}
                         >
-                            Use this<span className="ml-1 first-letter:uppercase">{fieldName}</span>
+                            Use this
+                            <span className="ml-1 first-letter:uppercase">{fieldName}</span>
                             {usingGen && (
                                 <CheckIcon className="ml-2 inline h-6 fill-current text-white" />
                             )}

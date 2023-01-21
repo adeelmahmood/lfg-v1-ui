@@ -65,7 +65,7 @@ export default function LoanProposal() {
         },
         {
             href: "GatherImages",
-            title: "Business Images",
+            title: "Images",
             completed: false,
             component: GatherImages,
         },

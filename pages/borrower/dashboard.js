@@ -4,7 +4,7 @@ import Navbar from "../../components/Navbar";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../../utils/Constants";
-import HeroCard from "../../components/HeroCard";
+import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 
 export default function BorrowerGenInfo() {
@@ -14,10 +14,9 @@ export default function BorrowerGenInfo() {
     const [proposals, setProposals] = useState();
 
     const fetchProposals = async () => {
-        console.log("fetching proposals for", user.id);
         const { data, error } = await supabase
             .from(SUPABASE_TABLE_LOAN_PROPOSALS)
-            .select()
+            .select(`*,user_identity_verifications ( verification_status)`)
             .eq("user_id", user.id);
 
         setProposals(data);
@@ -34,6 +33,13 @@ export default function BorrowerGenInfo() {
 
     const trimText = (text, limit) => {
         return text && text.length > limit ? text.substring(0, limit) + " ..." : text;
+    };
+
+    const isVerified = (p) => {
+        return (
+            p?.user_identity_verifications?.length > 0 &&
+            p.user_identity_verifications[0]?.verification_status == "verified"
+        );
     };
 
     return (
@@ -112,51 +118,40 @@ export default function BorrowerGenInfo() {
                                         )}
                                     </p>
                                 </div>
-                                <div className="flex flex-col items-start px-4 pb-4">
-                                    <div className="flex w-full items-center justify-between">
-                                        <div className="rounded-lg bg-gray-300 px-2 py-1">
-                                            {p.status}
-                                        </div>
-                                        <div className="rounded-lg bg-teal-500 px-2 py-1 font-semibold text-white">
+                                <div className="flex flex-col items-start space-y-2 px-4 pb-4">
+                                    <div className="rounded-lg px-2 py-1">
+                                        Loan Status: {p.status}
+                                    </div>
+                                    {isVerified(p) ? (
+                                        <div className="flex items-center rounded-lg bg-teal-500 px-2 py-1 font-semibold text-white">
+                                            <CheckCircleIcon className="mr-1 inline h-6 fill-current text-white" />
                                             Identity Verified
                                         </div>
-                                    </div>
+                                    ) : (
+                                        <div className="rounded-lg bg-orange-500 px-2 py-1 font-semibold text-white">
+                                            Needs Identity Verification
+                                        </div>
+                                    )}
                                     <Link
                                         href={`/borrower/proposals/${p.id}`}
-                                        className="mt-2 rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                        className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                         View Proposal
                                     </Link>
-                                    <Link
+                                    <button
                                         href={`/borrower/proposals/${p.id}`}
-                                        className="mt-2 rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                        className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        disabled={true}
                                     >
                                         Edit Proposal
-                                    </Link>
-                                    <Link
+                                    </button>
+                                    <button
                                         href={`/borrower/proposals/${p.id}`}
-                                        className="mt-2 rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                        className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        disabled={true}
                                     >
                                         Delete Proposal
-                                    </Link>
-
-                                    {/* <span className="mr-2 mb-2 inline-block rounded-full bg-teal-500 px-3 py-1 text-sm font-semibold text-white">
-                                        {p.status}
-                                    </span>
-                                    <div className="space-x-2">
-                                        <Link
-                                            href={`/borrower/proposals/${p.id}`}
-                                            className="rounded-md border border-transparent bg-blue-100 px-2 py-1 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                                        >
-                                            View
-                                        </Link>
-                                        <a
-                                            href="#"
-                                            className="rounded-md border border-transparent bg-blue-100 px-2 py-1 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                                        >
-                                            Modify
-                                        </a>
-                                    </div> */}
+                                    </button>
                                 </div>
                             </div>
                         );

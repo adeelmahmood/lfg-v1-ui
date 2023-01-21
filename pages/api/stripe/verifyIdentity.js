@@ -3,8 +3,9 @@ import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 const stripe = require("stripe")(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY);
 
 export default async function handler(req, res) {
-    // Create authenticated Supabase Client
     const supabase = createServerSupabaseClient({ req, res });
+    const { pid } = req.body;
+
     // Check if we have a session
     const {
         data: { session },
@@ -17,6 +18,7 @@ export default async function handler(req, res) {
                 type: "document",
                 metadata: {
                     user_id: userId,
+                    pid: pid,
                 },
                 options: {
                     document: {

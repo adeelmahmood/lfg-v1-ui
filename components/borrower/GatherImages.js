@@ -2,7 +2,7 @@ import { ArrowLongRightIcon, MagnifyingGlassIcon, CheckBadgeIcon } from "@heroic
 import { Fragment, useEffect, useState, useMemo } from "react";
 import debounce from "lodash.debounce";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../../utils/Constants";
+import { SUPABASE_STORAGE_LOAN_PROPOSALS } from "../../utils/Constants";
 
 export default function GatherImages({ loanProposal, setLoanProposal, handle, ...rest }) {
     const appName = process.env.NEXT_PUBLIC_APP_NAME;
@@ -91,7 +91,7 @@ export default function GatherImages({ loanProposal, setLoanProposal, handle, ..
         try {
             if (uploadBannerImage) {
                 const { data, error } = await supabase.storage
-                    .from(SUPABASE_TABLE_LOAN_PROPOSALS)
+                    .from(SUPABASE_STORAGE_LOAN_PROPOSALS)
                     .upload(
                         `${user.id}/banner-images/${uploadBannerImage.name}`,
                         uploadBannerImage,
@@ -105,14 +105,14 @@ export default function GatherImages({ loanProposal, setLoanProposal, handle, ..
 
                     // get public url after upload
                     const { data: d, error: e } = await supabase.storage
-                        .from(SUPABASE_TABLE_LOAN_PROPOSALS)
+                        .from(SUPABASE_STORAGE_LOAN_PROPOSALS)
                         .getPublicUrl(data.path);
 
                     if (e && e.message) {
                         setError(e.message);
                     } else {
                         setBannerImage(d.publicUrl);
-                        setBannerImageMetadata({});
+                        setBannerImageMetadata({ path: data.path });
                     }
                 }
             }

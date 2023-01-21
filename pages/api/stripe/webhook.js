@@ -1,3 +1,4 @@
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { buffer } from "micro";
 
 const stripe = require("stripe")(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY);
@@ -10,6 +11,8 @@ export const config = {
 };
 
 const handler = async (req, res) => {
+    const supabase = createServerSupabaseClient({ req, res });
+
     if (req.method == "POST") {
         const sig = req.headers["stripe-signature"];
         const buf = await buffer(req);
@@ -27,7 +30,23 @@ const handler = async (req, res) => {
             case "identity.verification_session.verified":
                 const session = event.data.object;
                 const userId = session.metadata?.user_id;
-                console.log("identity verified for", userId);
+                const pid = session.metadata?.pid;
+
+                console.log(session);
+
+                // update proposal application with verification results
+                const { data, error } = await supabase.from("user_identity_verifications").insert({
+                    user_id: userId,
+                    verification_provider: "stripe",
+                    verification_status: session.status,
+                    received_at: new Date(),
+                    proposal_id: pid,
+                });
+
+                if (error && error.message) {
+                    console.log("Unable to update identity verification results", error.message);
+                    // do something else
+                }
         }
 
         res.json({ received: true });
