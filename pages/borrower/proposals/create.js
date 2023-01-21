@@ -9,7 +9,7 @@ import GatherImages from "../../components/borrower/GatherImages";
 import Tagline from "../../components/borrower/Tagline";
 import BusinessInformation from "../../components/borrower/BusinessInformation";
 import LoanReason from "../../components/borrower/LoanReason";
-import Preview from "../../components/borrower/Preview";
+import PreviewAndSubmit from "../../components/borrower/PreviewAndSubmit";
 
 export default function LoanProposal() {
     const [loanProposal, setLoanProposal] = useState({
@@ -83,10 +83,10 @@ export default function LoanProposal() {
             component: VerifyIdentity,
         },
         {
-            href: "Preview",
+            href: "PreviewAndSubmit",
             title: "Preview And Submit",
             completed: false,
-            component: Preview,
+            component: PreviewAndSubmit,
         },
     ]);
 

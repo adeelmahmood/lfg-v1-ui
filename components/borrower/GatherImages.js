@@ -105,6 +105,7 @@ export default function GatherImages({ loanProposal, setLoanProposal, handle, ..
                 } else {
                     setSuccess(true);
                     setBannerImage(data.path);
+                    setBannerImageMetadata({});
                 }
             }
         } catch (e) {
