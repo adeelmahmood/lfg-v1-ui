@@ -17,6 +17,7 @@ export default function LoanProposal({}) {
 
     useEffect(() => {
         async function fetchProposal(pid) {
+            console.log("fetching for ", pid);
             const { data, error } = await supabase
                 .from(SUPABASE_TABLE_LOAN_PROPOSALS)
                 .select()
@@ -27,8 +28,8 @@ export default function LoanProposal({}) {
             }
         }
 
-        if (user) fetchProposal(pid);
-    }, [user]);
+        if (user && router.isReady) fetchProposal(pid);
+    }, [user, router.isReady]);
 
     return (
         <>

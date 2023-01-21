@@ -95,17 +95,25 @@ export default function GatherImages({ loanProposal, setLoanProposal, handle, ..
                     .upload(
                         `${user.id}/banner-images/${uploadBannerImage.name}`,
                         uploadBannerImage,
-                        {
-                            upsert: true,
-                        }
+                        { upsert: true }
                     );
 
                 if (error && error.message) {
                     setError(error.message);
                 } else {
                     setSuccess(true);
-                    setBannerImage(data.path);
-                    setBannerImageMetadata({});
+
+                    // get public url after upload
+                    const { data: d, error: e } = await supabase.storage
+                        .from(SUPABASE_TABLE_LOAN_PROPOSALS)
+                        .getPublicUrl(data.path);
+
+                    if (e && e.message) {
+                        setError(e.message);
+                    } else {
+                        setBannerImage(d.publicUrl);
+                        setBannerImageMetadata({});
+                    }
                 }
             }
         } catch (e) {

@@ -5,8 +5,6 @@ export default function ViewProposal({ loanProposal, ...rest }) {
     const supabase = useSupabaseClient();
     const user = useUser();
 
-    const [bannerImage, setBannerImage] = useState();
-
     let USDollar = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
@@ -17,26 +15,19 @@ export default function ViewProposal({ loanProposal, ...rest }) {
         if (manFlag) return value;
     };
 
-    useEffect(() => {
-        const loadImage = async () => {
-            let bImage = loanProposal.banner_image;
-            if (bImage && !bImage.startsWith("http")) {
-                const { data, error } = await supabase.storage
-                    .from("loanproposals")
-                    .getPublicUrl(bImage);
-                if (data) {
-                    bImage = data.publicUrl;
-                }
-            }
-            setBannerImage(bImage);
-        };
-        if (user) loadImage();
-    }, [user]);
+    const displayDate = (date) => {
+        return new Date(date).toLocaleDateString("en-us", {
+            weekday: "long",
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+        });
+    };
 
     return (
         <>
             <div className="mt-10 mb-10">
-                <div className="mb-10 flex items-center justify-center">
+                <div className="mb-10 flex items-center md:justify-center">
                     <div className="block h-24 w-24 overflow-hidden rounded-full border-2 border-indigo-400 hover:shadow-md focus:outline-none">
                         <img
                             src={user?.user_metadata.avatar_url}
@@ -44,12 +35,16 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                         />
                     </div>
                     <div className="ml-5 flex flex-col">
-                        <span className="font-semibold">{user?.user_metadata.full_name}</span>
-                        <span className="text-sm text-gray-500">CEO of Some Company</span>
-                        <span className="text-sm text-gray-500">Jan 20th 2023</span>
+                        <span className="font-semibold text-gray-800">
+                            {user?.user_metadata.full_name}
+                        </span>
+                        <span className="text-sm text-gray-500">Proposal Creator</span>
+                        <span className="text-sm text-gray-500">
+                            {displayDate(loanProposal.created_at)}
+                        </span>
                     </div>
                 </div>
-                <h2 className="text-left text-4xl font-bold uppercase md:text-center md:text-5xl md:tracking-wider">
+                <h2 className="text-left text-4xl font-bold uppercase text-gray-800 md:text-center md:text-5xl md:tracking-wider">
                     {getSelected(
                         loanProposal.business_title,
                         loanProposal.business_tagline,
@@ -60,7 +55,7 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                 <div className="relative mt-6 pb-2/3 shadow-lg">
                     <img
                         className="absolute h-full w-full rounded-xl object-cover object-center"
-                        src={bannerImage}
+                        src={loanProposal.banner_image}
                         alt=""
                     />
                 </div>
@@ -86,7 +81,7 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                     </p>
                 </div>
 
-                <div className="mt-6 font-semibold">
+                <div className="mt-6 font-semibold text-gray-800">
                     <p>Loan Amount Requested: {USDollar.format(loanProposal.amount)}</p>
                 </div>
             </div>

@@ -20,25 +20,7 @@ export default function BorrowerGenInfo() {
             .select()
             .eq("user_id", user.id);
 
-        const proposalsData = [];
-        setProposals(
-            data.map(async (p) => {
-                let bImage = p.banner_image;
-                if (bImage && !bImage.startsWith("http")) {
-                    const { data, error } = await supabase.storage
-                        .from("loanproposals")
-                        .getPublicUrl(bImage);
-                    if (data) {
-                        bImage = data.publicUrl;
-                    }
-                }
-                proposalsData.push({
-                    ...p,
-                    banner_image: bImage,
-                });
-            })
-        );
-        setProposals(proposalsData);
+        setProposals(data);
     };
 
     useEffect(() => {
@@ -51,7 +33,7 @@ export default function BorrowerGenInfo() {
     };
 
     const trimText = (text, limit) => {
-        return text.length > limit ? text.substring(0, limit) + " ..." : text;
+        return text && text.length > limit ? text.substring(0, limit) + " ..." : text;
     };
 
     return (
@@ -62,6 +44,20 @@ export default function BorrowerGenInfo() {
             <div className="container mx-auto p-6">
                 <div className="mt-8 mb-4 flex items-center justify-between">
                     <h2 className="text-4xl font-bold">Borrower Dashboard</h2>
+                </div>
+
+                <h3 className="mt-6 text-3xl font-bold text-gray-500">Create a loan proposal</h3>
+                <p className="mt-2 mb-8 text-left leading-8 text-gray-600">
+                    A loan proposal is not a loan application. The idea is for you to provide us
+                    with all the information you can about yourself, your business, and the reason
+                    why you need the loan. We will do some verification on our end to develop some
+                    confidence towards your ability to pay back the loan. We will prepare all this
+                    information in the form a loan proposal and present it to the lenders community
+                    on this platform. It is then up to the lenders to vote on this proposal and
+                    accept the proposal.
+                </p>
+
+                <div>
                     <a
                         href="/borrower/proposals/create"
                         className="rounded-lg border border-gray-400 bg-indigo-500 py-2 px-4 text-white hover:bg-indigo-700 md:font-semibold"
@@ -70,10 +66,13 @@ export default function BorrowerGenInfo() {
                     </a>
                 </div>
 
-                <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">
-                    {proposals?.map((p) => {
+                <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+                    {proposals?.map((p, i) => {
                         return (
-                            <div className="w-full space-y-5 overflow-hidden rounded shadow-lg">
+                            <div
+                                key={i}
+                                className="w-full space-y-5 overflow-hidden rounded shadow-lg"
+                            >
                                 <div className="relative pb-2/3">
                                     <img
                                         className="absolute h-full w-full object-cover object-center"
@@ -81,7 +80,7 @@ export default function BorrowerGenInfo() {
                                         alt=""
                                     />
                                 </div>
-                                <div className="px-6 py-4">
+                                <div className="px-6 pt-4">
                                     <div className="mb-2 text-xl font-bold">
                                         {getSelected(
                                             p.business_title,
@@ -113,8 +112,35 @@ export default function BorrowerGenInfo() {
                                         )}
                                     </p>
                                 </div>
-                                <div className="flex items-center justify-between px-6 pb-2">
-                                    <span className="mr-2 mb-2 inline-block rounded-full bg-teal-500 px-3 py-1 text-sm font-semibold text-white">
+                                <div className="flex flex-col items-start px-4 pb-4">
+                                    <div className="flex w-full items-center justify-between">
+                                        <div className="rounded-lg bg-gray-300 px-2 py-1">
+                                            {p.status}
+                                        </div>
+                                        <div className="rounded-lg bg-teal-500 px-2 py-1 font-semibold text-white">
+                                            Identity Verified
+                                        </div>
+                                    </div>
+                                    <Link
+                                        href={`/borrower/proposals/${p.id}`}
+                                        className="mt-2 rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                    >
+                                        View Proposal
+                                    </Link>
+                                    <Link
+                                        href={`/borrower/proposals/${p.id}`}
+                                        className="mt-2 rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                    >
+                                        Edit Proposal
+                                    </Link>
+                                    <Link
+                                        href={`/borrower/proposals/${p.id}`}
+                                        className="mt-2 rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                    >
+                                        Delete Proposal
+                                    </Link>
+
+                                    {/* <span className="mr-2 mb-2 inline-block rounded-full bg-teal-500 px-3 py-1 text-sm font-semibold text-white">
                                         {p.status}
                                     </span>
                                     <div className="space-x-2">
@@ -130,7 +156,7 @@ export default function BorrowerGenInfo() {
                                         >
                                             Modify
                                         </a>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         );

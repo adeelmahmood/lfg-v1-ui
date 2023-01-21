@@ -14,9 +14,12 @@ export default function HeroCard({ heading, description, imgSrc, imgAltText, tag
                     <p className="text-base text-gray-700">{description}</p>
                 </div>
                 <div className="px-6 pb-2">
-                    {tags?.map((tag) => {
+                    {tags?.map((tag, i) => {
                         return (
-                            <span className="mr-2 mb-2 inline-block rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
+                            <span
+                                key={i}
+                                className="mr-2 mb-2 inline-block rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700"
+                            >
                                 {tag}
                             </span>
                         );

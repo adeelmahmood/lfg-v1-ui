@@ -16,17 +16,6 @@ export default function GetStarted({ loanProposal, setLoanProposal, handle, ...r
             <div className="mb-8 w-full px-8" {...rest}>
                 <h2 className="text-4xl font-bold text-gray-700">Create A Loan Proposal</h2>
 
-                <h3 className="mt-6 text-3xl font-bold text-gray-500">What is a loan proposal?</h3>
-                <p className="mt-2 mb-8 max-w-2xl text-left leading-8 text-gray-600">
-                    A loan proposal is not a loan application. The idea is for you to provide us
-                    with all the information you can about yourself, your business, and the reason
-                    why you need the loan. We will do some verification on our end to develop some
-                    confidence towards your ability to pay back the loan. We will prepare all this
-                    information in the form a loan proposal and present it to the lenders community
-                    on this platform. It is then up to the lenders to vote on this proposal and
-                    accept the proposal.
-                </p>
-
                 <h3 className="mt-6 text-3xl font-bold text-gray-500">
                     What information do we need?
                 </h3>
@@ -39,9 +28,6 @@ export default function GetStarted({ loanProposal, setLoanProposal, handle, ...r
                 </p>
 
                 <div className="mt-4">
-                    <p className="mt-2 mb-6 max-w-2xl text-left leading-8 text-gray-600">
-                        Think of it as writing a blog for your business and your current needs
-                    </p>
                     <button
                         className="w-full rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
                         onClick={handle}

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../../../components/Navbar";
 import TopGradient from "../../../components/TopGradient";
-import ProvideYourInfo from "../../../components/borrower/ProvideYourInfo";
 import VerifyIdentity from "../../../components/borrower/VerifyIdentity";
 import LoanInformation from "../../../components/borrower/LoanInformation";
 import GetStarted from "../../../components/borrower/GetStarted";
@@ -59,12 +58,6 @@ export default function LoanProposal() {
             component: LoanReason,
         },
         {
-            href: "ProvideYourInfo",
-            title: "Provide Your Information (experimental page)",
-            completed: false,
-            component: ProvideYourInfo,
-        },
-        {
             href: "LoanInformation",
             title: "Loan Information",
             completed: false,
@@ -77,16 +70,16 @@ export default function LoanProposal() {
             component: GatherImages,
         },
         {
-            href: "VerifyIdentity",
-            title: "Verify Your Identity",
-            completed: false,
-            component: VerifyIdentity,
-        },
-        {
             href: "PreviewAndSubmit",
             title: "Preview And Submit",
             completed: false,
             component: PreviewAndSubmit,
+        },
+        {
+            href: "VerifyIdentity",
+            title: "Verify Your Identity",
+            completed: false,
+            component: VerifyIdentity,
         },
     ]);
 
