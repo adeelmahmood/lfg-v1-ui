@@ -22,11 +22,12 @@ export default function Home() {
                     <div className="mx-auto w-full max-w-screen-xl pt-10 pb-10 sm:pt-20">
                         <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-8">
                             <div className="flex flex-col items-center justify-center md:col-span-7">
-                                <h1 className="text-5xl font-bold tracking-tight md:text-center md:text-6xl md:tracking-normal">
-                                    <span className="text-indigo-700">Enter</span> the Social
-                                    Marketplace for
-                                    <span className="pl-2 text-indigo-700">Lending</span>
-                                </h1>
+                                <h2 className="max-w-6xl text-center text-8xl font-bold tracking-wider text-white">
+                                    <span className="bg-gradient-to-r from-indigo-500 to-green-600 bg-clip-text text-transparent">
+                                        Enter the Social Marketplace for Lending
+                                    </span>
+                                </h2>
+
                                 <div className="overflow:hidden mt-10 flex md:hidden">
                                     <div className="relative">
                                         <div className="absolute -inset-0.5 rounded-lg bg-gradient-to-br from-yellow-600 to-green-300 opacity-75 blur-sm"></div>
@@ -77,8 +78,10 @@ export default function Home() {
 
                 <section id="lendersHeroSection">
                     <div className="container mx-auto mt-10 max-w-screen-lg">
-                        <h2 className="text-left text-5xl font-bold tracking-tight md:text-center md:text-6xl md:tracking-normal">
-                            What can you do as a Lender?
+                        <h2 className="max-w-6xl text-7xl font-bold text-white">
+                            <span className="bg-gradient-to-r from-indigo-500 to-green-600 bg-clip-text tracking-tight text-transparent">
+                                What can you do as a Lender?
+                            </span>
                         </h2>
                         <div className="mt-10 grid grid-cols-1 items-start gap-8 sm:mt-20 sm:grid-cols-2 sm:justify-items-center sm:gap-24">
                             <HeroCard
@@ -140,8 +143,10 @@ export default function Home() {
 
                 <section id="borrowersHeroSection">
                     <div className="container mx-auto mt-20 max-w-screen-lg">
-                        <h2 className="text-left text-5xl font-bold tracking-tight md:text-center md:text-6xl md:tracking-normal">
-                            What can you do as a Borrower?
+                        <h2 className="max-w-6xl text-7xl font-bold text-white">
+                            <span className="bg-gradient-to-r from-indigo-500 to-green-600 bg-clip-text tracking-tight text-transparent">
+                                What can you do as a Borrower?
+                            </span>
                         </h2>
                         <div className="mt-10 grid grid-cols-1 items-start gap-8 sm:mt-20 sm:grid-cols-2 sm:justify-items-center sm:gap-24">
                             <HeroCard
