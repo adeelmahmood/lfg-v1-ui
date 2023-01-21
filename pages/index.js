@@ -22,7 +22,7 @@ export default function Home() {
                     <div className="mx-auto w-full max-w-screen-xl pt-10 pb-10 sm:pt-20">
                         <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-8">
                             <div className="flex flex-col items-center justify-center md:col-span-7">
-                                <h2 className="max-w-6xl text-center text-8xl font-bold tracking-wider text-white">
+                                <h2 className="max-w-6xl text-left text-6xl font-bold tracking-wider text-white lg:text-center lg:text-8xl">
                                     <span className="bg-gradient-to-r from-indigo-500 to-green-600 bg-clip-text text-transparent">
                                         Enter the Social Marketplace for Lending
                                     </span>
@@ -78,7 +78,7 @@ export default function Home() {
 
                 <section id="lendersHeroSection">
                     <div className="container mx-auto mt-10 max-w-screen-lg">
-                        <h2 className="max-w-6xl text-7xl font-bold text-white">
+                        <h2 className="max-w-6xl text-6xl font-bold text-white lg:text-7xl">
                             <span className="bg-gradient-to-r from-indigo-500 to-green-600 bg-clip-text tracking-tight text-transparent">
                                 What can you do as a Lender?
                             </span>
@@ -143,7 +143,7 @@ export default function Home() {
 
                 <section id="borrowersHeroSection">
                     <div className="container mx-auto mt-20 max-w-screen-lg">
-                        <h2 className="max-w-6xl text-7xl font-bold text-white">
+                        <h2 className="max-w-6xl text-6xl font-bold text-white lg:text-7xl">
                             <span className="bg-gradient-to-r from-indigo-500 to-green-600 bg-clip-text tracking-tight text-transparent">
                                 What can you do as a Borrower?
                             </span>
