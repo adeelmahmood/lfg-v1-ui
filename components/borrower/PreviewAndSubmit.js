@@ -36,7 +36,11 @@ export default function PreviewAndSubmit({ loanProposal, setLoanProposal, handle
     return (
         <>
             <div className="mb-8 w-full max-w-2xl px-8" {...rest}>
-                <h2 className="text-3xl font-bold text-gray-700">Preview Loan Proposal</h2>
+                <h2 className="max-w-6xl text-4xl font-bold text-white">
+                    <span className="bg-gradient-to-r from-indigo-500 to-green-600 bg-clip-text text-transparent">
+                        Preview Loan Proposal
+                    </span>
+                </h2>
                 <div className="mt-5 flex-grow border-t border-gray-400"></div>
 
                 {error && <p className="mt-5 text-red-500">{error}</p>}

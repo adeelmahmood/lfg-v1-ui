@@ -49,7 +49,7 @@ export default function BorrowerGenInfo() {
 
             <div className="container mx-auto p-6">
                 <div className="mt-8 mb-4 flex items-center justify-between">
-                    <h2 className="max-w-6xl text-center text-6xl font-bold tracking-wider text-white">
+                    <h2 className="max-w-6xl text-5xl font-bold tracking-wider text-white">
                         <span className="bg-gradient-to-r from-indigo-500 to-green-600 bg-clip-text text-transparent">
                             Borrwer Dashboard
                         </span>

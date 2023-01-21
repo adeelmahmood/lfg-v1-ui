@@ -75,7 +75,11 @@ export default function InputWithAISuggestedOption({
     return (
         <>
             <div className="mb-8 w-full max-w-2xl px-8" {...rest}>
-                <h2 className="text-3xl font-bold text-gray-700">{heading}</h2>
+                <h2 className="max-w-6xl text-4xl font-bold text-white">
+                    <span className="bg-gradient-to-r from-indigo-500 to-green-600 bg-clip-text text-transparent">
+                        {heading}
+                    </span>
+                </h2>
                 <div className="mt-6">
                     <label className="mb-2 block text-sm font-medium text-gray-700">{label}</label>
 

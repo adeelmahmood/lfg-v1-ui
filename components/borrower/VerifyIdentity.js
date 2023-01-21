@@ -47,8 +47,16 @@ export default function VerifyIdentity({ loanProposal, setLoanProposal, handle, 
     return (
         <>
             <div className="mb-8 w-full max-w-2xl px-8" {...rest}>
-                <h2 className="text-3xl font-bold text-gray-700">Verify your identity</h2>
-                <div className="mt-6 mb-10">
+                <h2 className="max-w-6xl text-4xl font-bold text-white">
+                    <span className="bg-gradient-to-r from-indigo-500 to-green-600 bg-clip-text text-transparent">
+                        Verify Your Identity
+                    </span>
+                </h2>
+                <p className="mt-4 text-gray-800">
+                    Last thing, we need you to verify your identity before this proposal can be
+                    published.
+                </p>
+                <div className="mt-4 mb-10">
                     <button
                         className="mt-2 rounded-lg border border-gray-400 bg-gray-100 py-1 px-4 text-gray-800 shadow hover:bg-gray-100 disabled:cursor-not-allowed  disabled:opacity-50 md:font-semibold"
                         onClick={startVerification}

@@ -128,7 +128,7 @@ export default function GatherImages({ loanProposal, setLoanProposal, handle, ..
     }, []);
 
     useEffect(() => {
-        setIsCompleted(bannerImage != null);
+        setIsCompleted(bannerImage);
     }, [bannerImage]);
 
     const handleNext = async () => {
@@ -144,7 +144,11 @@ export default function GatherImages({ loanProposal, setLoanProposal, handle, ..
     return (
         <>
             <div className="mb-8 w-full px-8" {...rest}>
-                <h2 className="text-3xl font-bold text-gray-700">Banner image for your proposal</h2>
+                <h2 className="max-w-6xl text-4xl font-bold text-white">
+                    <span className="bg-gradient-to-r from-indigo-500 to-green-600 bg-clip-text text-transparent">
+                        Banner Image For Your Proposal
+                    </span>
+                </h2>
                 <p className="mt-4 max-w-2xl text-left leading-8 text-gray-600">
                     Upload a banner image that will be featured on the loan proposal page
                 </p>

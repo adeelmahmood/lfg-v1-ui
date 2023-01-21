@@ -14,7 +14,11 @@ export default function GetStarted({ loanProposal, setLoanProposal, handle, ...r
     return (
         <>
             <div className="mb-8 w-full px-8" {...rest}>
-                <h2 className="text-4xl font-bold text-gray-700">Create A Loan Proposal</h2>
+                <h2 className="max-w-6xl text-4xl font-bold text-white">
+                    <span className="bg-gradient-to-r from-indigo-500 to-green-600 bg-clip-text text-transparent">
+                        Create A Loan Proposal
+                    </span>
+                </h2>
 
                 <h3 className="mt-6 text-3xl font-bold text-gray-500">
                     What information do we need?
