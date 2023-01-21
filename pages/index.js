@@ -145,6 +145,17 @@ export default function Home() {
                         </h2>
                         <div className="mt-10 grid grid-cols-1 items-start gap-8 sm:mt-20 sm:grid-cols-2 sm:justify-items-center sm:gap-24">
                             <HeroCard
+                                heading="Submit loan proposal for community"
+                                description="Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                    Voluptatibus quia, nulla! Maiores et perferendis eaque,
+                                    exercitationem praesentium nihil."
+                                imgSrc="/images/proposal.jpg"
+                                imgAltText="Create Proposals"
+                                tags={["Loan Proposal"]}
+                                status={true}
+                            />
+
+                            <HeroCard
                                 heading="Zero to low collateral lending"
                                 description="Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                                     Voluptatibus quia, nulla! Maiores et perferendis eaque,
