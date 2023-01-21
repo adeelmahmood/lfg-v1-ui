@@ -1,26 +1,21 @@
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { buffer } from "micro";
+// import { buffer } from "micro";
 
-const stripe = require("stripe")(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY);
-const webhookSecret = process.env.NEXT_PUBLIC_STRIPE_WH_SECRET;
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const webhookSecret = process.env.STRIPE_WH_SECRET;
 
-export const config = {
-    api: {
-        bodyParser: false,
-    },
-};
 
 const handler = async (req, res) => {
     const supabase = createServerSupabaseClient({ req, res });
 
     if (req.method == "POST") {
         const sig = req.headers["stripe-signature"];
-        const buf = await buffer(req);
+        // const buf = await buffer(req);
 
         let event;
 
         try {
-            event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
+            event = stripe.webhooks.constructEvent(req, sig, webhookSecret);
         } catch (err) {
             res.status(400).send(`Webhook Error: ${err.message}`);
             return;
@@ -47,6 +42,8 @@ const handler = async (req, res) => {
                     console.log("Unable to update identity verification results", error.message);
                     // do something else
                 }
+                break;
+                default
         }
 
         res.json({ received: true });
