@@ -5,7 +5,6 @@ import BottomGradient from "../components/BottomGradient";
 import Navbar from "../components/Navbar";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import HeroCard from "../components/HeroCard";
-import { useUser } from "@supabase/auth-helpers-react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,7 +21,7 @@ export default function Home() {
                     <div className="mx-auto w-full max-w-screen-xl pt-10 pb-10 sm:pt-20">
                         <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-8">
                             <div className="flex flex-col items-center justify-center md:col-span-7">
-                                <h2 className="max-w-6xl text-6xl font-bold tracking-tight text-white sm:tracking-wider lg:text-center lg:text-8xl">
+                                <h2 className="max-w-6xl text-6xl font-bold tracking-tight text-white md:tracking-wider lg:text-center lg:text-7xl">
                                     <span className="bg-gradient-to-r from-indigo-500 to-green-600 bg-clip-text text-transparent">
                                         Enter the Social Marketplace for Lending
                                     </span>

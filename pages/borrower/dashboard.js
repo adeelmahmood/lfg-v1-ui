@@ -16,7 +16,7 @@ export default function BorrowerGenInfo() {
     const fetchProposals = async () => {
         const { data, error } = await supabase
             .from(SUPABASE_TABLE_LOAN_PROPOSALS)
-            .select(`*,user_identity_verifications ( verification_status)`)
+            .select(`*,user_identity_verifications ( verification_status, verification_message)`)
             .eq("user_id", user.id);
 
         setProposals(data);
@@ -40,6 +40,14 @@ export default function BorrowerGenInfo() {
             p?.user_identity_verifications?.length > 0 &&
             p.user_identity_verifications[0]?.verification_status == "verified"
         );
+    };
+
+    const getVerificationReason = (p) => {
+        console.log(p);
+        return p?.user_identity_verifications?.length > 0 &&
+            p.user_identity_verifications[0]?.verification_message
+            ? p.user_identity_verifications[0]?.verification_message
+            : "Unverified";
     };
 
     return (
@@ -76,7 +84,7 @@ export default function BorrowerGenInfo() {
                     </a>
                 </div>
 
-                <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+                <div className="mt-10 grid grid-cols-1 gap-14 md:grid-cols-2 lg:grid-cols-3">
                     {proposals?.map((p, i) => {
                         return (
                             <div
@@ -134,7 +142,7 @@ export default function BorrowerGenInfo() {
                                         </div>
                                     ) : (
                                         <div className="rounded-lg bg-orange-500 px-2 py-1 font-semibold text-white">
-                                            Needs Identity Verification
+                                            {getVerificationReason(p)}
                                         </div>
                                     )}
                                     <Link

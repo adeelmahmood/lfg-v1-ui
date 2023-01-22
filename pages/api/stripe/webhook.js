@@ -26,30 +26,50 @@ const handler = async (req, res) => {
             return;
         }
 
+        let userId;
+        let pid;
+        let verificationResult;
+        let verificationMessage;
+
         switch (event.type) {
-            case "identity.verification_session.verified":
+            case "identity.verification_session.verified": {
                 const session = event.data.object;
-                const userId = session.metadata?.user_id;
-                const pid = session.metadata?.pid;
+                userId = session.metadata?.user_id;
+                pid = session.metadata?.pid;
+                verificationResult = session.status;
 
-                console.log(session);
-
-                // update proposal application with verification results
-                const { data, error } = await supabase.from("user_identity_verifications").insert({
-                    user_id: userId,
-                    verification_provider: "stripe",
-                    verification_status: session.status,
-                    received_at: new Date(),
-                    proposal_id: pid,
-                });
-
-                if (error && error.message) {
-                    console.log("Unable to update identity verification results", error.message);
-                    // do something else
-                }
                 break;
+            }
+            case "identity.verification_session.requires_input": {
+                // At least one of the verification checks failed
+                const verificationSession = event.data.object;
+
+                userId = verificationSession.metadata?.user_id;
+                pid = verificationSession.metadata?.pid;
+
+                verificationResult = verificationSession.last_error.code;
+                verificationMessage = verificationSession.last_error.reason;
+
+                break;
+            }
             default:
                 console.log(`Unhandled event type ${event.type}`);
+                break;
+        }
+
+        // update proposal application with verification results
+        const { data, error } = await supabase.from("user_identity_verifications").insert({
+            user_id: userId,
+            verification_provider: "stripe",
+            verification_status: verificationResult,
+            verification_message: verificationMessage,
+            received_at: new Date(),
+            proposal_id: pid,
+        });
+
+        if (error && error.message) {
+            console.log("Unable to update identity verification results", error.message);
+            // do something else
         }
 
         res.json({ received: true });
