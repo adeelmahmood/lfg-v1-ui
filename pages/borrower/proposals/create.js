@@ -101,9 +101,9 @@ export default function LoanProposal() {
         let href = e.target.href;
         href = href.indexOf("/") != -1 ? href.substring(href.lastIndexOf("/") + 1) : href;
         const targetStage = stages.find((s) => s.href == href);
-        if (targetStage?.completed) {
-            setStage(targetStage.href);
-        }
+        // if (targetStage?.completed) {
+        setStage(targetStage.href);
+        // }
     };
 
     return (
