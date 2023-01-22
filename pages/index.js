@@ -5,6 +5,7 @@ import BottomGradient from "../components/BottomGradient";
 import Navbar from "../components/Navbar";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import HeroCard from "../components/HeroCard";
+import { useUser } from "@supabase/auth-helpers-react";
 
 const inter = Inter({ subsets: ["latin"] });
 
