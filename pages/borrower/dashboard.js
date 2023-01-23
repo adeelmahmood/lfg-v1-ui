@@ -64,8 +64,10 @@ export default function BorrowerGenInfo() {
                     </h2>
                 </div>
 
-                <h3 className="mt-6 text-3xl font-bold text-gray-500">Create a loan proposal</h3>
-                <p className="mt-2 mb-8 text-left leading-8 text-gray-600">
+                <h3 className="mt-6 text-3xl font-bold text-gray-700 dark:text-gray-300">
+                    Create a loan proposal
+                </h3>
+                <p className="mt-2 mb-8 text-left leading-8 text-gray-600 dark:text-gray-400">
                     A loan proposal is not a loan application. The idea is for you to provide us
                     with all the information you can about yourself, your business, and the reason
                     why you need the loan. We will do some verification on our end to develop some
@@ -78,7 +80,7 @@ export default function BorrowerGenInfo() {
                 <div>
                     <a
                         href="/borrower/proposals/create"
-                        className="rounded-lg border border-gray-400 bg-indigo-500 py-2 px-4 text-white hover:bg-indigo-700 md:font-semibold"
+                        className="rounded-lg border border-gray-400 bg-indigo-500 py-2 px-4 text-white hover:bg-indigo-700 dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800 md:font-semibold"
                     >
                         Create New Loan Proposal
                     </a>
@@ -89,7 +91,7 @@ export default function BorrowerGenInfo() {
                         return (
                             <div
                                 key={i}
-                                className="w-full space-y-5 overflow-hidden rounded shadow-lg"
+                                className="w-full space-y-5 overflow-hidden rounded-xl shadow-lg dark:bg-slate-800"
                             >
                                 <div className="relative pb-2/3">
                                     <img
@@ -99,7 +101,7 @@ export default function BorrowerGenInfo() {
                                     />
                                 </div>
                                 <div className="px-6 pt-4">
-                                    <div className="mb-2 text-xl font-bold">
+                                    <div className="mb-2 text-xl font-bold dark:text-gray-300">
                                         {getSelected(
                                             p.business_title,
                                             p.business_tagline,
@@ -107,7 +109,7 @@ export default function BorrowerGenInfo() {
                                             p.tagline_gen_picked
                                         )}
                                     </div>
-                                    <p className="mt-2 text-base text-gray-700">
+                                    <p className="mt-4 text-base text-gray-700 dark:text-gray-400">
                                         {trimText(
                                             getSelected(
                                                 p.business_description,
@@ -118,7 +120,7 @@ export default function BorrowerGenInfo() {
                                             100
                                         )}
                                     </p>
-                                    <p className="mt-4 text-base text-gray-700">
+                                    <p className="mt-2 text-base text-gray-700 dark:text-gray-400">
                                         {trimText(
                                             getSelected(
                                                 p.loan_reasoning,
@@ -130,7 +132,7 @@ export default function BorrowerGenInfo() {
                                         )}
                                     </p>
                                 </div>
-                                <div className="flex flex-col items-start space-y-2 px-4 pb-4">
+                                <div className="flex flex-col items-start space-y-2 px-4 pb-4 dark:text-gray-300">
                                     <div className="rounded-lg px-2 py-1">
                                         <span className="">Proposal Status:</span>
                                         <span className="font-semibold"> {p.status}</span>

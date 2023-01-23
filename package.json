@@ -22,6 +22,7 @@
     "ethers": "^5.7.2",
     "micro": "^10.0.1",
     "next": "13.1.1",
+    "next-themes": "^0.2.1",
     "openai": "^3.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -30,11 +31,11 @@
     "wagmi": "^0.9.6"
   },
   "devDependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.3",
     "autoprefixer": "^10.4.13",
     "postcss": "^8.4.20",
     "prettier-plugin-tailwindcss": "^0.2.1",
-    "@tailwindcss/aspect-ratio": "^0.4.2",
-    "@tailwindcss/forms": "^0.5.3",
     "tailwindcss": "^3.2.4"
   }
 }

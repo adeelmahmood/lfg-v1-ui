@@ -1,8 +1,9 @@
 import * as React from "react";
 import { Menu, Transition } from "@headlessui/react";
-import { useUser } from "@supabase/auth-helpers-react";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
 export default function ({ ...rest }) {
+    const supabase = useSupabaseClient();
     const user = useUser();
 
     return (
@@ -34,8 +35,10 @@ export default function ({ ...rest }) {
                                     className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md border border-gray-200 bg-white shadow-lg outline-none"
                                 >
                                     <div className="px-4 py-3">
-                                        <p className="text-sm leading-5">Signed in as</p>
-                                        <p className="truncate text-sm font-medium leading-5 text-gray-900">
+                                        <p className="text-sm leading-5 text-gray-800">
+                                            Signed in as
+                                        </p>
+                                        <p className="truncate text-sm font-medium leading-5 text-gray-800">
                                             {user?.user_metadata.full_name}
                                         </p>
                                     </div>
@@ -74,6 +77,10 @@ export default function ({ ...rest }) {
                                                             ? "bg-gray-100 text-gray-900"
                                                             : "text-gray-700"
                                                     } flex w-full justify-between px-4 py-2 text-left text-sm leading-5`}
+                                                    onClick={async () => {
+                                                        await supabase.auth.signOut();
+                                                        router.push("/");
+                                                    }}
                                                 >
                                                     Sign out
                                                 </a>

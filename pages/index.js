@@ -17,7 +17,7 @@ export default function Home() {
             <TopGradient />
             <Navbar />
 
-            <div className="container mx-auto p-6">
+            <div className="container relative mx-auto p-6">
                 <section id="hero">
                     <div className="mx-auto w-full max-w-screen-xl pt-10 pb-10 sm:pt-20">
                         <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-8">
@@ -38,13 +38,13 @@ export default function Home() {
                                         />
                                     </div>
                                 </div>
-                                <p className="mt-6 text-lg leading-8 text-gray-600 sm:text-center">
+                                <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300 sm:text-center">
                                     Unlock the power of your digital assets. Our platform allows you
                                     to lend and borrow a variety of cryptocurrencies with ease and
                                     security. Enjoy competitive interest rates and flexible terms on
                                     your loans, all while keeping your assets in your own wallet.
                                 </p>
-                                <p className="text-lg leading-8 text-gray-600 sm:text-center">
+                                <p className="text-lg leading-8 text-gray-600 dark:text-gray-300 sm:text-center">
                                     Sign up now and start earning on your digital assets today!
                                 </p>
                                 <div className="mt-6 flex gap-x-4 sm:justify-center">
@@ -52,7 +52,7 @@ export default function Home() {
                                         <Link
                                             href="/dashboard"
                                             className="rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
-                                            leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700"
+                                            leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800"
                                         >
                                             Login
                                         </Link>
@@ -123,14 +123,14 @@ export default function Home() {
                             />
                         </div>
                         <div className="mt-20">
-                            <h2 className="text-left text-3xl font-bold tracking-tight md:text-center md:text-4xl md:tracking-normal">
+                            <h2 className="text-left text-3xl font-bold tracking-tight text-gray-800 dark:text-gray-300 md:text-center md:text-4xl md:tracking-normal">
                                 Ready to start lending in the protocol?
                             </h2>
                             <div className="mt-6 flex gap-x-4 sm:justify-center">
                                 <Link
                                     href="/dashboard"
                                     className="inline-block rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
-                                            leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700"
+                                            leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800"
                                 >
                                     Become a Lender
                                 </Link>
@@ -139,7 +139,7 @@ export default function Home() {
                     </div>
                 </section>
 
-                <div className="mt-20 h-1 bg-gradient-to-r from-indigo-200 to-indigo-100" />
+                <div className="mt-20 h-1 bg-gradient-to-r from-indigo-200 to-indigo-100 dark:from-slate-600 dark:to-slate-800" />
 
                 <section id="borrowersHeroSection">
                     <div className="container mx-auto mt-20 max-w-screen-lg">
@@ -190,14 +190,14 @@ export default function Home() {
                             />
                         </div>
                         <div className="mt-20">
-                            <h2 className="text-left text-3xl font-bold tracking-tight md:text-center md:text-4xl md:tracking-normal">
+                            <h2 className="text-left text-3xl font-bold tracking-tight text-gray-800 dark:text-gray-300 md:text-center md:text-4xl md:tracking-normal">
                                 Ready to sign up and submit a loan proposal?
                             </h2>
                             <div className="mt-6 flex gap-x-4 sm:justify-center">
                                 <Link
                                     href="/borrower/dashboard"
                                     className="inline-block rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
-                                            leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700"
+                                            leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800"
                                 >
                                     Become a Borrower
                                 </Link>
@@ -206,7 +206,7 @@ export default function Home() {
                     </div>
                 </section>
 
-                <div className="mt-20 h-1 bg-gradient-to-r from-indigo-200 to-indigo-100" />
+                <div className="mt-20 h-1 bg-gradient-to-r from-indigo-200 to-indigo-100 dark:from-slate-600 dark:to-slate-800" />
 
                 <BottomGradient />
             </div>

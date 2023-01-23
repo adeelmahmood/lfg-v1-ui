@@ -35,10 +35,10 @@ export default function Borrower() {
                 <div className="mt-10 grid w-full grid-cols-1 lg:grid-cols-12">
                     <div className="col-span-1 lg:col-span-7">
                         <div className="flex flex-col items-center justify-center p-5">
-                            <h2 className="max-w-md text-4xl font-bold tracking-tight md:mt-20 md:tracking-normal">
+                            <h2 className="max-w-md text-4xl font-bold tracking-tight dark:text-gray-300 md:mt-20 md:tracking-normal">
                                 Login or Create an Account
                             </h2>
-                            <p className="mt-5 max-w-md text-gray-700">
+                            <p className="mt-5 max-w-md text-gray-700 dark:text-gray-300">
                                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                                 Voluptatibus quia, nulla! Maiores et perferendis eaque,
                                 exercitationem praesentium nihil.
