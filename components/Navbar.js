@@ -16,7 +16,7 @@ const Navbar = ({}) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const toggleTheme = () => {
-        setTheme(theme == "dark" ? "light" : "dark");
+        setTheme(theme === "dark" ? "light" : "dark");
     };
 
     return (
@@ -106,8 +106,8 @@ const Navbar = ({}) => {
                     </div>
                 </nav>
                 <div className="flex items-center space-x-4">
-                    <button onClick={toggleTheme}>
-                        {theme == "dark" ? (
+                    <button onClick={toggleTheme} className="hidden lg:block">
+                        {theme === "dark" ? (
                             <MoonIcon className="h-5 w-5 fill-current text-gray-300" />
                         ) : (
                             <SunIcon className="h-5 w-5 fill-current text-indigo-500" />

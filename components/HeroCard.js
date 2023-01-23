@@ -10,7 +10,7 @@ export default function HeroCard({ heading, description, imgSrc, imgAltText, tag
                     />
                 </div>
                 <div className="px-6 py-4">
-                    <div className="mb-2 text-xl font-bold text-gray-800 dark:text-gray-300">
+                    <div className="mb-2 text-xl font-bold text-gray-800 dark:text-gray-200">
                         {heading}
                     </div>
                     <p className="text-base text-gray-700 dark:text-gray-400">{description}</p>
@@ -20,7 +20,7 @@ export default function HeroCard({ heading, description, imgSrc, imgAltText, tag
                         return (
                             <span
                                 key={i}
-                                className="mr-2 mb-2 inline-block rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700 dark:text-gray-900"
+                                className="mr-2 mb-2 inline-block rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700 dark:bg-gray-300 dark:text-gray-900"
                             >
                                 {tag}
                             </span>
