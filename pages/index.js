@@ -38,27 +38,36 @@ export default function Home() {
                                         />
                                     </div>
                                 </div>
-                                <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300 sm:text-center">
-                                    Unlock the power of your digital assets. Our platform allows you
-                                    to lend and borrow a variety of cryptocurrencies with ease and
-                                    security. Enjoy competitive interest rates and flexible terms on
-                                    your loans, all while keeping your assets in your own wallet.
-                                </p>
-                                <p className="text-lg leading-8 text-gray-600 dark:text-gray-300 sm:text-center">
-                                    Sign up now and start earning on your digital assets today!
-                                </p>
-                                <div className="mt-6 flex gap-x-4 sm:justify-center">
-                                    {!user && (
+                                <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2">
+                                    <div className="items-center justify-center space-y-4 text-center">
+                                        <p className="text-lg leading-8 text-gray-600 dark:text-gray-300">
+                                            Direct the power of your digital assets towards
+                                            community driven specialized lending. Deposit a variety
+                                            of cryptocurrencies and earn interest. Connect with
+                                            borrowers
+                                        </p>
                                         <Link
                                             href="/dashboard"
-                                            className="rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
+                                            className="inline-block rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
                                             leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800"
                                         >
-                                            Login
+                                            Become a Lender
                                         </Link>
-                                    )}
-                                    <div className="">
-                                        <ConnectButton />
+                                    </div>
+                                    <div className="items-center justify-center space-y-4 text-center">
+                                        <p className="text-lg leading-8 text-gray-600 dark:text-gray-300">
+                                            Direct the power of your digital assets towards
+                                            community driven specialized lending. Deposit a variety
+                                            of cryptocurrencies and earn interest. Connect with
+                                            borrowers
+                                        </p>
+                                        <Link
+                                            href="/borrower/dashboard"
+                                            className="inline-block rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
+                                            leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800"
+                                        >
+                                            Become a Borrower
+                                        </Link>
                                     </div>
                                 </div>
                             </div>

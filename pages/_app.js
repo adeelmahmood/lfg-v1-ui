@@ -50,7 +50,7 @@ export default function App({ Component, pageProps }) {
                         supabaseClient={supabase}
                         initialSession={pageProps.initialSession}
                     >
-                        <ThemeProvider attribute="class">
+                        <ThemeProvider attribute="class" defaultTheme="dark">
                             <Component {...pageProps} />
                         </ThemeProvider>
                     </SessionContextProvider>
