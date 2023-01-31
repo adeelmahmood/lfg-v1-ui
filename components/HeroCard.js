@@ -1,7 +1,7 @@
 export default function HeroCard({ heading, description, imgSrc, imgAltText, tags, status }) {
     return (
         <>
-            <div className="w-full space-y-5 overflow-hidden rounded-xl shadow-lg dark:bg-slate-800">
+            <div className="w-full space-y-5 overflow-hidden rounded-xl shadow-lg dark:bg-gray-700">
                 <div className="relative pb-2/3">
                     <img
                         className="absolute h-full w-full object-cover object-center"

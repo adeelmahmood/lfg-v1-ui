@@ -149,12 +149,12 @@ export default function GatherImages({ loanProposal, setLoanProposal, handle, ..
                         Banner Image For Your Proposal
                     </span>
                 </h2>
-                <p className="mt-4 max-w-2xl text-left leading-8 text-gray-600">
+                <p className="mt-4 max-w-2xl text-left leading-8 text-gray-600 dark:text-gray-200">
                     Upload a banner image that will be featured on the loan proposal page
                 </p>
 
                 <div className="mt-6">
-                    <label className="form-label mb-2 inline-block text-gray-700">
+                    <label className="form-label mb-2 inline-block text-gray-700 dark:text-gray-200">
                         Upload Banner Image
                     </label>
                     <input
@@ -163,7 +163,7 @@ export default function GatherImages({ loanProposal, setLoanProposal, handle, ..
                         onChange={uploadHandler}
                     />
                     <button
-                        className="mt-2 inline-flex rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 shadow hover:bg-gray-100 disabled:cursor-not-allowed  disabled:opacity-50"
+                        className="mt-2 inline-flex items-center rounded-lg border border-gray-400 bg-indigo-500 py-2 px-4 text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800 md:font-semibold"
                         disabled={!uploadBannerImage}
                         onClick={handleUpload}
                     >
@@ -196,20 +196,20 @@ export default function GatherImages({ loanProposal, setLoanProposal, handle, ..
                 </div>
 
                 <div className="mt-8 flex items-center">
-                    <div className="flex-grow border-t border-gray-400"></div>
-                    <span className="mx-4 flex-shrink text-gray-400">OR</span>
-                    <div className="flex-grow border-t border-gray-400"></div>
+                    <div className="flex-grow border-t border-gray-400 dark:border-gray-200"></div>
+                    <span className="mx-4 flex-shrink text-gray-400 dark:text-gray-200">OR</span>
+                    <div className="flex-grow border-t border-gray-400 dark:border-gray-200"></div>
                 </div>
 
-                <p className="mt-8 max-w-2xl text-left leading-8 text-gray-600">
+                <p className="mt-8 max-w-2xl text-left leading-8 text-gray-600 dark:text-gray-200">
                     Use one of these images or search by keywords
                 </p>
 
                 <div className="mt-6 flex items-center rounded-lg border px-4 py-2">
-                    <MagnifyingGlassIcon className="inline h-6 fill-current text-gray-800" />
+                    <MagnifyingGlassIcon className="inline h-6 fill-current text-gray-800 dark:text-gray-200" />
                     <input
                         type="text"
-                        className="ml-2 w-full appearance-none border-0 text-gray-600 focus:ring-0"
+                        className="ml-2 w-full appearance-none border-0 text-gray-600 focus:ring-0 dark:bg-slate-800 dark:text-gray-200"
                         placeholder="Search by keywords"
                         onChange={debouncedFetchImages}
                     />
@@ -225,7 +225,9 @@ export default function GatherImages({ loanProposal, setLoanProposal, handle, ..
 
                 <div className="mt-4">
                     <button
-                        className="w-full rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="w-full rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm 
+                        ring-1 ring-indigo-600 transition duration-150 ease-in-out hover:bg-indigo-700
+                        hover:ring-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-green-500 dark:ring-0 dark:hover:bg-green-600 dark:focus:bg-green-600 dark:focus:outline-none dark:focus:ring-0"
                         onClick={handleNext}
                         disabled={!isCompleted}
                     >

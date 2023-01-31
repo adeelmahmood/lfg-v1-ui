@@ -35,7 +35,7 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                         />
                     </div>
                     <div className="ml-5 flex flex-col">
-                        <span className="font-semibold text-gray-800">
+                        <span className="font-semibold text-gray-800 dark:text-gray-200">
                             {user?.user_metadata.full_name}
                         </span>
                         <span className="text-sm text-gray-500">Proposal Creator</span>
@@ -44,7 +44,7 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                         </span>
                     </div>
                 </div>
-                <h2 className="text-left text-4xl font-bold uppercase text-gray-800 md:text-center md:text-5xl md:tracking-wider">
+                <h2 className="text-left text-4xl font-bold uppercase text-gray-800 dark:text-gray-200 md:text-center md:text-5xl md:tracking-wider">
                     {getSelected(
                         loanProposal.business_title,
                         loanProposal.business_tagline,
@@ -60,7 +60,7 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                     />
                 </div>
                 <div className="mt-6">
-                    <p className="text-gray-500">
+                    <p className="text-gray-500 dark:text-gray-200">
                         {getSelected(
                             loanProposal.business_description,
                             loanProposal.business_gen_description,
@@ -71,7 +71,7 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                 </div>
 
                 <div className="mt-6">
-                    <p className="text-gray-800">
+                    <p className="text-gray-800 dark:text-gray-200">
                         {getSelected(
                             loanProposal.loan_reasoning,
                             loanProposal.loan_gen_reasoning,
@@ -81,7 +81,7 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                     </p>
                 </div>
 
-                <div className="mt-6 font-semibold text-gray-800">
+                <div className="mt-6 font-semibold text-gray-800 dark:text-gray-200">
                     <p>Loan Amount Requested: {USDollar.format(loanProposal.amount)}</p>
                 </div>
             </div>

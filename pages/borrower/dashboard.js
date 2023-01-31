@@ -55,7 +55,7 @@ export default function BorrowerGenInfo() {
             <TopGradient />
             <Navbar />
 
-            <div className="container mx-auto p-6">
+            <div className="pt- container mx-auto p-6">
                 <div className="mt-8 mb-4 flex items-center justify-between">
                     <h2 className="max-w-6xl text-5xl font-bold tracking-wider text-white">
                         <span className="bg-gradient-to-r from-indigo-500 to-green-600 bg-clip-text text-transparent">
@@ -64,23 +64,23 @@ export default function BorrowerGenInfo() {
                     </h2>
                 </div>
 
-                <h3 className="mt-6 text-3xl font-bold text-gray-700 dark:text-gray-300">
+                <h3 className="mt-6 text-3xl font-bold text-gray-700 dark:text-gray-200">
                     Create a loan proposal
                 </h3>
-                <p className="mt-2 mb-8 text-left leading-8 text-gray-600 dark:text-gray-400">
+                <p className="mt-2 mb-8 text-left leading-8 text-gray-600 dark:text-gray-300">
                     A loan proposal is not a loan application. The idea is for you to provide us
                     with all the information you can about yourself, your business, and the reason
-                    why you need the loan. We will do some verification on our end to develop some
-                    confidence towards your ability to pay back the loan. We will prepare all this
-                    information in the form a loan proposal and present it to the lenders community
-                    on this platform. It is then up to the lenders to vote on this proposal and
-                    accept the proposal.
+                    why you need the loan. We will prepare all this information in the form a loan
+                    proposal and present it to the lenders community on this platform. It is then up
+                    to the lenders to vote on this proposal and accept the proposal.
                 </p>
 
                 <div>
                     <a
                         href="/borrower/proposals/create"
-                        className="rounded-lg border border-gray-400 bg-indigo-500 py-2 px-4 text-white hover:bg-indigo-700 dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800 md:font-semibold"
+                        className="w-full rounded-lg bg-indigo-600 px-6 py-2.5 text-base font-semibold leading-7 text-white shadow-sm 
+                        ring-1 ring-indigo-600 transition duration-150 ease-in-out hover:bg-indigo-700
+                        hover:ring-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-green-500 dark:ring-0 dark:hover:bg-green-600 dark:focus:bg-green-600 dark:focus:outline-none dark:focus:ring-0"
                     >
                         Create New Loan Proposal
                     </a>
@@ -91,7 +91,7 @@ export default function BorrowerGenInfo() {
                         return (
                             <div
                                 key={i}
-                                className="w-full space-y-5 overflow-hidden rounded-xl shadow-lg dark:bg-slate-800"
+                                className="w-full space-y-5 overflow-hidden rounded-xl shadow-lg dark:bg-gray-700"
                             >
                                 <div className="relative pb-2/3">
                                     <img

@@ -9,6 +9,7 @@ import Tagline from "../../../components/borrower/Tagline";
 import BusinessInformation from "../../../components/borrower/BusinessInformation";
 import LoanReason from "../../../components/borrower/LoanReason";
 import PreviewAndSubmit from "../../../components/borrower/PreviewAndSubmit";
+import { CheckIcon, CheckBadgeIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
 
 export default function LoanProposal() {
     const [loanProposal, setLoanProposal] = useState({
@@ -117,26 +118,31 @@ export default function LoanProposal() {
                         <div className="mt-10 flex flex-col space-y-6 px-6">
                             {stages.map((s, index) => {
                                 return (
-                                    <a
-                                        key={index}
-                                        href={s.href}
-                                        className={`${
-                                            stage == s.href
-                                                ? "font-semibold text-indigo-700"
-                                                : s.completed
-                                                ? "font-normal text-indigo-500"
-                                                : "font-normal text-gray-500"
-                                        }`}
-                                        onClick={handleNav}
-                                    >
-                                        {s.title}
-                                    </a>
+                                    <div className="flex items-start">
+                                        <a
+                                            key={index}
+                                            href={s.href}
+                                            className={`${
+                                                stage == s.href
+                                                    ? "font-semibold text-indigo-800 dark:text-gray-200"
+                                                    : s.completed
+                                                    ? "font-normal text-indigo-500 dark:text-gray-400"
+                                                    : "font-normal text-indigo-800 dark:text-gray-300"
+                                            }`}
+                                            onClick={handleNav}
+                                        >
+                                            {s.title}
+                                        </a>
+                                        {s.completed && (
+                                            <CheckIcon className="ml-1 inline h-5 fill-current text-indigo-500 dark:text-gray-200" />
+                                        )}
+                                    </div>
                                 );
                             })}
                         </div>
                     </div>
 
-                    <div className="w-full max-w-2xl rounded-xl bg-white shadow-md">
+                    <div className="w-full max-w-2xl rounded-xl bg-white shadow-md dark:bg-slate-800">
                         <div className="mt-8 flex flex-col">
                             {stages.map((s, index) => {
                                 if (!s.component) {
