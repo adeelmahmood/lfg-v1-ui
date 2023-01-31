@@ -4,7 +4,7 @@ import Navbar from "../../components/Navbar";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../../utils/Constants";
-import { CheckCircleIcon } from "@heroicons/react/24/solid";
+import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 
 export default function BorrowerGenInfo() {
@@ -91,7 +91,7 @@ export default function BorrowerGenInfo() {
                         return (
                             <div
                                 key={i}
-                                className="w-full space-y-5 overflow-hidden rounded-xl shadow-lg dark:bg-gray-700"
+                                className="relative w-full space-y-5 overflow-hidden rounded-xl shadow-lg dark:bg-gray-700"
                             >
                                 <div className="relative pb-2/3">
                                     <img
@@ -100,6 +100,23 @@ export default function BorrowerGenInfo() {
                                         alt=""
                                     />
                                 </div>
+
+                                {isVerified(p) ? (
+                                    <div className="absolute -right-10 -top-2 m-0 h-12 w-40 rotate-45 transform rounded-lg bg-green-600">
+                                        <CheckCircleIcon
+                                            className="absolute top-2 right-16 inline h-8 -rotate-45 transform fill-current text-white"
+                                            title="Identity Verified Successfully"
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="absolute -right-10 -top-2 m-0 h-12 w-40 rotate-45 transform rounded-lg bg-orange-600">
+                                        <ExclamationCircleIcon
+                                            className="absolute top-2 right-16 inline h-8 -rotate-45 transform fill-current text-white"
+                                            title={getVerificationReason(p)}
+                                        />
+                                    </div>
+                                )}
+
                                 <div className="px-6 pt-4">
                                     <div className="mb-2 text-xl font-bold dark:text-gray-300">
                                         {getSelected(
@@ -137,16 +154,6 @@ export default function BorrowerGenInfo() {
                                         <span className="">Proposal Status:</span>
                                         <span className="font-semibold"> {p.status}</span>
                                     </div>
-                                    {isVerified(p) ? (
-                                        <div className="flex items-center rounded-lg bg-teal-500 px-2 py-1 font-semibold text-white">
-                                            <CheckCircleIcon className="mr-1 inline h-6 fill-current text-white" />
-                                            Identity Verified
-                                        </div>
-                                    ) : (
-                                        <div className="rounded-lg bg-orange-500 px-2 py-1 font-semibold text-white">
-                                            {getVerificationReason(p)}
-                                        </div>
-                                    )}
                                     <Link
                                         href={`/borrower/proposals/${p.id}`}
                                         className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
