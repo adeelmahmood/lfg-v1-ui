@@ -77,19 +77,28 @@ const Navbar = ({}) => {
                         )}
                         {user && (
                             <div className="lg:hidden">
-                                <div className="flex items-center px-2 py-1 lg:hidden">
-                                    <img
-                                        src={user?.user_metadata.avatar_url}
-                                        className="h-10 w-10 rounded-full border-2 border-indigo-400 object-cover"
-                                    />
-                                    <div className="ml-2">
-                                        <p className="text-sm leading-5 text-gray-800 dark:text-gray-300">
-                                            Signed in as
-                                        </p>
-                                        <p className="truncate text-sm font-medium leading-5 text-gray-800 dark:text-gray-300">
-                                            {user?.user_metadata.full_name}
-                                        </p>
+                                <div className="flex items-center justify-between px-2 py-1">
+                                    <div className="flex items-center">
+                                        <img
+                                            src={user?.user_metadata.avatar_url}
+                                            className="h-10 w-10 rounded-full border-2 border-indigo-400 object-cover"
+                                        />
+                                        <div className="ml-2">
+                                            <p className="text-sm leading-5 text-gray-800 dark:text-gray-300">
+                                                Signed in as
+                                            </p>
+                                            <p className="truncate text-sm font-medium leading-5 text-gray-800 dark:text-gray-300">
+                                                {user?.user_metadata.full_name}
+                                            </p>
+                                        </div>
                                     </div>
+                                    <button onClick={toggleTheme}>
+                                        {theme === "dark" ? (
+                                            <MoonIcon className="h-5 w-5 fill-current text-gray-300" />
+                                        ) : (
+                                            <SunIcon className="h-5 w-5 fill-current text-indigo-500" />
+                                        )}
+                                    </button>
                                 </div>
                                 <button
                                     href="#"
