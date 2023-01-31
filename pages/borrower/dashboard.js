@@ -102,16 +102,16 @@ export default function BorrowerGenInfo() {
                                 </div>
 
                                 {isVerified(p) ? (
-                                    <div className="absolute -right-10 -top-2 m-0 h-12 w-40 rotate-45 transform rounded-lg bg-green-600">
+                                    <div className="absolute -right-10 -top-2 m-0 grid h-12 w-40 rotate-45 place-items-center rounded-lg bg-green-600 shadow-md">
                                         <CheckCircleIcon
-                                            className="absolute top-2 right-16 inline h-8 -rotate-45 transform fill-current text-white"
+                                            className="absolute  inline h-8 -rotate-45 fill-current text-white"
                                             title="Identity Verified Successfully"
                                         />
                                     </div>
                                 ) : (
-                                    <div className="absolute -right-10 -top-2 m-0 h-12 w-40 rotate-45 transform rounded-lg bg-orange-600">
+                                    <div className="absolute -right-10 -top-2 m-0 grid h-12 w-40 rotate-45 place-items-center rounded-lg bg-orange-600 shadow-md">
                                         <ExclamationCircleIcon
-                                            className="absolute top-2 right-16 inline h-8 -rotate-45 transform fill-current text-white"
+                                            className="absolute inline h-8 -rotate-45 fill-current text-white"
                                             title={getVerificationReason(p)}
                                         />
                                     </div>

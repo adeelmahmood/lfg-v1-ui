@@ -62,26 +62,28 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                 token={selectedToken}
             />
 
-            <h2 className="mt-20 mb-2 text-4xl font-semibold text-slate-700 sm:mt-10 sm:max-w-md md:text-3xl">
-                Tokens Available to Supply
-            </h2>
             <div className="mb-4 flex items-center">
                 <Switch
                     checked={isShowZeroBalanceTokens}
                     onChange={setIsShowZeroBalanceTokens}
                     className={`${
-                        isShowZeroBalanceTokens ? "bg-indigo-600" : "bg-gray-200"
-                    } h-6 w-8 rounded-full`}
+                        isShowZeroBalanceTokens ? "bg-indigo-600 dark:bg-green-500" : "bg-gray-300"
+                    } h-5 w-5 rounded`}
                 />
-                <div className="ml-2 text-gray-600">Show tokens with zero balance in wallet</div>
+                <div className="ml-2 text-gray-600 dark:text-gray-200">
+                    Show tokens with zero balance in wallet
+                </div>
             </div>
 
             <div className="grid grid-cols-1 gap-y-4 sm:hidden">
+                <h2 className="rounded-t-lg bg-gray-800 py-4 px-4 font-semibold uppercase tracking-wider text-gray-200 dark:bg-green-700 dark:text-gray-200">
+                    Tokens Available to Supply
+                </h2>
                 {filteredTokenMarketData.map((token, index) => {
                     const { depositAPY, stableBorrowAPY, variableBorrowAPY } = calculateAPY(token);
                     return (
-                        <div className="w-full rounded-lg shadow" key={index}>
-                            <div className="flex items-center space-x-2 rounded-t-lg bg-gray-100 p-3">
+                        <div className="w-full rounded-lg shadow dark:bg-gray-800" key={index}>
+                            <div className="flex items-center space-x-2 rounded-t-lg bg-gray-100 p-3 dark:bg-gray-700">
                                 <ImageWithFallback
                                     width={32}
                                     height={32}
@@ -100,10 +102,12 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                                 <div>APY</div>
                                 <div>{displayPercent(depositAPY)} %</div>
                             </div>
-                            <div className="mb-2 flex items-center justify-center p-2 px-4">
+                            <div className="mb-2 flex items-center p-2 px-4">
                                 <a
                                     href="#"
-                                    className="rounded-lg border border-gray-400 bg-indigo-500 py-2 px-8 text-white hover:bg-indigo-700 md:font-semibold"
+                                    className="rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold text-white 
+                                    ring-1 ring-indigo-600 transition duration-150 ease-in-out hover:bg-indigo-700
+                                    hover:ring-indigo-700 dark:bg-green-500 dark:ring-0 dark:hover:bg-green-600 dark:focus:bg-green-600 dark:focus:outline-none dark:focus:ring-0"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         showDepositModal(token);
@@ -119,18 +123,18 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
 
             <div className="hidden max-w-4xl overflow-x-auto rounded-lg shadow-md sm:flex">
                 <table className="w-full text-left text-sm text-gray-800">
-                    <thead className="bg-slate-600 text-xs uppercase text-white">
+                    <thead className="bg-gray-800 text-xs uppercase tracking-wider text-gray-200 dark:bg-gray-500">
                         <tr>
                             <th scope="col" className="py-3 px-6">
-                                Token
+                                Tokens Availabe To Supply
                             </th>
-                            <th scope="col" className="border-l py-3 px-6 text-center">
+                            <th scope="col" className="py-3 px-6 text-center">
                                 Wallet Balance
                             </th>
-                            <th scope="col" className="border-l py-3 px-6 text-center">
+                            <th scope="col" className="py-3 px-6 text-center">
                                 APY
                             </th>
-                            <th scope="col" className="border-l py-3 px-6 text-center">
+                            <th scope="col" className="py-3 px-6 text-center">
                                 Action
                             </th>
                         </tr>
@@ -148,9 +152,12 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                                 calculateAPY(token);
 
                             return (
-                                <tr key={index} className="border-b bg-white hover:bg-gray-50">
+                                <tr
+                                    key={index}
+                                    className="border-t border-gray-300 bg-white hover:bg-gray-50 dark:border-gray-500 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                >
                                     <td className="py-4 px-6">
-                                        <div className="flex items-center space-x-2">
+                                        <div className="flex items-center space-x-2 dark:text-gray-200">
                                             <ImageWithFallback
                                                 width={25}
                                                 height={25}
@@ -163,16 +170,18 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="py-4 px-6 text-center">
+                                    <td className="py-4 px-6 text-center dark:text-gray-200">
                                         {displayUnits(token.walletBalance, token.tokenDecimals)}
                                     </td>
-                                    <td className="py-4 px-6 text-center">
+                                    <td className="py-4 px-6 text-center dark:text-gray-200">
                                         {displayPercent(depositAPY)} %
                                     </td>
                                     <td className="py-4 px-6 text-center">
                                         <a
                                             href="#"
-                                            className="rounded-lg border border-gray-400 bg-indigo-500 py-2 px-4 text-white hover:bg-indigo-700 md:font-semibold"
+                                            className="rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold text-white 
+                                            ring-1 ring-indigo-600 transition duration-150 ease-in-out hover:bg-indigo-700
+                                            hover:ring-indigo-700 dark:bg-green-500 dark:ring-0 dark:hover:bg-green-600 dark:focus:bg-green-600 dark:focus:outline-none dark:focus:ring-0"
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 showDepositModal(token);
