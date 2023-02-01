@@ -82,8 +82,11 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                 {filteredTokenMarketData.map((token, index) => {
                     const { depositAPY, stableBorrowAPY, variableBorrowAPY } = calculateAPY(token);
                     return (
-                        <div className="w-full rounded-lg shadow dark:bg-gray-800" key={index}>
-                            <div className="flex items-center space-x-2 rounded-t-lg bg-gray-100 p-3 dark:bg-blue-500/20">
+                        <div
+                            className="w-full rounded-lg bg-gray-100 shadow-md dark:bg-gray-700"
+                            key={index}
+                        >
+                            <div className="flex items-center space-x-2 rounded-t-lg p-3">
                                 <ImageWithFallback
                                     width={32}
                                     height={32}
@@ -94,7 +97,7 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                                     {token.tokenSymbol} - {token.tokenName}
                                 </div>
                             </div>
-                            <div className="mt-2 flex items-center justify-between p-2 px-4">
+                            <div className="flex items-center justify-between p-2 px-4">
                                 <div>Wallet Balance</div>
                                 <div>{displayUnits(token.walletBalance, token.tokenDecimals)}</div>
                             </div>
@@ -105,7 +108,7 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                             <div className="mb-2 flex items-center p-2 px-4">
                                 <a
                                     href="#"
-                                    className="btn-clear"
+                                    className="btn-primary"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         showDepositModal(token);

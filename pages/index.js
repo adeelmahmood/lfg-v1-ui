@@ -5,12 +5,38 @@ import BottomGradient from "../components/BottomGradient";
 import Navbar from "../components/Navbar";
 import HeroCard from "../components/HeroCard";
 import { useUser } from "@supabase/auth-helpers-react";
-import PoolLiquidityHero from "../components/lender/PoolLiquidityHero";
+import { useAccount, useContractRead } from "wagmi";
+import { useState } from "react";
+import addresses from "../constants/contract.json";
+import abi from "../constants/lendingpool.json";
+import { displayUnits } from "../utils/Math";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
     const user = useUser();
+
+    const { isConnected, address } = useAccount();
+    const [isLoading, setIsLoading] = useState(true);
+
+    const [liquidityData, setLiquidityData] = useState([]);
+
+    const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
+    const lendingPoolAddress = addresses[chainId].LendingPool[0];
+
+    useContractRead({
+        address: lendingPoolAddress,
+        abi,
+        functionName: "getLiquidity",
+        onSuccess(data) {
+            setIsLoading(false);
+            setLiquidityData(data);
+        },
+        onError(err) {
+            console.log(err);
+        },
+        enabled: isConnected,
+    });
 
     return (
         <>
@@ -39,10 +65,8 @@ export default function Home() {
                                     </div>
                                 </div>
 
-                                <PoolLiquidityHero />
-
-                                <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2">
-                                    <div className="items-center justify-center space-y-4 text-center">
+                                <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+                                    <div className="items-center justify-center space-y-4 rounded-lg py-4 px-6 text-center shadow-md dark:bg-gray-800">
                                         <p className="text-lg leading-8 text-gray-600 dark:text-gray-300">
                                             Direct the power of your digital assets towards
                                             community driven specialized lending. Deposit a variety
@@ -52,8 +76,16 @@ export default function Home() {
                                         <Link href="/dashboard" className="btn-primary">
                                             Become a Lender
                                         </Link>
+                                        <div className="text-center text-gray-600 dark:text-gray-300">
+                                            <div className="text-3xl font-bold tracking-wide">
+                                                {displayUnits(liquidityData.totalCollateral)} ETH
+                                            </div>
+                                            <h2 className="text-2xl tracking-tight">
+                                                Deposited Collateral
+                                            </h2>
+                                        </div>
                                     </div>
-                                    <div className="items-center justify-center space-y-4 text-center">
+                                    <div className="items-center justify-center space-y-4 rounded-lg px-6 py-4 text-center shadow-md dark:bg-gray-800">
                                         <p className="text-lg leading-8 text-gray-600 dark:text-gray-300">
                                             Direct the power of your digital assets towards
                                             community driven specialized lending. Deposit a variety
@@ -63,6 +95,14 @@ export default function Home() {
                                         <Link href="/borrower/dashboard" className="btn-primary">
                                             Become a Borrower
                                         </Link>
+                                        <div className="text-center text-gray-600 dark:text-gray-300">
+                                            <div className="text-3xl font-bold tracking-wide">
+                                                {displayUnits(liquidityData.availableToBorrow)} ETH
+                                            </div>
+                                            <div className="text-2xl tracking-tight">
+                                                Availabe to Borrow
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

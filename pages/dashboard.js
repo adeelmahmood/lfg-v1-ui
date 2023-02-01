@@ -80,7 +80,6 @@ export default function Dashboard() {
                 <section id="portfolio">
                     <div className="items-left mt-10 mb-20 flex flex-col gap-8 md:mt-6 md:flex-row md:items-start">
                         <PortfolioSection />
-                        <PoolLiquiditySection />
                     </div>
                 </section>
 

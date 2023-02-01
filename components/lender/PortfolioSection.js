@@ -50,10 +50,19 @@ export default function PortfolioSection() {
                 <h2 className="rounded-lg bg-slate-600 py-4 px-4 font-semibold uppercase tracking-wider text-gray-200 dark:bg-blue-600 dark:text-gray-200">
                     Your Deposits
                 </h2>
+                {isLoading && (
+                    <div className="font-semibold dark:text-gray-200">Loading Data ...</div>
+                )}
+                {!isLoading && portfolioData.length == 0 && (
+                    <div className="font-semibold dark:text-gray-200">No Deposits Yet</div>
+                )}
                 {portfolioData.map((token, index) => {
                     return (
-                        <div className="w-full rounded-lg shadow dark:bg-gray-800" key={index}>
-                            <div className="flex items-center space-x-2 rounded-t-lg bg-gray-100 p-3 dark:bg-blue-500/20">
+                        <div
+                            className="w-full rounded-lg bg-gray-100 shadow dark:bg-gray-700"
+                            key={index}
+                        >
+                            <div className="flex items-center space-x-2 rounded-t-lg p-3">
                                 <ImageWithFallback
                                     width={32}
                                     height={32}
@@ -64,7 +73,7 @@ export default function PortfolioSection() {
                                     {token.symbol} - {token.name}
                                 </div>
                             </div>
-                            <div className="mt-2 flex items-center justify-between p-2 px-4">
+                            <div className="flex items-center justify-between p-2 px-4">
                                 <div>Deposited Balance</div>
                                 <div>{displayUnits(token.balance, token.decimals)}</div>
                             </div>
