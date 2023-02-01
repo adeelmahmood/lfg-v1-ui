@@ -67,11 +67,10 @@ export default function Home() {
 
                                 <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
                                     <div className="items-center justify-center space-y-4 rounded-lg py-4 px-6 text-center shadow-md dark:bg-gray-800">
-                                        <p className="text-lg leading-8 text-gray-600 dark:text-gray-300">
-                                            Direct the power of your digital assets towards
-                                            community driven specialized lending. Deposit a variety
-                                            of cryptocurrencies and earn interest. Connect with
-                                            borrowers
+                                        <p className="mb-2 text-lg leading-8 text-gray-600 dark:text-gray-300">
+                                            Deposit and earn interest. Participate in a
+                                            community-driven lending protocol. Vote on borrow
+                                            proposals and learn about what they do.
                                         </p>
                                         <Link href="/dashboard" className="btn-primary">
                                             Become a Lender
@@ -86,11 +85,10 @@ export default function Home() {
                                         </div>
                                     </div>
                                     <div className="items-center justify-center space-y-4 rounded-lg px-6 py-4 text-center shadow-md dark:bg-gray-800">
-                                        <p className="text-lg leading-8 text-gray-600 dark:text-gray-300">
-                                            Direct the power of your digital assets towards
-                                            community driven specialized lending. Deposit a variety
-                                            of cryptocurrencies and earn interest. Connect with
-                                            borrowers
+                                        <p className="mb-2 text-lg leading-8 text-gray-600 dark:text-gray-300">
+                                            Provide exposure to your business to crypto community
+                                            and apply for zero to low collateral loans. Develop a
+                                            community.
                                         </p>
                                         <Link href="/borrower/dashboard" className="btn-primary">
                                             Become a Borrower
