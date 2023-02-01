@@ -3,9 +3,9 @@ import Link from "next/link";
 import TopGradient from "../components/TopGradient";
 import BottomGradient from "../components/BottomGradient";
 import Navbar from "../components/Navbar";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import HeroCard from "../components/HeroCard";
 import { useUser } from "@supabase/auth-helpers-react";
+import PoolLiquidityHero from "../components/lender/PoolLiquidityHero";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,10 +34,13 @@ export default function Home() {
                                         <img
                                             src="/images/eth-garden-ent.png"
                                             alt="Social markplace for lending"
-                                            className="aspect-square relative max-w-xs rounded-lg object-cover object-center shadow-lg"
+                                            className="aspect-square relative max-h-96 max-w-xs rounded-lg object-cover object-center shadow-lg"
                                         />
                                     </div>
                                 </div>
+
+                                <PoolLiquidityHero />
+
                                 <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2">
                                     <div className="items-center justify-center space-y-4 text-center">
                                         <p className="text-lg leading-8 text-gray-600 dark:text-gray-300">
@@ -46,11 +49,7 @@ export default function Home() {
                                             of cryptocurrencies and earn interest. Connect with
                                             borrowers
                                         </p>
-                                        <Link
-                                            href="/dashboard"
-                                            className="inline-block rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
-                                            leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800"
-                                        >
+                                        <Link href="/dashboard" className="btn-primary">
                                             Become a Lender
                                         </Link>
                                     </div>
@@ -61,11 +60,7 @@ export default function Home() {
                                             of cryptocurrencies and earn interest. Connect with
                                             borrowers
                                         </p>
-                                        <Link
-                                            href="/borrower/dashboard"
-                                            className="inline-block rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
-                                            leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800"
-                                        >
+                                        <Link href="/borrower/dashboard" className="btn-primary">
                                             Become a Borrower
                                         </Link>
                                     </div>
@@ -136,11 +131,7 @@ export default function Home() {
                                 Ready to start lending in the protocol?
                             </h2>
                             <div className="mt-6 flex gap-x-4 sm:justify-center">
-                                <Link
-                                    href="/dashboard"
-                                    className="inline-block rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
-                                            leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800"
-                                >
+                                <Link href="/dashboard" className="btn-primary">
                                     Become a Lender
                                 </Link>
                             </div>
@@ -203,11 +194,7 @@ export default function Home() {
                                 Ready to sign up and submit a loan proposal?
                             </h2>
                             <div className="mt-6 flex gap-x-4 sm:justify-center">
-                                <Link
-                                    href="/borrower/dashboard"
-                                    className="inline-block rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold 
-                                            leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800"
-                                >
+                                <Link href="/borrower/dashboard" className="btn-primary">
                                     Become a Borrower
                                 </Link>
                             </div>

@@ -47,13 +47,13 @@ export default function PortfolioSection() {
             />
 
             <div className="grid grid-cols-1 gap-y-4 sm:hidden">
-                <h2 className="rounded-t-lg bg-gray-800 py-4 px-4 font-semibold uppercase tracking-wider text-gray-200 dark:bg-green-700 dark:text-gray-200">
+                <h2 className="rounded-lg bg-slate-600 py-4 px-4 font-semibold uppercase tracking-wider text-gray-200 dark:bg-blue-600 dark:text-gray-200">
                     Your Deposits
                 </h2>
                 {portfolioData.map((token, index) => {
                     return (
                         <div className="w-full rounded-lg shadow dark:bg-gray-800" key={index}>
-                            <div className="flex items-center space-x-2 rounded-t-lg bg-gray-100 p-3 dark:bg-gray-700">
+                            <div className="flex items-center space-x-2 rounded-t-lg bg-gray-100 p-3 dark:bg-blue-500/20">
                                 <ImageWithFallback
                                     width={32}
                                     height={32}
@@ -75,7 +75,7 @@ export default function PortfolioSection() {
                             <div className="mb-2 flex items-center justify-start p-2 px-4">
                                 <a
                                     href="#"
-                                    className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 shadow hover:bg-gray-100 md:font-semibold"
+                                    className="btn-clear"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         showWithdrawModal(token);
@@ -91,7 +91,7 @@ export default function PortfolioSection() {
 
             <div className="hidden w-full overflow-x-auto rounded-lg shadow-md sm:flex md:w-2/3">
                 <table className="w-full table-auto text-left text-sm text-gray-800">
-                    <thead className="bg-gray-800 text-xs uppercase tracking-wider text-gray-200 dark:bg-gray-500">
+                    <thead className="bg-slate-600 text-xs uppercase tracking-wider text-gray-200 dark:bg-gray-600">
                         <tr>
                             <th scope="col" className="py-3 px-6">
                                 Your Deposits
@@ -126,7 +126,7 @@ export default function PortfolioSection() {
                             return (
                                 <tr
                                     key={index}
-                                    className="border-t border-gray-300 bg-white hover:bg-gray-50 dark:border-gray-500 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    className="border-t border-gray-300 bg-white hover:bg-gray-50 dark:border-gray-500 dark:bg-gray-500/20 dark:hover:bg-gray-600/20"
                                 >
                                     <td className="py-4 px-6 text-center">
                                         <div className="flex items-center space-x-2 dark:text-gray-200">
@@ -150,7 +150,7 @@ export default function PortfolioSection() {
                                     <td className="py-4 px-6 text-center dark:text-gray-200">
                                         <a
                                             href="#"
-                                            className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 hover:bg-gray-100 md:font-semibold"
+                                            className="btn-clear"
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 showWithdrawModal(token);

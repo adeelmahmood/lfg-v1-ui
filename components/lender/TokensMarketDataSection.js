@@ -76,14 +76,14 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
             </div>
 
             <div className="grid grid-cols-1 gap-y-4 sm:hidden">
-                <h2 className="rounded-t-lg bg-gray-800 py-4 px-4 font-semibold uppercase tracking-wider text-gray-200 dark:bg-green-700 dark:text-gray-200">
+                <h2 className="rounded-lg bg-slate-600 py-4 px-4 font-semibold uppercase tracking-wider text-gray-200 dark:bg-blue-600 dark:text-gray-200">
                     Tokens Available to Supply
                 </h2>
                 {filteredTokenMarketData.map((token, index) => {
                     const { depositAPY, stableBorrowAPY, variableBorrowAPY } = calculateAPY(token);
                     return (
                         <div className="w-full rounded-lg shadow dark:bg-gray-800" key={index}>
-                            <div className="flex items-center space-x-2 rounded-t-lg bg-gray-100 p-3 dark:bg-gray-700">
+                            <div className="flex items-center space-x-2 rounded-t-lg bg-gray-100 p-3 dark:bg-blue-500/20">
                                 <ImageWithFallback
                                     width={32}
                                     height={32}
@@ -105,9 +105,7 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                             <div className="mb-2 flex items-center p-2 px-4">
                                 <a
                                     href="#"
-                                    className="rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold text-white 
-                                    ring-1 ring-indigo-600 transition duration-150 ease-in-out hover:bg-indigo-700
-                                    hover:ring-indigo-700 dark:bg-green-500 dark:ring-0 dark:hover:bg-green-600 dark:focus:bg-green-600 dark:focus:outline-none dark:focus:ring-0"
+                                    className="btn-clear"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         showDepositModal(token);
@@ -123,7 +121,7 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
 
             <div className="hidden max-w-4xl overflow-x-auto rounded-lg shadow-md sm:flex">
                 <table className="w-full text-left text-sm text-gray-800">
-                    <thead className="bg-gray-800 text-xs uppercase tracking-wider text-gray-200 dark:bg-gray-500">
+                    <thead className="bg-slate-600 text-xs uppercase tracking-wider text-gray-200 dark:bg-gray-600">
                         <tr>
                             <th scope="col" className="py-3 px-6">
                                 Tokens Availabe To Supply
@@ -154,7 +152,7 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                             return (
                                 <tr
                                     key={index}
-                                    className="border-t border-gray-300 bg-white hover:bg-gray-50 dark:border-gray-500 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    className="border-t border-gray-300 bg-white hover:bg-gray-50 dark:border-gray-500 dark:bg-gray-500/20 dark:hover:bg-gray-600/20"
                                 >
                                     <td className="py-4 px-6">
                                         <div className="flex items-center space-x-2 dark:text-gray-200">
@@ -179,9 +177,7 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                                     <td className="py-4 px-6 text-center">
                                         <a
                                             href="#"
-                                            className="rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold text-white 
-                                            ring-1 ring-indigo-600 transition duration-150 ease-in-out hover:bg-indigo-700
-                                            hover:ring-indigo-700 dark:bg-green-500 dark:ring-0 dark:hover:bg-green-600 dark:focus:bg-green-600 dark:focus:outline-none dark:focus:ring-0"
+                                            className="btn-clear"
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 showDepositModal(token);

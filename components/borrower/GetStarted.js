@@ -33,9 +33,7 @@ export default function GetStarted({ loanProposal, setLoanProposal, handle, ...r
 
                 <div className="mt-4">
                     <button
-                        className="w-full rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm 
-                        ring-1 ring-indigo-600 transition duration-150 ease-in-out hover:bg-indigo-700
-                        hover:ring-indigo-700 dark:bg-green-500 dark:ring-0 dark:hover:bg-green-600 dark:focus:bg-green-600 dark:focus:outline-none dark:focus:ring-0"
+                        className="btn-secondary w-full"
                         onClick={handle}
                         disabled={!isCompleted}
                     >

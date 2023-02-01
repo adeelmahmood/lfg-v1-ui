@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useAccount, useContractRead } from "wagmi";
 import addresses from "../../constants/contract.json";
 import abi from "../../constants/lendingpool.json";
-import { formatEther, formatUnits } from "ethers/lib/utils.js";
 import { display1e4, displayUnits } from "../../utils/Math";
 
 export default function PoolLiquiditySection() {

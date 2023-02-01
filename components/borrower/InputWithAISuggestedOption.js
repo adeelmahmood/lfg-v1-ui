@@ -87,7 +87,7 @@ export default function InputWithAISuggestedOption({
 
                     {inputType == "textarea" ? (
                         <textarea
-                            className="mb-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-gray-800 dark:focus:border-green-500 dark:focus:ring-green-500"
+                            className="mb-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-blue-600 dark:focus:ring-blue-400"
                             rows={8}
                             placeholder={placeHolder}
                             onChange={(e) => setValue(e.target.value)}
@@ -95,7 +95,7 @@ export default function InputWithAISuggestedOption({
                         />
                     ) : (
                         <input
-                            className="mb-3 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-gray-800 dark:focus:border-green-500 dark:focus:ring-green-500"
+                            className="mb-3 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-blue-600 dark:focus:ring-blue-400"
                             type={inputType}
                             placeholder={placeHolder}
                             onChange={(e) => setValue(e.target.value)}
@@ -103,11 +103,7 @@ export default function InputWithAISuggestedOption({
                         />
                     )}
                     <button
-                        className={`inline-flex rounded-lg border ${
-                            usingManual
-                                ? "border-teal-500 bg-teal-700 text-white"
-                                : "border-gray-400 bg-white text-gray-800 hover:bg-gray-100 dark:bg-slate-800 dark:text-gray-200 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800"
-                        } py-2 px-4 shadow disabled:cursor-not-allowed disabled:opacity-50`}
+                        className={`${usingManual ? "btn-selected" : "btn-clear"}`}
                         onClick={() => {
                             setUsingManual(true);
                             setUsingGen(false);
@@ -130,7 +126,7 @@ export default function InputWithAISuggestedOption({
                         Based on your description above, let us generate a {fieldName} for you
                     </label>
                     <button
-                        className="inline-flex items-center rounded-lg border border-gray-400 bg-indigo-500 py-2 px-4 text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800 md:font-semibold"
+                        className="btn-clear"
                         onClick={handleGenerate}
                         disabled={!value || isLoading}
                     >
@@ -162,15 +158,11 @@ export default function InputWithAISuggestedOption({
                 {error && <p className="mt-2 text-red-400">{error}</p>}
                 {genValue && (
                     <div className="mt-8">
-                        <p className="mb-2 rounded-lg border bg-gray-100 px-4 py-2 font-serif text-xl text-gray-800">
+                        <p className="mb-2 rounded-lg border bg-gray-100 px-4 py-2 font-serif text-xl text-gray-800 dark:bg-gray-800 dark:text-gray-200">
                             {genValue}
                         </p>
                         <button
-                            className={`inline-flex rounded-lg border ${
-                                usingGen
-                                    ? "border-teal-400 bg-teal-700 text-white"
-                                    : "border-gray-400 bg-white text-gray-800 hover:bg-gray-100 dark:bg-slate-800 dark:text-gray-200 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800"
-                            } py-2 px-4 shadow disabled:cursor-not-allowed  disabled:opacity-50`}
+                            className={`${usingGen ? "btn-selected" : "btn-clear"}`}
                             onClick={() => {
                                 setUsingManual(false);
                                 setUsingGen(true);
@@ -186,9 +178,7 @@ export default function InputWithAISuggestedOption({
                 )}
                 <div className="mt-10">
                     <button
-                        className="w-full rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm 
-                        ring-1 ring-indigo-600 transition duration-150 ease-in-out hover:bg-indigo-700
-                        hover:ring-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-green-500 dark:ring-0 dark:hover:bg-green-600 dark:focus:bg-green-600 dark:focus:outline-none dark:focus:ring-0"
+                        className="btn-secondary w-full"
                         onClick={handleNext}
                         disabled={!isCompleted}
                     >

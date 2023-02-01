@@ -58,7 +58,7 @@ export default function VerifyIdentity({ loanProposal, setLoanProposal, handle, 
                 </p>
                 <div className="mt-4 mb-10">
                     <button
-                        className="mt-2 rounded-lg border border-gray-400 bg-gray-100 py-1 px-4 text-gray-800 shadow hover:bg-gray-100 disabled:cursor-not-allowed  disabled:opacity-50 md:font-semibold"
+                        className="btn-secondary mt-2 px-4 py-1.5"
                         onClick={startVerification}
                         disabled={isLoading || isCompleted}
                     >
@@ -75,9 +75,7 @@ export default function VerifyIdentity({ loanProposal, setLoanProposal, handle, 
 
                 <div className="mt-4">
                     <button
-                        className="w-full rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm 
-                        ring-1 ring-indigo-600 transition duration-150 ease-in-out hover:bg-indigo-700
-                        hover:ring-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-green-500 dark:ring-0 dark:hover:bg-green-600 dark:focus:bg-green-600 dark:focus:outline-none dark:focus:ring-0"
+                        className="btn-secondary w-full"
                         onClick={() => router.push("/borrower/dashboard")}
                         disabled={!isCompleted}
                     >

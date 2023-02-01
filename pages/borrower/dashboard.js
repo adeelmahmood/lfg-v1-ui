@@ -76,12 +76,7 @@ export default function BorrowerGenInfo() {
                 </p>
 
                 <div>
-                    <a
-                        href="/borrower/proposals/create"
-                        className="w-full rounded-lg bg-indigo-600 px-6 py-2.5 text-base font-semibold leading-7 text-white shadow-sm 
-                        ring-1 ring-indigo-600 transition duration-150 ease-in-out hover:bg-indigo-700
-                        hover:ring-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-green-500 dark:ring-0 dark:hover:bg-green-600 dark:focus:bg-green-600 dark:focus:outline-none dark:focus:ring-0"
-                    >
+                    <a href="/borrower/proposals/create" className="btn-secondary w-full">
                         Create New Loan Proposal
                     </a>
                 </div>
@@ -91,7 +86,7 @@ export default function BorrowerGenInfo() {
                         return (
                             <div
                                 key={i}
-                                className="relative w-full space-y-5 overflow-hidden rounded-xl shadow-lg dark:bg-gray-700"
+                                className="relative w-full space-y-5 overflow-hidden rounded-xl shadow-lg dark:bg-gray-700/50"
                             >
                                 <div className="relative pb-2/3">
                                     <img

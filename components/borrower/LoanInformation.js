@@ -21,7 +21,7 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                         Amount needed for the loan (in USD)
                     </label>
                     <input
-                        className="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        className="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-blue-600 dark:focus:ring-blue-400"
                         id="amount"
                         type="number"
                         placeholder="Amount in USD"
@@ -37,9 +37,7 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                 </div>
                 <div className="mt-4">
                     <button
-                        className="w-full rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm 
-                        ring-1 ring-indigo-600 transition duration-150 ease-in-out hover:bg-indigo-700
-                        hover:ring-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-green-500 dark:ring-0 dark:hover:bg-green-600 dark:focus:bg-green-600 dark:focus:outline-none dark:focus:ring-0"
+                        className="btn-secondary w-full"
                         onClick={handle}
                         disabled={!isCompleted}
                     >

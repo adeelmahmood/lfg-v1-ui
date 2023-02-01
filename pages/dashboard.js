@@ -55,13 +55,13 @@ export default function Dashboard() {
                     {TEST_ENV == "true" && (
                         <div className="hidden space-x-2 sm:flex sm:justify-end">
                             <button
-                                className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 hover:bg-gray-100 md:font-semibold"
+                                className="btn-clear"
                                 onClick={() => setSendEthToWethModal(!sendEthToWethModal)}
                             >
                                 Send Eth to Weth
                             </button>
                             <button
-                                className="rounded-lg border border-gray-400 bg-white py-2 px-4 text-gray-800 hover:bg-gray-100 md:font-semibold"
+                                className="btn-clear"
                                 onClick={() => setSendWethToDaiModal(!sendWethToDaiModal)}
                             >
                                 Swap Tokens
