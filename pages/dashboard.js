@@ -8,7 +8,6 @@ import SendWethToDaiDialog from "../components/lender/SendWethToDaiDialog";
 import DepositDialog from "../components/lender/DepositDialog";
 import PortfolioSection from "../components/lender/PortfolioSection";
 import TokensMarketDataSection from "../components/lender/TokensMarketDataSection";
-import PoolLiquiditySection from "../components/lender/PoolLiquiditySection";
 
 export default function Dashboard() {
     const [sendEthToWethModal, setSendEthToWethModal] = useState(false);
@@ -70,7 +69,7 @@ export default function Dashboard() {
                     )}
                 </div>
 
-                <p className="mt-2 text-left leading-8 text-gray-600 dark:text-gray-300">
+                <p className="mt-2 max-w-3xl text-left leading-8 text-gray-600 dark:text-gray-300">
                     Here you can deposit tokens and earn interest. Later on we will add some way to
                     show open proposals or it might be on another page. Either way, you should be
                     able to do all the lender stuff here. Some other things might go here. Another

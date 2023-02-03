@@ -1,6 +1,9 @@
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
-import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../../utils/Constants";
+import {
+    SUPABASE_TABLE_LOAN_PROPOSALS,
+    SUPABASE_TABLE_LOAN_PROPOSALS_STATUS,
+} from "../../utils/Constants";
 import { useState } from "react";
 import ViewProposal from "./ViewProposal";
 
@@ -16,20 +19,30 @@ export default function PreviewAndSubmit({ loanProposal, setLoanProposal, handle
             .insert({
                 ...loanProposal,
                 user_id: user.id,
-                status: "Created",
             })
             .select("id")
             .single();
         if (error) {
             setError(error.message);
         } else {
-            // add persisted record id
-            setLoanProposal({
-                ...loanProposal,
-                id: data.id,
-            });
+            // add status entry
+            const { data: Status, error: statusError } = await supabase
+                .from(SUPABASE_TABLE_LOAN_PROPOSALS_STATUS)
+                .insert({
+                    status: "Created",
+                    proposal_id: data.id,
+                });
 
-            handle?.();
+            if (statusError) setError(statusError.message);
+            else {
+                // add persisted record id
+                setLoanProposal({
+                    ...loanProposal,
+                    id: data.id,
+                });
+
+                handle?.();
+            }
         }
     };
 

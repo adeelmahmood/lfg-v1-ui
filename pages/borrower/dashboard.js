@@ -11,14 +11,21 @@ export default function BorrowerGenInfo() {
     const supabase = useSupabaseClient();
     const user = useUser();
 
-    const [proposals, setProposals] = useState();
+    const [isLoading, setIsLoading] = useState(false);
+    const [proposals, setProposals] = useState([]);
 
     const fetchProposals = async () => {
+        setIsLoading(true);
         const { data, error } = await supabase
             .from(SUPABASE_TABLE_LOAN_PROPOSALS)
-            .select(`*,user_identity_verifications ( verification_status, verification_message)`)
+            .select(
+                `*, 
+                loan_proposals_status (*), 
+                user_identity_verifications ( verification_status, verification_message)`
+            )
             .eq("user_id", user.id);
 
+        setIsLoading(false);
         setProposals(data);
     };
 
@@ -42,11 +49,14 @@ export default function BorrowerGenInfo() {
         );
     };
 
+    const getStatus = (p) => {
+        return p?.loan_proposals_status?.length > 0 && p.loan_proposals_status[0].status;
+    };
+
     const getVerificationReason = (p) => {
-        console.log(p);
         return p?.user_identity_verifications?.length > 0 &&
-            p.user_identity_verifications[0]?.verification_message
-            ? p.user_identity_verifications[0]?.verification_message
+            p.user_identity_verifications[0].verification_message
+            ? p.user_identity_verifications[0].verification_message
             : "Unverified";
     };
 
@@ -81,94 +91,210 @@ export default function BorrowerGenInfo() {
                     </a>
                 </div>
 
-                <div className="mt-10 grid grid-cols-1 gap-14 md:grid-cols-2 lg:grid-cols-3">
+                <div className="mt-10 hidden w-full overflow-x-auto rounded-lg shadow-md sm:flex  md:w-3/4">
+                    <table className="w-full text-left text-sm text-gray-800">
+                        <thead className="bg-slate-600 text-xs uppercase tracking-wider text-gray-200 dark:bg-gray-600">
+                            <tr>
+                                <th scope="col" className="py-3 px-6" colSpan={2}>
+                                    Proposal
+                                </th>
+                                <th scope="col" className="py-3 px-6 text-center">
+                                    Identity Verified
+                                </th>
+                                <th scope="col" className="py-3 px-6 text-center">
+                                    Status
+                                </th>
+                                <th scope="col" className="py-3 px-6 text-center">
+                                    View
+                                </th>
+                                <th scope="col" className="py-3 px-6 text-center">
+                                    Edit
+                                </th>
+                                <th scope="col" className="py-3 px-6 text-center">
+                                    Delete
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {isLoading && (
+                                <tr>
+                                    <td
+                                        colSpan={5}
+                                        className="py-4 px-6 font-semibold dark:text-gray-200"
+                                    >
+                                        Loading Proposals ...
+                                    </td>
+                                </tr>
+                            )}
+                            {!isLoading && proposals.length == 0 && (
+                                <tr>
+                                    <td
+                                        colSpan={5}
+                                        className="py-4 px-6 font-semibold dark:text-gray-200"
+                                    >
+                                        No Propopsals Yet
+                                    </td>
+                                </tr>
+                            )}
+                            {proposals.map((p, index) => {
+                                return (
+                                    <tr
+                                        key={index}
+                                        className="border-t border-gray-300 bg-white hover:bg-gray-50 dark:border-gray-500 dark:bg-gray-500/20 dark:hover:bg-gray-600/20"
+                                    >
+                                        <td className="py-4 px-6" colSpan={2}>
+                                            <div className="flex">
+                                                <img
+                                                    className="h-24 w-24 rounded-full object-cover object-center"
+                                                    src={p.banner_image}
+                                                    alt=""
+                                                />
+                                                <div className="ml-5">
+                                                    <div className="mb-2 text-xl font-bold dark:text-gray-300">
+                                                        {getSelected(
+                                                            p.business_title,
+                                                            p.business_tagline,
+                                                            p.tagline_manual_picked,
+                                                            p.tagline_gen_picked
+                                                        )}
+                                                    </div>
+                                                    <p className="text-base text-gray-700 dark:text-gray-400">
+                                                        {trimText(
+                                                            getSelected(
+                                                                p.business_description,
+                                                                p.business_gen_description,
+                                                                p.description_manual_picked,
+                                                                p.description_gen_picked
+                                                            ),
+                                                            100
+                                                        )}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="py-4 px-6 text-center dark:text-gray-200">
+                                            {getStatus(p)}
+                                        </td>
+                                        <td className="py-4 px-6 text-center dark:text-gray-200">
+                                            {isVerified(p) ? "Verified" : getVerificationReason(p)}
+                                        </td>
+                                        <td className="py-4 px-6 text-center">
+                                            <a
+                                                href="#"
+                                                className="btn-clear"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    showDepositModal(token);
+                                                }}
+                                            >
+                                                View
+                                            </a>
+                                        </td>
+                                        <td className="py-4 px-6 text-center">
+                                            <a
+                                                href="#"
+                                                className="btn-clear"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    showDepositModal(token);
+                                                }}
+                                            >
+                                                Edit
+                                            </a>
+                                        </td>
+                                        <td className="py-4 px-6 text-center">
+                                            <a
+                                                href="#"
+                                                className="btn-clear"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    showDepositModal(token);
+                                                }}
+                                            >
+                                                Delete
+                                            </a>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className="mt-10 grid grid-cols-1 gap-14 sm:hidden md:grid-cols-2 lg:grid-cols-3">
                     {proposals?.map((p, i) => {
                         return (
                             <div
                                 key={i}
                                 className="relative w-full space-y-5 overflow-hidden rounded-xl shadow-lg dark:bg-gray-700/50"
                             >
-                                <div className="relative pb-2/3">
-                                    <img
-                                        className="absolute h-full w-full object-cover object-center"
-                                        src={p.banner_image}
-                                        alt=""
-                                    />
-                                </div>
-
-                                {isVerified(p) ? (
-                                    <div className="absolute -right-10 -top-2 m-0 grid h-12 w-40 rotate-45 place-items-center rounded-lg bg-green-600 shadow-md">
-                                        <CheckCircleIcon
-                                            className="absolute  inline h-8 -rotate-45 fill-current text-white"
-                                            title="Identity Verified Successfully"
+                                <div>
+                                    <div className="flex px-4 pt-4">
+                                        <img
+                                            className="h-24 w-24 rounded-full object-cover object-center"
+                                            src={p.banner_image}
+                                            alt=""
                                         />
+                                        <div className="ml-5">
+                                            <div className="mb-2 text-xl font-bold dark:text-gray-300">
+                                                {getSelected(
+                                                    p.business_title,
+                                                    p.business_tagline,
+                                                    p.tagline_manual_picked,
+                                                    p.tagline_gen_picked
+                                                )}
+                                            </div>
+                                            <p className="text-base text-gray-700 dark:text-gray-400">
+                                                {trimText(
+                                                    getSelected(
+                                                        p.business_description,
+                                                        p.business_gen_description,
+                                                        p.description_manual_picked,
+                                                        p.description_gen_picked
+                                                    ),
+                                                    100
+                                                )}
+                                            </p>
+                                        </div>
                                     </div>
-                                ) : (
-                                    <div className="absolute -right-10 -top-2 m-0 grid h-12 w-40 rotate-45 place-items-center rounded-lg bg-orange-600 shadow-md">
-                                        <ExclamationCircleIcon
-                                            className="absolute inline h-8 -rotate-45 fill-current text-white"
-                                            title={getVerificationReason(p)}
-                                        />
-                                    </div>
-                                )}
-
-                                <div className="px-6 pt-4">
-                                    <div className="mb-2 text-xl font-bold dark:text-gray-300">
-                                        {getSelected(
-                                            p.business_title,
-                                            p.business_tagline,
-                                            p.tagline_manual_picked,
-                                            p.tagline_gen_picked
-                                        )}
-                                    </div>
-                                    <p className="mt-4 text-base text-gray-700 dark:text-gray-400">
-                                        {trimText(
-                                            getSelected(
-                                                p.business_description,
-                                                p.business_gen_description,
-                                                p.description_manual_picked,
-                                                p.description_gen_picked
-                                            ),
-                                            100
-                                        )}
-                                    </p>
-                                    <p className="mt-2 text-base text-gray-700 dark:text-gray-400">
-                                        {trimText(
-                                            getSelected(
-                                                p.loan_reasoning,
-                                                p.loan_gen_reasoning,
-                                                p.reasoning_manual_picked,
-                                                p.reasoning_gen_picked
-                                            ),
-                                            100
-                                        )}
-                                    </p>
                                 </div>
-                                <div className="flex flex-col items-start space-y-2 px-4 pb-4 dark:text-gray-300">
-                                    <div className="rounded-lg px-2 py-1">
+                                <div className="flex flex-col px-4 pb-4">
+                                    <div className="flex justify-between border-b border-gray-600">
                                         <span className="">Proposal Status:</span>
-                                        <span className="font-semibold"> {p.status}</span>
+                                        <span className="font-semibold">{getStatus(p)}</span>
                                     </div>
-                                    <Link
-                                        href={`/borrower/proposals/${p.id}`}
-                                        className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                    >
-                                        View Proposal
-                                    </Link>
-                                    <button
-                                        href={`/borrower/proposals/${p.id}`}
-                                        className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                        disabled={true}
-                                    >
-                                        Edit Proposal
-                                    </button>
-                                    <button
-                                        href={`/borrower/proposals/${p.id}`}
-                                        className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                        disabled={true}
-                                    >
-                                        Delete Proposal
-                                    </button>
+                                    <div className="mt-2 mb-6 flex justify-between border-b border-gray-600">
+                                        <span className="mr-2">Identity Verified:</span>
+                                        {isVerified(p) ? (
+                                            <span className="font-medium text-green-600">Yes</span>
+                                        ) : (
+                                            <span className="font-medium text-red-500">
+                                                {getVerificationReason(p)}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="flex flex-col space-y-2">
+                                        <Link
+                                            href={`/borrower/proposals/${p.id}`}
+                                            className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-center text-xs font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+                                            View Proposal
+                                        </Link>
+                                        <button
+                                            href={`/borrower/proposals/${p.id}`}
+                                            className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-xs font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                            disabled={true}
+                                        >
+                                            Edit Proposal
+                                        </button>
+                                        <button
+                                            href={`/borrower/proposals/${p.id}`}
+                                            className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-xs font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                            disabled={true}
+                                        >
+                                            Delete Proposal
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         );

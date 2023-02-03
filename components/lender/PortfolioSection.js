@@ -119,14 +119,20 @@ export default function PortfolioSection() {
                     <tbody>
                         {isLoading && (
                             <tr>
-                                <td colSpan={5} className="py-4 px-6 font-semibold">
+                                <td
+                                    colSpan={5}
+                                    className="py-4 px-6 font-semibold dark:text-gray-200"
+                                >
                                     Loading Data ...
                                 </td>
                             </tr>
                         )}
                         {!isLoading && portfolioData.length == 0 && (
                             <tr>
-                                <td colSpan={5} className="py-4 px-6 font-semibold">
+                                <td
+                                    colSpan={5}
+                                    className="py-4 px-6 font-semibold dark:text-gray-200"
+                                >
                                     No Deposits Yet
                                 </td>
                             </tr>

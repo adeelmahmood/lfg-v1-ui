@@ -65,9 +65,9 @@ export default function Home() {
                                     </div>
                                 </div>
 
-                                <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+                                <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2">
                                     <div className="items-center justify-center space-y-4 rounded-lg py-4 px-6 text-center shadow-md dark:bg-gray-800">
-                                        <p className="mb-2 text-lg leading-8 text-gray-600 dark:text-gray-300">
+                                        <p className="text-lg leading-8 text-gray-600 dark:text-gray-300">
                                             Deposit and earn interest. Participate in a
                                             community-driven lending protocol. Vote on borrow
                                             proposals and learn about what they do.
@@ -79,13 +79,11 @@ export default function Home() {
                                             <div className="text-3xl font-bold tracking-wide">
                                                 {displayUnits(liquidityData.totalCollateral)} ETH
                                             </div>
-                                            <h2 className="text-2xl tracking-tight">
-                                                Deposited Collateral
-                                            </h2>
+                                            <h2 className="text-2xl">Deposited Collateral</h2>
                                         </div>
                                     </div>
                                     <div className="items-center justify-center space-y-4 rounded-lg px-6 py-4 text-center shadow-md dark:bg-gray-800">
-                                        <p className="mb-2 text-lg leading-8 text-gray-600 dark:text-gray-300">
+                                        <p className="text-lg leading-8 text-gray-600 dark:text-gray-300">
                                             Provide exposure to your business to crypto community
                                             and apply for zero to low collateral loans. Develop a
                                             community.
@@ -97,9 +95,7 @@ export default function Home() {
                                             <div className="text-3xl font-bold tracking-wide">
                                                 {displayUnits(liquidityData.availableToBorrow)} ETH
                                             </div>
-                                            <div className="text-2xl tracking-tight">
-                                                Availabe to Borrow
-                                            </div>
+                                            <div className="text-2xl">Availabe to Borrow</div>
                                         </div>
                                     </div>
                                 </div>

@@ -143,7 +143,10 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                     <tbody>
                         {isLoading && (
                             <tr>
-                                <td colSpan={5} className="py-4 px-6 font-semibold">
+                                <td
+                                    colSpan={5}
+                                    className="py-4 px-6 font-semibold dark:text-gray-200"
+                                >
                                     Loading Tokens ...
                                 </td>
                             </tr>
