@@ -12,6 +12,9 @@ export default function BorrowerGenInfo() {
     const user = useUser();
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [error, setError] = useState();
+
     const [proposals, setProposals] = useState([]);
 
     const fetchProposals = async () => {
@@ -26,7 +29,24 @@ export default function BorrowerGenInfo() {
             .eq("user_id", user.id);
 
         setIsLoading(false);
-        setProposals(data);
+        if (error) setError(error.message);
+        else setProposals(data);
+    };
+
+    const deleteProposal = async (p, i) => {
+        setIsDeleting(true);
+        const { data, error } = await supabase
+            .from(SUPABASE_TABLE_LOAN_PROPOSALS)
+            .delete()
+            .eq("id", p.id);
+        if (error) {
+            setError(error.message);
+            console.log(error);
+            console.log(data);
+        } else {
+            console.log(data);
+            proposals.splice(i, 1);
+        }
     };
 
     useEffect(() => {
@@ -91,7 +111,9 @@ export default function BorrowerGenInfo() {
                     </a>
                 </div>
 
-                <div className="mt-10 hidden w-full overflow-x-auto rounded-lg shadow-md sm:flex  md:w-3/4">
+                {error && <p className="mt-4 text-red-500">{error}</p>}
+
+                <div className="mt-8 hidden w-full overflow-x-auto rounded-lg shadow-md sm:flex  md:w-3/4">
                     <table className="w-full text-left text-sm text-gray-800">
                         <thead className="bg-slate-600 text-xs uppercase tracking-wider text-gray-200 dark:bg-gray-600">
                             <tr>
@@ -116,16 +138,6 @@ export default function BorrowerGenInfo() {
                             </tr>
                         </thead>
                         <tbody>
-                            {isLoading && (
-                                <tr>
-                                    <td
-                                        colSpan={5}
-                                        className="py-4 px-6 font-semibold dark:text-gray-200"
-                                    >
-                                        Loading Proposals ...
-                                    </td>
-                                </tr>
-                            )}
                             {!isLoading && proposals.length == 0 && (
                                 <tr>
                                     <td
@@ -176,7 +188,15 @@ export default function BorrowerGenInfo() {
                                             {getStatus(p)}
                                         </td>
                                         <td className="py-4 px-6 text-center dark:text-gray-200">
-                                            {isVerified(p) ? "Verified" : getVerificationReason(p)}
+                                            {isVerified(p) ? (
+                                                <span className="font-medium text-green-600">
+                                                    Verified
+                                                </span>
+                                            ) : (
+                                                <span className="font-medium text-red-500">
+                                                    {getVerificationReason(p)}
+                                                </span>
+                                            )}
                                         </td>
                                         <td className="py-4 px-6 text-center">
                                             <a
@@ -208,7 +228,7 @@ export default function BorrowerGenInfo() {
                                                 className="btn-clear"
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    showDepositModal(token);
+                                                    deleteProposal(p, index);
                                                 }}
                                             >
                                                 Delete
@@ -259,14 +279,16 @@ export default function BorrowerGenInfo() {
                                     </div>
                                 </div>
                                 <div className="flex flex-col px-4 pb-4">
-                                    <div className="flex justify-between border-b border-gray-600">
+                                    <div className="flex justify-between border-b border-gray-300 dark:border-gray-500">
                                         <span className="">Proposal Status:</span>
                                         <span className="font-semibold">{getStatus(p)}</span>
                                     </div>
-                                    <div className="mt-2 mb-6 flex justify-between border-b border-gray-600">
+                                    <div className="mt-2 mb-6 flex justify-between border-b border-gray-300 dark:border-gray-500">
                                         <span className="mr-2">Identity Verified:</span>
                                         {isVerified(p) ? (
-                                            <span className="font-medium text-green-600">Yes</span>
+                                            <span className="font-medium text-green-600">
+                                                Verified
+                                            </span>
                                         ) : (
                                             <span className="font-medium text-red-500">
                                                 {getVerificationReason(p)}
@@ -288,9 +310,8 @@ export default function BorrowerGenInfo() {
                                             Edit Proposal
                                         </button>
                                         <button
-                                            href={`/borrower/proposals/${p.id}`}
                                             className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-xs font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                            disabled={true}
+                                            onClick={() => deleteProposal(p, i)}
                                         >
                                             Delete Proposal
                                         </button>
