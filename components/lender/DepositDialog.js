@@ -170,10 +170,8 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                                     </Dialog.Title>
                                     <div className="mt-2">
                                         <p className="text-sm text-gray-500">
-                                            Transfer your{" "}
-                                            <span className="pr-1 font-bold">
-                                                {token?.tokenName}
-                                            </span>
+                                            Transfer your
+                                            <span className="font-bold"> {token?.tokenName} </span>
                                             tokens to deposit in the contract
                                         </p>
                                     </div>

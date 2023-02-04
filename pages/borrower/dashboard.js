@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../../utils/Constants";
 import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
+import DialogComponent from "../../components/DialogComponent";
 
 export default function BorrowerGenInfo() {
     const supabase = useSupabaseClient();
@@ -16,6 +17,9 @@ export default function BorrowerGenInfo() {
     const [error, setError] = useState();
 
     const [proposals, setProposals] = useState([]);
+    const [selected, setSelected] = useState();
+
+    const [deleteModal, setDeleteModal] = useState(false);
 
     const fetchProposals = async () => {
         setIsLoading(true);
@@ -33,19 +37,22 @@ export default function BorrowerGenInfo() {
         else setProposals(data);
     };
 
-    const deleteProposal = async (p, i) => {
+    const deleteProposal = (p) => {
+        setSelected(p);
+        setDeleteModal(true);
+    };
+
+    const handleDeleteProposal = async (p) => {
         setIsDeleting(true);
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from(SUPABASE_TABLE_LOAN_PROPOSALS)
             .delete()
             .eq("id", p.id);
         if (error) {
             setError(error.message);
             console.log(error);
-            console.log(data);
         } else {
-            console.log(data);
-            proposals.splice(i, 1);
+            setProposals(proposals.filter((pr) => pr.id != p.id));
         }
     };
 
@@ -84,6 +91,23 @@ export default function BorrowerGenInfo() {
         <>
             <TopGradient />
             <Navbar />
+
+            <DialogComponent
+                isModelOpen={deleteModal}
+                modelCloseHandler={() => setDeleteModal(!deleteModal)}
+                heading="Delete Confirmation"
+            >
+                <p className="mt-4">Are you sure you want to delete this proposal?</p>
+                <button
+                    className="btn-clear mt-4"
+                    onClick={() => {
+                        setDeleteModal(false);
+                        handleDeleteProposal(selected);
+                    }}
+                >
+                    Delete
+                </button>
+            </DialogComponent>
 
             <div className="pt- container mx-auto p-6">
                 <div className="mt-8 mb-4 flex items-center justify-between">
@@ -199,28 +223,24 @@ export default function BorrowerGenInfo() {
                                             )}
                                         </td>
                                         <td className="py-4 px-6 text-center">
-                                            <a
-                                                href="#"
+                                            <Link
+                                                href={`/borrower/proposals/${p.id}`}
                                                 className="btn-clear"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    showDepositModal(token);
-                                                }}
                                             >
                                                 View
-                                            </a>
+                                            </Link>
                                         </td>
                                         <td className="py-4 px-6 text-center">
-                                            <a
+                                            <button
                                                 href="#"
                                                 className="btn-clear"
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    showDepositModal(token);
                                                 }}
+                                                disabled={true}
                                             >
                                                 Edit
-                                            </a>
+                                            </button>
                                         </td>
                                         <td className="py-4 px-6 text-center">
                                             <a
@@ -228,7 +248,7 @@ export default function BorrowerGenInfo() {
                                                 className="btn-clear"
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    deleteProposal(p, index);
+                                                    deleteProposal(p);
                                                 }}
                                             >
                                                 Delete
@@ -311,7 +331,7 @@ export default function BorrowerGenInfo() {
                                         </button>
                                         <button
                                             className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-xs font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                            onClick={() => deleteProposal(p, i)}
+                                            onClick={() => deleteProposal(p)}
                                         >
                                             Delete Proposal
                                         </button>

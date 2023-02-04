@@ -79,70 +79,72 @@ export default function LoanPropospals() {
                         return (
                             <div
                                 key={i}
-                                className="relative w-full cursor-pointer overflow-hidden rounded-xl shadow-lg hover:shadow-xl dark:bg-gray-700/50 dark:hover:shadow-md dark:hover:shadow-white"
+                                className="relative w-full overflow-hidden rounded-xl shadow-lg hover:shadow-xl dark:bg-gray-700/50 dark:hover:shadow-md dark:hover:shadow-white"
                             >
-                                <div className="relative pb-2/3">
-                                    <img
-                                        className="absolute h-full w-full object-cover object-center"
-                                        src={p.banner_image}
-                                        alt=""
-                                    />
-                                </div>
-
-                                {isVerified(p) ? (
-                                    <div
-                                        aria-hidden="true"
-                                        className="absolute -right-12 top-4 m-0 grid h-12 w-44 rotate-45 place-items-center rounded-lg bg-green-600 shadow-md"
-                                    >
-                                        <CheckCircleIcon
-                                            className="absolute  inline h-8 -rotate-45 fill-current text-white"
-                                            title="Identity Verified Successfully"
+                                <Link href={`/borrower/proposals/${p.id}`}>
+                                    <div className="relative pb-2/3">
+                                        <img
+                                            className="absolute h-full w-full object-cover object-center"
+                                            src={p.banner_image}
+                                            alt=""
                                         />
                                     </div>
-                                ) : (
-                                    <div
-                                        aria-hidden="true"
-                                        className="absolute -right-12 top-4 m-0 grid h-12 w-44 rotate-45 place-items-center rounded-lg bg-orange-600 shadow-md"
-                                    >
-                                        <ExclamationCircleIcon
-                                            className="absolute inline h-8 -rotate-45 fill-current text-white"
-                                            title={getVerificationReason(p)}
-                                        />
-                                    </div>
-                                )}
 
-                                <div className="px-6 py-4">
-                                    <div className="text-xl font-bold dark:text-gray-300">
-                                        {getSelected(
-                                            p.business_title,
-                                            p.business_tagline,
-                                            p.tagline_manual_picked,
-                                            p.tagline_gen_picked
-                                        )}
+                                    {isVerified(p) ? (
+                                        <div
+                                            aria-hidden="true"
+                                            className="absolute -right-12 top-4 m-0 grid h-12 w-44 rotate-45 place-items-center rounded-lg bg-green-600 shadow-md"
+                                        >
+                                            <CheckCircleIcon
+                                                className="absolute  inline h-8 -rotate-45 fill-current text-white"
+                                                title="Identity Verified Successfully"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div
+                                            aria-hidden="true"
+                                            className="absolute -right-12 top-4 m-0 grid h-12 w-44 rotate-45 place-items-center rounded-lg bg-orange-600 shadow-md"
+                                        >
+                                            <ExclamationCircleIcon
+                                                className="absolute inline h-8 -rotate-45 fill-current text-white"
+                                                title={getVerificationReason(p)}
+                                            />
+                                        </div>
+                                    )}
+
+                                    <div className="px-6 py-4">
+                                        <div className="text-xl font-bold dark:text-gray-300">
+                                            {getSelected(
+                                                p.business_title,
+                                                p.business_tagline,
+                                                p.tagline_manual_picked,
+                                                p.tagline_gen_picked
+                                            )}
+                                        </div>
+                                        <p className="mt-2 text-base text-gray-700 dark:text-gray-400">
+                                            {trimText(
+                                                getSelected(
+                                                    p.business_description,
+                                                    p.business_gen_description,
+                                                    p.description_manual_picked,
+                                                    p.description_gen_picked
+                                                ),
+                                                100
+                                            )}
+                                        </p>
+                                        <p className="mt-2 text-base text-gray-700 dark:text-gray-400">
+                                            {trimText(
+                                                getSelected(
+                                                    p.loan_reasoning,
+                                                    p.loan_gen_reasoning,
+                                                    p.reasoning_manual_picked,
+                                                    p.reasoning_gen_picked
+                                                ),
+                                                100
+                                            )}
+                                        </p>
                                     </div>
-                                    <p className="mt-2 text-base text-gray-700 dark:text-gray-400">
-                                        {trimText(
-                                            getSelected(
-                                                p.business_description,
-                                                p.business_gen_description,
-                                                p.description_manual_picked,
-                                                p.description_gen_picked
-                                            ),
-                                            100
-                                        )}
-                                    </p>
-                                    <p className="mt-2 text-base text-gray-700 dark:text-gray-400">
-                                        {trimText(
-                                            getSelected(
-                                                p.loan_reasoning,
-                                                p.loan_gen_reasoning,
-                                                p.reasoning_manual_picked,
-                                                p.reasoning_gen_picked
-                                            ),
-                                            100
-                                        )}
-                                    </p>
-                                </div>
+                                </Link>
                             </div>
                         );
                     })}

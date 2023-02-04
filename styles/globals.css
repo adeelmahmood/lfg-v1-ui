@@ -10,7 +10,7 @@
 
 @layer components {
     .btn-primary {
-        @apply inline-block rounded-lg bg-indigo-600 px-4 py-1.5 text-base 
+        @apply inline-block rounded-lg bg-indigo-600 px-4 py-2 text-base 
             font-semibold leading-7 text-white shadow-sm ring-1 
             ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 
             dark:bg-gray-200 dark:text-gray-800 dark:ring-gray-300 
