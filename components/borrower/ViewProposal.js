@@ -1,6 +1,6 @@
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
-import { HandThumbUpIcon, EnvelopeIcon } from "@heroicons/react/24/solid";
+import { HandThumbUpIcon, ArchiveBoxArrowDownIcon } from "@heroicons/react/24/solid";
 
 export default function ViewProposal({ loanProposal, ...rest }) {
     const supabase = useSupabaseClient();
@@ -49,7 +49,7 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                                 className="h-full w-full object-cover"
                             />
                         </div>
-                        <div className="ml-5 flex flex-col">
+                        <div className="ml-3 flex flex-col">
                             <span className="font-semibold text-gray-800 dark:text-gray-200">
                                 {user?.user_metadata.full_name}
                             </span>
@@ -65,7 +65,7 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                             <span className="ml-2 hidden md:inline">Like this Proposal</span>
                         </button>
                         <button className="btn-primary text-base">
-                            <EnvelopeIcon className="inline h-6 fill-current align-top text-white dark:text-gray-800" />
+                            <ArchiveBoxArrowDownIcon className="inline h-6 fill-current align-top text-white dark:text-gray-800" />
                             <span className="ml-2 hidden md:inline">Vote on this Proposal</span>
                         </button>
                     </div>
