@@ -17,10 +17,13 @@ export default function LoanProposal({}) {
 
     useEffect(() => {
         async function fetchProposal(pid) {
-            console.log("fetching for ", pid);
             const { data, error } = await supabase
                 .from(SUPABASE_TABLE_LOAN_PROPOSALS)
-                .select()
+                .select(
+                    `*, 
+                    loan_proposals_status (*), 
+                    user_identity_verifications ( verification_status, verification_message)`
+                )
                 .eq("id", pid)
                 .single();
             if (data) {

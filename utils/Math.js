@@ -41,3 +41,10 @@ export const display1e4 = (number) => {
     const val = Math.round(number * 1e4) / 1e4;
     return val / 100;
 };
+
+export const uuidToInt = (uuid) => {
+    const bigIntValue = BigInt("0x" + uuid.replace(/-/g, ""));
+    const num = bigIntValue.toString();
+    console.log(num);
+    return num;
+};

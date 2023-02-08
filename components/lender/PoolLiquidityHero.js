@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAccount, useContractRead } from "wagmi";
 import addresses from "../../constants/contract.json";
-import abi from "../../constants/lendingpool.json";
+import abi from "../../constants/LendPool.json";
 import { display1e4, displayUnits } from "../../utils/Math";
 
 export default function PoolLiquidityHero() {
@@ -11,7 +11,7 @@ export default function PoolLiquidityHero() {
     const [liquidityData, setLiquidityData] = useState([]);
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
-    const lendingPoolAddress = addresses[chainId].LendingPool[0];
+    const lendingPoolAddress = addresses[chainId].LendPool;
 
     useContractRead({
         address: lendingPoolAddress,

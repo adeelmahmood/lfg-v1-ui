@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAccount, useContractRead } from "wagmi";
 import addresses from "../../constants/contract.json";
-import abi from "../../constants/lendingpool.json";
+import abi from "../../constants/LendPool.json";
 import { calculateAPY, displayPercent, displayUnits } from "../../utils/Math";
 import ImageWithFallback from "../ImageWithFallback";
 import { Switch } from "@headlessui/react";
@@ -20,7 +20,7 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
     const [filteredTokenMarketData, setFilteredTokenMarketData] = useState([]);
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
-    const lendingPoolAddress = addresses[chainId].LendingPool[0];
+    const lendingPoolAddress = addresses[chainId].LendPool;
 
     useContractRead({
         address: lendingPoolAddress,
@@ -56,11 +56,13 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
 
     return (
         <>
-            <DepositDialog
-                isModelOpen={depositModal}
-                modelCloseHandler={() => setDepositModal(false)}
-                token={selectedToken}
-            />
+            {depositModal && (
+                <DepositDialog
+                    isModelOpen={depositModal}
+                    modelCloseHandler={() => setDepositModal(false)}
+                    token={selectedToken}
+                />
+            )}
 
             <div className="mb-4 flex items-center">
                 <Switch

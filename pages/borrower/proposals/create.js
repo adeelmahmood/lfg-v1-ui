@@ -118,7 +118,7 @@ export default function LoanProposal() {
                         <div className="mt-10 flex flex-col space-y-6 px-6">
                             {stages.map((s, index) => {
                                 return (
-                                    <div className="flex items-start">
+                                    <div className="flex items-start" key={index}>
                                         <a
                                             key={index}
                                             href={s.href}

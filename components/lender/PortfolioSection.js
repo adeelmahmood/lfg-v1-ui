@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAccount, useContractRead, useContractWrite } from "wagmi";
 import addresses from "../../constants/contract.json";
-import abi from "../../constants/lendingpool.json";
+import abi from "../../constants/LendPool.json";
 import { displayUnits } from "../../utils/Math";
 import WithdrawDialog from "./WithdrawDialog";
 import ImageWithFallback from "../ImageWithFallback";
@@ -16,7 +16,7 @@ export default function PortfolioSection() {
     const [portfolioData, setPortfolioData] = useState([]);
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
-    const lendingPoolAddress = addresses[chainId].LendingPool[0];
+    const lendingPoolAddress = addresses[chainId].LendPool;
 
     useContractRead({
         address: lendingPoolAddress,
@@ -40,11 +40,13 @@ export default function PortfolioSection() {
 
     return (
         <>
-            <WithdrawDialog
-                isModelOpen={withdrawModal}
-                modelCloseHandler={() => setWithdrawModal(false)}
-                token={selectedToken}
-            />
+            {withdrawModal && (
+                <WithdrawDialog
+                    isModelOpen={withdrawModal}
+                    modelCloseHandler={() => setWithdrawModal(false)}
+                    token={selectedToken}
+                />
+            )}
 
             <div className="grid grid-cols-1 gap-y-4 sm:hidden">
                 <h2 className="rounded-lg bg-slate-600 py-4 px-4 font-semibold uppercase tracking-wider text-gray-200 dark:bg-blue-600 dark:text-gray-200">

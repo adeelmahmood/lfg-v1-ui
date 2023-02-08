@@ -8,7 +8,7 @@ import { useUser } from "@supabase/auth-helpers-react";
 import { useAccount, useContractRead } from "wagmi";
 import { useState } from "react";
 import addresses from "../constants/contract.json";
-import abi from "../constants/lendingpool.json";
+import abi from "../constants/LendPool.json";
 import { displayUnits } from "../utils/Math";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -22,7 +22,7 @@ export default function Home() {
     const [liquidityData, setLiquidityData] = useState([]);
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
-    const lendingPoolAddress = addresses[chainId].LendingPool[0];
+    const lendingPoolAddress = addresses[chainId].LendPool;
 
     useContractRead({
         address: lendingPoolAddress,

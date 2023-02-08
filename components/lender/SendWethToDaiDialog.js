@@ -7,7 +7,7 @@ import {
     useWaitForTransaction,
 } from "wagmi";
 import addresses from "../../constants/contract.json";
-import abi from "../../constants/swaprouter.json";
+import abi from "../../constants/SwapRouter.json";
 import { parseEther } from "ethers/lib/utils.js";
 import useIsMounted from "../../hooks/useIsMounted";
 import { erc20ABI } from "wagmi";
@@ -33,7 +33,7 @@ export default function SendWethToDaiDialog({
     const [isLoading, setIsLoading] = useState(false);
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
-    const swapRouterAddress = addresses[chainId].SwapRouter[0];
+    const swapRouterAddress = addresses[chainId].SwapRouter;
     const approveFunctionName = "approve";
     const swapFunctionName = "swap";
 

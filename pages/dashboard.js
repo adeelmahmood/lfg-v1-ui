@@ -5,14 +5,12 @@ import BottomGradient from "../components/BottomGradient";
 import { useState } from "react";
 import SendEthToWethDialog from "../components/lender/SendEthToWethDialog";
 import SendWethToDaiDialog from "../components/lender/SendWethToDaiDialog";
-import DepositDialog from "../components/lender/DepositDialog";
 import PortfolioSection from "../components/lender/PortfolioSection";
 import TokensMarketDataSection from "../components/lender/TokensMarketDataSection";
 
 export default function Dashboard() {
     const [sendEthToWethModal, setSendEthToWethModal] = useState(false);
     const [sendWethToDaiModal, setSendWethToDaiModal] = useState(false);
-    const [depositModal, setDepositModal] = useState(false);
 
     const [tokenMarketDataForCaller, setTokenMarketDataForCaller] = useState([]);
 
@@ -38,11 +36,6 @@ export default function Dashboard() {
                         tokenMarketDataForCaller={tokenMarketDataForCaller}
                     />
                 )}
-
-                <DepositDialog
-                    isModelOpen={depositModal}
-                    modelCloseHandler={() => setDepositModal(false)}
-                />
 
                 <div className="mt-8 mb-4 flex items-center justify-between">
                     <h2 className="max-w-6xl text-5xl font-bold tracking-wider text-white">

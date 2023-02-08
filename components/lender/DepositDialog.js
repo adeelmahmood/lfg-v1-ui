@@ -7,7 +7,7 @@ import {
     useWaitForTransaction,
 } from "wagmi";
 import addresses from "../../constants/contract.json";
-import abi from "../../constants/lendingpool.json";
+import abi from "../../constants/LendPool.json";
 import { parseUnits } from "ethers/lib/utils.js";
 import useIsMounted from "../../hooks/useIsMounted";
 import { erc20ABI } from "wagmi";
@@ -25,7 +25,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
     const [isApproved, setIsApproved] = useState(false);
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
-    const lendingPoolAddress = addresses[chainId].LendingPool[0];
+    const lendingPoolAddress = addresses[chainId].LendPool;
     const approveFunctionName = "approve";
     const depositFunctionName = "deposit";
 

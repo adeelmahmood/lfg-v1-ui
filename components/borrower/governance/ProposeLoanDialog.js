@@ -1,97 +1,117 @@
-import { Dialog, Switch, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useState } from "react";
 import {
     useAccount,
     useContractWrite,
     usePrepareContractWrite,
     useWaitForTransaction,
 } from "wagmi";
-import addresses from "../../constants/contract.json";
-import abi from "../../constants/LendPool.json";
-import { parseEther, parseUnits } from "ethers/lib/utils.js";
-import useIsMounted from "../../hooks/useIsMounted";
+import addresses from "../../../constants/contract.json";
+import governorAbi from "../../../constants/LoanGovernor.json";
+import loanManagerAbi from "../../../constants/LoanManager.json";
+import { ethers } from "ethers";
+import { parseEther } from "ethers/lib/utils.js";
+import { Dialog, Transition } from "@headlessui/react";
+import {
+    DAI_ADDRESS,
+    SUPABASE_TABLE_LOAN_PROPOSALS,
+    SUPABASE_TABLE_LOAN_PROPOSALS_STATUS,
+} from "../../../utils/Constants";
+import { Fragment, useEffect, useState } from "react";
+import useIsMounted from "../../../hooks/useIsMounted";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
-export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }) {
+export default function ProposeLoanDialog({ isModelOpen, modelCloseHandler, loanProposal }) {
     let [isOpen, setIsOpen] = useState(isModelOpen || false);
-
-    const { isConnected, address } = useAccount();
-
-    const [amount, setAmount] = useState("");
-    const [parsedAmount, setParsedAmount] = useState(0);
-
-    const [maxWithdrawl, setMaxWithdral] = useState(false);
-
     const isMounted = useIsMounted();
-    const [isLoading, setIsLoading] = useState(false);
 
+    const supabase = useSupabaseClient();
+    const user = useUser();
+
+    const [dbError, setDbError] = useState(false);
+
+    const { address, isConnected } = useAccount();
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
-    const lendingPoolAddress = addresses[chainId].LendPool;
-    const withdrawFunctionName = "withdraw";
+    const governorAddress = addresses[chainId].LoanGovernor;
+    const loanManagerAddress = addresses[chainId].LoanManager;
+    const governorFunctionName = "propose";
 
-    // request withdraw
+    const proposeFunctionName = "issueLoan";
+    const proposeFunctionArgs = [address, DAI_ADDRESS, parseEther(String(loanProposal.amount))];
+    const proposeDescription = `@@Loan Proposal {{${loanProposal.id}}}@@`;
+
+    const [encodedFunctionCall, setEncodedFunctionCall] = useState();
+
+    useEffect(() => {
+        if (!encodedFunctionCall) {
+            const loanMangerIface = new ethers.utils.Interface(loanManagerAbi);
+            setEncodedFunctionCall(
+                loanMangerIface.encodeFunctionData(proposeFunctionName, proposeFunctionArgs)
+            );
+        }
+    }, []);
+
     const {
         config,
         error: prepareError,
         isError: isPrepareError,
     } = usePrepareContractWrite({
-        address: lendingPoolAddress,
-        abi,
-        functionName: withdrawFunctionName,
-        args: [token?.token, parseEther(parsedAmount?.toString())],
-        enabled: parsedAmount > 0 || maxWithdrawl,
-        onSettled(data, err) {
-            console.log("prepare Settled", { data, error });
-        },
+        address: governorAddress,
+        abi: governorAbi,
+        functionName: governorFunctionName,
+        enabled: encodedFunctionCall,
+        args: [[loanManagerAddress], [0], [encodedFunctionCall], proposeDescription],
         onError(err) {
             console.log("prepare error", err);
         },
     });
 
-    const {
-        write: handleWithdraw,
-        data,
-        error,
-        isLoading: isWithdrawLoading,
-        isError,
-    } = useContractWrite(config);
+    const { write: handle, data, error, isLoading, isError } = useContractWrite(config);
 
-    const { isLoading: isWithdrawTxLoading, isSuccess } = useWaitForTransaction({
+    const { isLoading: isTxLoading, isSuccess: isSuccess } = useWaitForTransaction({
         hash: data?.hash,
         onSuccess(data) {
-            closeModal();
+            const eventSignature =
+                "ProposalCreated(uint256,address,address[],uint256[],string[],bytes[],uint256,uint256,string)";
+            const eventSignatureHash = ethers.utils.id(eventSignature);
+
+            const event = data.logs?.find((log) => log.topics[0] == eventSignatureHash);
+            if (event) {
+                const proposalId = ethers.utils.defaultAbiCoder.decode(["uint256"], event.data);
+                handlePublished(proposalId);
+            }
         },
         onError(err) {
             console.log("tx error", err);
         },
     });
 
-    useEffect(() => {
-        if (maxWithdrawl) {
-            setParsedAmount(0);
-        } else {
-            if (!isNaN(parseFloat(amount))) {
-                setParsedAmount(parseFloat(amount));
-            } else {
-                setParsedAmount(0);
-            }
-        }
-    }, [amount, maxWithdrawl]);
+    const handlePublished = async (proposalId) => {
+        const { error: e } = await supabase
+            .from(SUPABASE_TABLE_LOAN_PROPOSALS)
+            .update({
+                onchain_proposal_id: proposalId.toString(),
+            })
+            .eq("id", loanProposal.id);
 
-    useEffect(() => {
-        setIsLoading(isWithdrawLoading || isWithdrawTxLoading);
-    }, [isWithdrawLoading || isWithdrawTxLoading]);
+        if (e) setDbError(e.message);
+        else {
+            const { error: er } = await supabase.from(SUPABASE_TABLE_LOAN_PROPOSALS_STATUS).insert({
+                status: "Published",
+                proposal_id: loanProposal.id,
+            });
+
+            if (er) setDbError(er.message);
+            else closeModal();
+        }
+    };
 
     function closeModal() {
         setIsOpen(false);
-        setAmount("");
-        setMaxWithdral(false);
         modelCloseHandler?.();
     }
 
     useEffect(() => {
         setIsOpen(isModelOpen);
     }, [isModelOpen]);
-
     return (
         <>
             <Transition appear show={isOpen} as={Fragment}>
@@ -124,52 +144,24 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
                                         as="h3"
                                         className="text-lg font-medium leading-6 text-gray-900"
                                     >
-                                        Withdraw
+                                        Publish Proposal
                                     </Dialog.Title>
                                     <div className="mt-2">
                                         <p className="text-sm text-gray-500">
-                                            Withdraw your{" "}
-                                            <span className="font-semibold">
-                                                {token?.name} - {token?.symbol}
-                                            </span>{" "}
-                                            tokens from the contract
+                                            Publish this proposal to start the voting process
                                         </p>
                                     </div>
 
-                                    <div className="mt-3">
-                                        <input
-                                            type="text"
-                                            placeholder="0.1"
-                                            className="max-w-xs appearance-none border border-gray-400 py-2 px-3 leading-tight focus:outline-none disabled:bg-gray-200"
-                                            value={amount}
-                                            disabled={maxWithdrawl}
-                                            onChange={(e) => setAmount(e.target.value)}
-                                        />
-                                    </div>
-
-                                    <div className="mt-3">
-                                        <div className="mb-4 flex items-center">
-                                            <Switch
-                                                checked={maxWithdrawl}
-                                                onChange={setMaxWithdral}
-                                                className={`${
-                                                    maxWithdrawl ? "bg-indigo-600" : "bg-gray-200"
-                                                } h-6 w-8 rounded-full`}
-                                            />
-                                            <div className="ml-2 text-gray-600">Max amount</div>
-                                        </div>
-                                    </div>
-
-                                    <div className="mt-4 flex w-full items-center justify-between">
+                                    <div className="mt-4 w-full">
                                         <button
                                             type="button"
-                                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200
+                                            className="inline-flex rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200
                                                 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed 
                                                 disabled:opacity-50"
-                                            onClick={() => handleWithdraw?.()}
+                                            onClick={() => handle?.()}
                                             disabled={!isConnected || isLoading}
                                         >
-                                            Withdraw
+                                            Publish Proposal
                                             {isMounted() && isLoading ? (
                                                 <svg
                                                     className="text-indigo ml-3 h-5 w-5 animate-spin"
@@ -193,14 +185,16 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
                                                 </svg>
                                             ) : null}
                                         </button>
-                                        {(isPrepareError || isError) && (
+                                    </div>
+                                    <div className="mt-2 w-full">
+                                        {(isError || isPrepareError || dbError) && (
                                             <div className="text-red-500">
-                                                Error: {(prepareError || error)?.message}
+                                                {(prepareError || error || dbError)?.message}
                                             </div>
                                         )}
                                         {isSuccess && (
                                             <div className="text-green-500">
-                                                Transaction submitted, Check Wallet
+                                                Transaction submitted successfully
                                             </div>
                                         )}
                                     </div>

@@ -6,6 +6,7 @@ import { useState } from "react";
 import AvatarMenu from "./AvatarMenu";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
+import useIsMounted from "../hooks/useIsMounted";
 
 const Navbar = ({}) => {
     const supabase = useSupabaseClient();
@@ -14,6 +15,8 @@ const Navbar = ({}) => {
     const { theme, setTheme } = useTheme();
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const isMounted = useIsMounted();
 
     const toggleTheme = () => {
         setTheme(theme === "dark" ? "light" : "dark");
@@ -101,9 +104,9 @@ const Navbar = ({}) => {
                                     </div>
                                     <button onClick={toggleTheme}>
                                         {theme === "dark" ? (
-                                            <MoonIcon className="h-5 w-5 fill-current text-gray-300" />
+                                            <MoonIcon className="h-5 w-5 fill-current text-gray-300 focus:outline-none dark:text-gray-200" />
                                         ) : (
-                                            <SunIcon className="h-5 w-5 fill-current text-indigo-500" />
+                                            <SunIcon className="h-5 w-5 fill-current text-indigo-500 focus:outline-none dark:text-gray-200" />
                                         )}
                                     </button>
                                 </div>
@@ -121,24 +124,26 @@ const Navbar = ({}) => {
                         )}
                     </div>
                 </nav>
-                <div className="flex items-center space-x-4">
-                    <button onClick={toggleTheme} className="hidden lg:block">
+                {/* TODO: MoonIcon throwing a SVG error fill-rule */}
+                <div className="hidden items-center space-x-4 lg:flex">
+                    <button onClick={toggleTheme}>
                         {theme === "dark" ? (
-                            <MoonIcon className="h-5 w-5 fill-current text-gray-300" />
+                            <MoonIcon className="h-5 w-5 fill-current text-gray-300 focus:outline-none dark:text-gray-200" />
                         ) : (
-                            <SunIcon className="h-5 w-5 fill-current text-indigo-500" />
+                            <SunIcon className="h-5 w-5 fill-current text-indigo-500 focus:outline-none dark:text-gray-200" />
                         )}
                     </button>
-                    {user && <AvatarMenu className="hidden lg:block" />}
-                    {!user && (
+                    {user ? (
+                        <AvatarMenu />
+                    ) : (
                         <a
                             href="/login"
-                            className="hidden rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800 lg:block"
+                            className="rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800 lg:block"
                         >
                             Login
                         </a>
                     )}
-                    <div className="hidden lg:block">
+                    <div>
                         <ConnectButton />
                     </div>
                 </div>
