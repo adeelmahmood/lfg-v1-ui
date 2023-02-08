@@ -138,6 +138,7 @@ export default function CastVote({ loanProposal }) {
 
     function closeModal() {
         setIsOpen(false);
+        // other close actions
     }
 
     useEffect(() => {
