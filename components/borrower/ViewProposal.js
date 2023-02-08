@@ -4,9 +4,8 @@ import {
     EnvelopeOpenIcon,
     ArrowUpOnSquareStackIcon,
 } from "@heroicons/react/24/solid";
-import ProposeLoanDialog from "./governance/ProposeLoanDialog";
 import { useEffect, useState } from "react";
-import CastVote from "./governance/CastVote";
+import CastVoteDialog from "./governance/CastVoteDialog";
 import ProposalState from "./governance/ProposalState";
 import VoteCounts from "./governance/VoteCounts";
 
@@ -14,9 +13,7 @@ export default function ViewProposal({ loanProposal, ...rest }) {
     const supabase = useSupabaseClient();
     const user = useUser();
 
-    const [currentStatus, setCurrentStatus] = useState();
     const [proposeModal, setProposeModal] = useState(false);
-    const [voteModal, setVoteModal] = useState(false);
 
     let USDollar = new Intl.NumberFormat("en-US", {
         style: "currency",
@@ -37,18 +34,8 @@ export default function ViewProposal({ loanProposal, ...rest }) {
         });
     };
 
-    useEffect(() => {
-        if (!currentStatus) {
-            setCurrentStatus(getCurrentStatus(loanProposal));
-        }
-    }, []);
-
-    const getCurrentStatus = (p) => {
-        if (p.loan_proposals_status) {
-            return p.loan_proposals_status.length > 0
-                ? p.loan_proposals_status[p.loan_proposals_status.length - 1].status
-                : null;
-        }
+    const isPublished = (p) => {
+        return p?.loan_proposals_status?.find((s) => s.status == "Published");
     };
 
     return (
@@ -57,14 +44,6 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                 <ProposeLoanDialog
                     isModelOpen={proposeModal}
                     modelCloseHandler={() => setProposeModal(false)}
-                    loanProposal={loanProposal}
-                />
-            )}
-
-            {voteModal && (
-                <CastVoteDialog
-                    isModelOpen={voteModal}
-                    modelCloseHandler={() => setVoteModal(false)}
                     loanProposal={loanProposal}
                 />
             )}
@@ -106,19 +85,8 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                             <HandThumbUpIcon className="inline h-6 fill-current align-top text-gray-800 dark:text-gray-200" />
                             <span className="ml-2 hidden md:inline">Like this Proposal</span>
                         </button>
-                        {currentStatus === "Created" ? (
-                            <button
-                                className="btn-primary text-base"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    setProposeModal(true);
-                                }}
-                            >
-                                <ArrowUpOnSquareStackIcon className="inline h-6 fill-current align-top text-white dark:text-gray-800" />
-                                <span className="ml-2 hidden md:inline">Publish this Proposal</span>
-                            </button>
-                        ) : (
-                            <CastVote loanProposal={loanProposal} />
+                        {isPublished(loanProposal) && (
+                            <CastVoteDialog loanProposal={loanProposal} />
                         )}
                     </div>
                 </div>

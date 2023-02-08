@@ -1,7 +1,12 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
 
-export default function DialogComponent({ isModelOpen, modelCloseHandler, heading, children }) {
+export default function DialogComponent({
+    isModelOpen = false,
+    modelCloseHandler,
+    heading,
+    children,
+}) {
     let [isOpen, setIsOpen] = useState(isModelOpen);
 
     function closeModal() {
