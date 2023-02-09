@@ -30,7 +30,9 @@ export default function BorrowerGenInfo() {
                 loan_proposals_status (*), 
                 user_identity_verifications ( verification_status, verification_message)`
             )
+            .order("created_at", { ascending: false })
             .eq("user_id", user.id);
+        console.log("did the order");
 
         setIsLoading(false);
         if (error) setError(error.message);

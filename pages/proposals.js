@@ -4,7 +4,14 @@ import Navbar from "../components/Navbar";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../utils/Constants";
-import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
+import {
+    ArrowLongLeftIcon,
+    ArrowLongRightIcon,
+    CheckCircleIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    ExclamationCircleIcon,
+} from "@heroicons/react/24/solid";
 import Link from "next/link";
 
 export default function LoanPropospals() {
@@ -19,6 +26,7 @@ export default function LoanPropospals() {
             .select(
                 `*, loan_proposals_status (*), user_identity_verifications ( verification_status, verification_message)`
             )
+            .order("created_at", { ascending: false })
             .eq("user_id", user.id);
 
         setProposals(data);
@@ -55,12 +63,19 @@ export default function LoanPropospals() {
             : "Unverified";
     };
 
+    const leftScroll = () => {
+        document.getElementById("slider").scrollLeft -= 800;
+    };
+    const rightScroll = () => {
+        document.getElementById("slider").scrollLeft += 800;
+    };
+
     return (
         <>
             <TopGradient />
             <Navbar />
 
-            <div className="pt- container mx-auto p-6">
+            <div className="container mx-auto p-6">
                 <div className="mt-8 mb-4 flex items-center justify-between">
                     <h2 className="max-w-6xl text-5xl font-bold tracking-wider text-white">
                         <span className="bg-gradient-to-r from-indigo-500 to-green-600 bg-clip-text text-transparent">
@@ -74,80 +89,101 @@ export default function LoanPropospals() {
                     reviewing and voting on these proposals
                 </p>
 
-                <div className="mt-10 grid grid-cols-1 gap-14 md:grid-cols-2 lg:grid-cols-3">
-                    {proposals?.map((p, i) => {
-                        return (
-                            <div
-                                key={i}
-                                className="relative w-full overflow-hidden rounded-xl shadow-lg hover:shadow-xl dark:bg-gray-700/50 dark:hover:shadow-md dark:hover:shadow-white"
-                            >
-                                <Link href={`/borrower/proposals/${p.id}`}>
-                                    <div className="relative pb-2/3">
-                                        <img
-                                            className="absolute h-full w-full object-cover object-center"
-                                            src={p.banner_image}
-                                            alt=""
-                                        />
-                                    </div>
+                <div className="mt-8">
+                    <div className="inline-block rounded-lg bg-indigo-600 px-8 py-4 text-center text-lg font-semibold text-gray-200 shadow-md">
+                        All Proposals
+                    </div>
+                    <div className="mt-2 flex w-full flex-col items-end md:flex-row md:items-center">
+                        <div
+                            id="slider"
+                            className="h-full w-full space-x-8 overflow-x-scroll scroll-smooth whitespace-nowrap rounded-lg scrollbar-hide"
+                        >
+                            {proposals?.map((p, i) => {
+                                return (
+                                    <div
+                                        key={i}
+                                        className="relative inline-block h-[440px] w-[400px] overflow-hidden rounded-xl shadow-md duration-300 ease-in-out hover:scale-105 dark:bg-gray-700/50"
+                                    >
+                                        <Link href={`/borrower/proposals/${p.id}`}>
+                                            <div className="relative pb-2/3">
+                                                <img
+                                                    className="absolute h-full w-full object-cover object-center"
+                                                    src={p.banner_image}
+                                                    alt=""
+                                                />
+                                            </div>
 
-                                    {isVerified(p) ? (
-                                        <div
-                                            aria-hidden="true"
-                                            className="absolute -right-12 top-4 m-0 grid h-12 w-44 rotate-45 place-items-center rounded-lg bg-green-600 shadow-md"
-                                        >
-                                            <CheckCircleIcon
-                                                className="absolute  inline h-8 -rotate-45 fill-current text-white"
-                                                title="Identity Verified Successfully"
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div
-                                            aria-hidden="true"
-                                            className="absolute -right-12 top-4 m-0 grid h-12 w-44 rotate-45 place-items-center rounded-lg bg-orange-600 shadow-md"
-                                        >
-                                            <ExclamationCircleIcon
-                                                className="absolute inline h-8 -rotate-45 fill-current text-white"
-                                                title={getVerificationReason(p)}
-                                            />
-                                        </div>
-                                    )}
+                                            {isVerified(p) ? (
+                                                <div
+                                                    aria-hidden="true"
+                                                    className="absolute -right-12 top-4 m-0 grid h-12 w-44 rotate-45 place-items-center rounded-lg bg-green-600 shadow-md"
+                                                >
+                                                    <CheckCircleIcon
+                                                        className="absolute  inline h-8 -rotate-45 fill-current text-white"
+                                                        title="Identity Verified Successfully"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div
+                                                    aria-hidden="true"
+                                                    className="absolute -right-12 top-4 m-0 grid h-12 w-44 rotate-45 place-items-center rounded-lg bg-orange-600 shadow-md"
+                                                >
+                                                    <ExclamationCircleIcon
+                                                        className="absolute inline h-8 -rotate-45 fill-current text-white"
+                                                        title={getVerificationReason(p)}
+                                                    />
+                                                </div>
+                                            )}
 
-                                    <div className="px-6 py-4">
-                                        <div className="text-xl font-bold dark:text-gray-300">
-                                            {getSelected(
-                                                p.business_title,
-                                                p.business_tagline,
-                                                p.tagline_manual_picked,
-                                                p.tagline_gen_picked
-                                            )}
-                                        </div>
-                                        <p className="mt-2 text-base text-gray-700 dark:text-gray-400">
-                                            {trimText(
-                                                getSelected(
-                                                    p.business_description,
-                                                    p.business_gen_description,
-                                                    p.description_manual_picked,
-                                                    p.description_gen_picked
-                                                ),
-                                                100
-                                            )}
-                                        </p>
-                                        <p className="mt-2 text-base text-gray-700 dark:text-gray-400">
-                                            {trimText(
-                                                getSelected(
-                                                    p.loan_reasoning,
-                                                    p.loan_gen_reasoning,
-                                                    p.reasoning_manual_picked,
-                                                    p.reasoning_gen_picked
-                                                ),
-                                                100
-                                            )}
-                                        </p>
+                                            <div className="px-6 py-4">
+                                                <div className="text-xl font-bold dark:text-gray-300">
+                                                    {getSelected(
+                                                        p.business_title,
+                                                        p.business_tagline,
+                                                        p.tagline_manual_picked,
+                                                        p.tagline_gen_picked
+                                                    )}
+                                                </div>
+                                                <p className="mt-2 max-w-xs text-base text-gray-700 dark:text-gray-400">
+                                                    {trimText(
+                                                        getSelected(
+                                                            p.business_description,
+                                                            p.business_gen_description,
+                                                            p.description_manual_picked,
+                                                            p.description_gen_picked
+                                                        ),
+                                                        100
+                                                    )}
+                                                </p>
+                                                <p className="mt-2 text-base text-gray-700 dark:text-gray-400">
+                                                    {trimText(
+                                                        getSelected(
+                                                            p.loan_reasoning,
+                                                            p.loan_gen_reasoning,
+                                                            p.reasoning_manual_picked,
+                                                            p.reasoning_gen_picked
+                                                        ),
+                                                        100
+                                                    )}
+                                                </p>
+                                            </div>
+                                        </Link>
                                     </div>
-                                </Link>
-                            </div>
-                        );
-                    })}
+                                );
+                            })}
+                        </div>
+                        <button onClick={rightScroll} className="hidden md:block">
+                            <ChevronRightIcon className="h-12 w-12 cursor-pointer opacity-50 hover:opacity-100 " />
+                        </button>
+                        <div className="flex w-full items-center justify-between md:hidden">
+                            <button onClick={leftScroll}>
+                                <ArrowLongLeftIcon className="h-12 w-12 cursor-pointer opacity-50 hover:opacity-100 " />
+                            </button>
+                            <button onClick={rightScroll}>
+                                <ArrowLongRightIcon className="h-12 w-12 cursor-pointer opacity-50 hover:opacity-100 " />
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 

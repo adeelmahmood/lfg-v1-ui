@@ -8,7 +8,7 @@ import {
 import addresses from "../../../constants/contract.json";
 import governorAbi from "../../../constants/LoanGovernor.json";
 import govTokenAbi from "../../../constants/GovToken.json";
-import { Dialog, Listbox, Transition } from "@headlessui/react";
+import { Listbox, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
 import useIsMounted from "../../../hooks/useIsMounted";
 import { CheckIcon, ChevronUpDownIcon, EnvelopeOpenIcon } from "@heroicons/react/24/solid";
@@ -29,20 +29,20 @@ export default function CastVoteDialog({ isModelOpen = false, modelCloseHandler,
 
     const options = [
         {
-            name: "Voting For",
+            name: "Vote for proposal to be accepted",
             id: 1,
             descr: "Vote in favor of this proposal being approved",
         },
         {
-            name: "Voting Against",
-            id: 2,
+            name: "Vote for propopsal to be rejected",
+            id: 0,
             descr: "Vote against this proposal being approved",
         },
-        {
-            name: "Abstain",
-            id: 0,
-            descr: "Essentially no vote",
-        },
+        // {
+        //     name: "Abstain from voting",
+        //     id: 2,
+        //     descr: "Essentially no vote",
+        // },
     ];
     const [description, setDescription] = useState("");
     const [vote, setVote] = useState(1);
