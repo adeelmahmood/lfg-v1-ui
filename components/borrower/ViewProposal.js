@@ -48,7 +48,7 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                 />
             )}
 
-            <div className="mt-8 mb-10">
+            <div className="mt-8 mb-10 max-w-2xl">
                 <h2 className="mb-2 text-left text-3xl font-bold uppercase tracking-tight text-gray-800 dark:text-gray-200 md:text-4xl md:tracking-wide">
                     Loan Proposal
                 </h2>

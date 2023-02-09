@@ -21,10 +21,12 @@ export default function LoanProposal({}) {
     const user = useUser();
 
     const [loanProposal, setLoanProposal] = useState();
+    const [published, setPublished] = useState(true);
 
     useEffect(() => {
         async function fetchProposal(pid) {
-            const { data, error } = await supabase
+            // TODO error not handled
+            const { data: p, error } = await supabase
                 .from(SUPABASE_TABLE_LOAN_PROPOSALS)
                 .select(
                     `*, 
@@ -33,8 +35,9 @@ export default function LoanProposal({}) {
                 )
                 .eq("id", pid)
                 .single();
-            if (data) {
-                setLoanProposal(data);
+            if (p) {
+                setLoanProposal(p);
+                setPublished(isPublished(p));
             }
         }
 
@@ -52,8 +55,8 @@ export default function LoanProposal({}) {
             <TopGradient />
             <Navbar />
 
-            {!isPublished(loanProposal) && (
-                <div className="flex flex-col items-start bg-yellow-600 p-4 shadow-lg dark:bg-yellow-600">
+            {!published && (
+                <div className="mt-2 flex flex-col items-start bg-yellow-600 p-4 shadow-lg dark:bg-yellow-600">
                     <div className="flex w-full justify-between">
                         <p className="flex items-center text-lg font-semibold text-gray-100">
                             <ExclamationCircleIcon className="hidden h-6 fill-current text-gray-200 sm:inline" />
@@ -87,16 +90,11 @@ export default function LoanProposal({}) {
                 </div>
             )}
 
-            <div className="container mx-auto max-w-2xl p-6">
+            <div className="container mx-auto grid grid-cols-3 p-6">
                 {loanProposal && (
-                    <>
+                    <div className="col-span-2">
                         <ViewProposal loanProposal={loanProposal} />
-                        <div>
-                            <button className="w-full rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 disabled:cursor-not-allowed disabled:opacity-50">
-                                Vote on this Proposal
-                            </button>
-                        </div>
-                    </>
+                    </div>
                 )}
             </div>
         </>

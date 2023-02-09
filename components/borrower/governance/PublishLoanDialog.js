@@ -83,6 +83,8 @@ export default function PublishLoanDialog({
             if (event) {
                 const proposalId = ethers.utils.defaultAbiCoder.decode(["uint256"], event.data);
                 handlePublished(proposalId);
+            } else {
+                setDbError("Onchain ProposalCreated event was not emitted");
             }
         },
         onError(err) {
@@ -146,10 +148,10 @@ export default function PublishLoanDialog({
                                                 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed 
                                                 disabled:opacity-50"
                         onClick={() => handle?.()}
-                        disabled={!isConnected || isLoading}
+                        disabled={!isConnected || isLoading || isTxLoading}
                     >
                         Publish Proposal
-                        {isMounted() && isLoading ? (
+                        {isMounted() && (isLoading || isTxLoading) ? (
                             <svg
                                 className="text-indigo ml-3 h-5 w-5 animate-spin"
                                 xmlns="http://www.w3.org/2000/svg"
