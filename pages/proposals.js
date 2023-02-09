@@ -8,7 +8,6 @@ import {
     ArrowLongLeftIcon,
     ArrowLongRightIcon,
     CheckCircleIcon,
-    ChevronLeftIcon,
     ChevronRightIcon,
     ExclamationCircleIcon,
 } from "@heroicons/react/24/solid";
@@ -42,7 +41,7 @@ export default function LoanPropospals() {
     };
 
     const trimText = (text, limit) => {
-        return text && text.length > limit ? text.substring(0, limit) + " ..." : text;
+        return text && text.length > limit ? text.substring(0, limit) + "..." : text;
     };
 
     const isVerified = (p) => {
@@ -50,10 +49,6 @@ export default function LoanPropospals() {
             p?.user_identity_verifications?.length > 0 &&
             p.user_identity_verifications[0]?.verification_status == "verified"
         );
-    };
-
-    const getStatus = (p) => {
-        return p?.loan_proposals_status?.length > 0 && p.loan_proposals_status[0].status;
     };
 
     const getVerificationReason = (p) => {
@@ -90,7 +85,7 @@ export default function LoanPropospals() {
                 </p>
 
                 <div className="mt-8">
-                    <div className="inline-block rounded-lg bg-indigo-600 px-8 py-4 text-center text-lg font-semibold text-gray-200 shadow-md">
+                    <div className="inline-block rounded-lg bg-slate-600 px-8 py-4 text-center text-lg text-gray-200 shadow-md">
                         All Proposals
                     </div>
                     <div className="mt-2 flex w-full flex-col items-end md:flex-row md:items-center">
@@ -102,7 +97,7 @@ export default function LoanPropospals() {
                                 return (
                                     <div
                                         key={i}
-                                        className="relative inline-block h-[440px] w-[400px] overflow-hidden rounded-xl shadow-md duration-300 ease-in-out hover:scale-105 dark:bg-gray-700/50"
+                                        className="relative inline-block h-[440px] w-[400px] overflow-hidden rounded-xl shadow-md dark:bg-gray-700/50 md:duration-300 md:ease-in-out md:hover:scale-105"
                                     >
                                         <Link href={`/borrower/proposals/${p.id}`}>
                                             <div className="relative pb-2/3">
@@ -135,7 +130,7 @@ export default function LoanPropospals() {
                                                 </div>
                                             )}
 
-                                            <div className="px-6 py-4">
+                                            <div className="h-full whitespace-normal px-6 py-4">
                                                 <div className="text-xl font-bold dark:text-gray-300">
                                                     {getSelected(
                                                         p.business_title,
@@ -152,7 +147,7 @@ export default function LoanPropospals() {
                                                             p.description_manual_picked,
                                                             p.description_gen_picked
                                                         ),
-                                                        100
+                                                        50
                                                     )}
                                                 </p>
                                                 <p className="mt-2 text-base text-gray-700 dark:text-gray-400">
@@ -163,7 +158,7 @@ export default function LoanPropospals() {
                                                             p.reasoning_manual_picked,
                                                             p.reasoning_gen_picked
                                                         ),
-                                                        100
+                                                        50
                                                     )}
                                                 </p>
                                             </div>

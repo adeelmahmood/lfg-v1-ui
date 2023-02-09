@@ -21,7 +21,7 @@ export default function Dashboard() {
             <TopGradient />
             <Navbar />
 
-            <div className="pt- container mx-auto p-6">
+            <div className="container mx-auto p-6">
                 {TEST_ENV == "true" && (
                     <SendEthToWethDialog
                         isModelOpen={sendEthToWethModal}

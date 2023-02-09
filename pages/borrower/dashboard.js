@@ -111,7 +111,7 @@ export default function BorrowerGenInfo() {
                 </button>
             </DialogComponent>
 
-            <div className="pt- container mx-auto p-6">
+            <div className="container mx-auto p-6">
                 <div className="mt-8 mb-4 flex items-center justify-between">
                     <h2 className="max-w-6xl text-5xl font-bold tracking-wider text-white">
                         <span className="bg-gradient-to-r from-indigo-500 to-green-600 bg-clip-text text-transparent">
@@ -139,7 +139,7 @@ export default function BorrowerGenInfo() {
 
                 {error && <p className="mt-4 text-red-500">{error}</p>}
 
-                <div className="mt-8 hidden w-full overflow-x-auto rounded-lg shadow-md sm:flex  md:w-3/4">
+                <div className="mt-4 hidden w-full overflow-x-auto rounded-lg shadow-md sm:flex  md:w-3/4">
                     <table className="w-full text-left text-sm text-gray-800">
                         <thead className="bg-slate-600 text-xs uppercase tracking-wider text-gray-200 dark:bg-gray-600">
                             <tr>
