@@ -13,9 +13,16 @@ import { Fragment, useEffect, useState } from "react";
 import useIsMounted from "../../../hooks/useIsMounted";
 import { CheckIcon, ChevronUpDownIcon, EnvelopeOpenIcon } from "@heroicons/react/24/solid";
 import DialogComponent from "../../DialogComponent";
+import { ethers } from "ethers";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS } from "../../../utils/Constants";
+import { findEvent } from "../../../utils/Events";
 
 export default function CastVoteDialog({ isModelOpen = false, modelCloseHandler, loanProposal }) {
     let [castVoteModalOpen, setCastVoteModalOpen] = useState(isModelOpen);
+
+    const supabase = useSupabaseClient();
+    const user = useUser();
 
     const isMounted = useIsMounted();
     const [isLoading, setIsLoading] = useState(false);
@@ -120,12 +127,24 @@ export default function CastVoteDialog({ isModelOpen = false, modelCloseHandler,
     const { isLoading: isVoteTxLoading, isSuccess: isSuccess } = useWaitForTransaction({
         hash: data?.hash,
         onSuccess(data) {
-            closeModal();
+            const abi = [
+                "event VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 weight, string reason)",
+            ];
+            findEvent(abi, data.logs, loanProposal).then((event) =>
+                saveEvent(event).then(() => closeModal())
+            );
         },
         onError(err) {
             console.log("tx error", err);
         },
     });
+
+    const saveEvent = async (event) => {
+        const { error } = await supabase.from(SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS).insert(event);
+        if (error) {
+            console.log(error.message);
+        }
+    };
 
     function closeModal() {
         setCastVoteModalOpen(false);

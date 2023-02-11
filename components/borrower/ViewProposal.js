@@ -84,7 +84,7 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                         )}
                     </div>
                 </div>
-                <div className="relative mt-2 pb-2/3 shadow-lg">
+                <div className="relative mt-4 pb-2/3 shadow-lg">
                     <img
                         className="absolute h-full w-full rounded-xl object-cover object-center"
                         src={loanProposal.banner_image}

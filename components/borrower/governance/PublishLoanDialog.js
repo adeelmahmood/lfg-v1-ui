@@ -13,6 +13,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import {
     DAI_ADDRESS,
     SUPABASE_TABLE_LOAN_PROPOSALS,
+    SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS,
     SUPABASE_TABLE_LOAN_PROPOSALS_STATUS,
 } from "../../../utils/Constants";
 import { Fragment, useEffect, useState } from "react";
@@ -20,6 +21,7 @@ import useIsMounted from "../../../hooks/useIsMounted";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { ArrowUpOnSquareStackIcon } from "@heroicons/react/24/solid";
 import DialogComponent from "../../DialogComponent";
+import { findEvent } from "../../../utils/Events";
 
 export default function PublishLoanDialog({
     isModelOpen = false,
@@ -75,22 +77,31 @@ export default function PublishLoanDialog({
     const { isLoading: isTxLoading, isSuccess: isSuccess } = useWaitForTransaction({
         hash: data?.hash,
         onSuccess(data) {
-            const eventSignature =
-                "ProposalCreated(uint256,address,address[],uint256[],string[],bytes[],uint256,uint256,string)";
-            const eventSignatureHash = ethers.utils.id(eventSignature);
-
-            const event = data.logs?.find((log) => log.topics[0] == eventSignatureHash);
-            if (event) {
-                const proposalId = ethers.utils.defaultAbiCoder.decode(["uint256"], event.data);
-                handlePublished(proposalId);
-            } else {
-                setDbError("Onchain ProposalCreated event was not emitted");
-            }
+            const abi = [
+                "event ProposalCreated(uint256 proposalId, address proposer, address[] targets, uint256[] values, string[] signatures, bytes[] calldatas, uint256 startBlock, uint256 endBlock, string description)",
+            ];
+            findEvent(abi, data.logs, loanProposal).then((event) => {
+                if (event) {
+                    saveEvent(event).then(() => {
+                        const proposalId = event.event_data["proposalId"];
+                        handlePublished(proposalId);
+                    });
+                } else {
+                    setDbError("error in finding publish event");
+                }
+            });
         },
         onError(err) {
             console.log("tx error", err);
         },
     });
+
+    const saveEvent = async (event) => {
+        const { error } = await supabase.from(SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS).insert(event);
+        if (error) {
+            console.log(error.message);
+        }
+    };
 
     const handlePublished = async (proposalId) => {
         const { error: e } = await supabase

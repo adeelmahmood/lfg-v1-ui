@@ -11,9 +11,11 @@ export default function PreviewAndSubmit({ loanProposal, setLoanProposal, handle
     const supabase = useSupabaseClient();
     const user = useUser();
 
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
 
     const handleNext = async () => {
+        setIsLoading(true);
         const { data, error } = await supabase
             .from(SUPABASE_TABLE_LOAN_PROPOSALS)
             .insert({
@@ -23,18 +25,22 @@ export default function PreviewAndSubmit({ loanProposal, setLoanProposal, handle
             .select("id")
             .single();
         if (error) {
+            setIsLoading(false);
             setError(error.message);
         } else {
             // add status entry
-            const { data: Status, error: statusError } = await supabase
+            const { error: statusError } = await supabase
                 .from(SUPABASE_TABLE_LOAN_PROPOSALS_STATUS)
                 .insert({
                     status: "Created",
                     proposal_id: data.id,
                 });
 
-            if (statusError) setError(statusError.message);
-            else {
+            setIsLoading(false);
+
+            if (statusError) {
+                setError(statusError.message);
+            } else {
                 // add persisted record id
                 setLoanProposal({
                     ...loanProposal,
@@ -61,7 +67,11 @@ export default function PreviewAndSubmit({ loanProposal, setLoanProposal, handle
                 <ViewProposal loanProposal={loanProposal} />
 
                 <div className="mt-4">
-                    <button className="btn-secondary w-full" onClick={handleNext}>
+                    <button
+                        className="btn-secondary w-full"
+                        onClick={handleNext}
+                        disabled={isLoading}
+                    >
                         Submit
                     </button>
                 </div>

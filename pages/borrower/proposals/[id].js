@@ -92,15 +92,16 @@ export default function LoanProposal({}) {
                 </div>
             )}
 
-            <div className="container mx-auto grid grid-cols-3 p-6">
+            <div className="container mx-auto flex p-6">
                 <div className="col-span-2">
                     {loanProposal && <ViewProposal loanProposal={loanProposal} />}
                 </div>
 
                 {loanProposal?.onchain_proposal_id && (
-                    <div className="mt-2 flex flex-col items-start justify-between rounded-lg bg-gray-600 px-4 py-2 text-gray-200 shadow md:flex-row md:items-center">
-                        <ProposalState proposalId={loanProposal.onchain_proposal_id} />
-                        <VoteCounts proposalId={loanProposal.onchain_proposal_id} />
+                    <div>
+                        <div className="ml-20">
+                            <ProposalState proposalId={loanProposal.onchain_proposal_id} />
+                        </div>
                     </div>
                 )}
             </div>

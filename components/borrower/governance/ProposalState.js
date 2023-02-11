@@ -2,6 +2,7 @@ import { useAccount, useContractRead } from "wagmi";
 import addresses from "../../../constants/contract.json";
 import governorAbi from "../../../constants/LoanGovernor.json";
 import { useState } from "react";
+import { displayUnits } from "../../../utils/Math";
 
 export default function ProposalState({ proposalId }) {
     const [proposalState, setProposalState] = useState();
@@ -35,11 +36,37 @@ export default function ProposalState({ proposalId }) {
         enabled: isConnected && proposalId,
     });
 
+    const [voteCounts, setVoteCounts] = useState();
+
+    useContractRead({
+        address: governorAddress,
+        abi: governorAbi,
+        functionName: "proposalVotes",
+        args: [proposalId],
+        onSuccess(data) {
+            setVoteCounts(data);
+        },
+        onError(err) {
+            console.log("governor proposalVotes contract read error", err.message);
+        },
+        enabled: isConnected && proposalId,
+    });
+
     return (
         <>
-            <div>
-                <span className="text-sm font-semibold">Proposal State:</span>
-                <span className="ml-1 text-sm font-semibold ">{proposalState}</span>
+            <div className="mt-10 w-72 space-y-2 rounded-lg bg-gray-300/50 px-8 py-4 shadow-md dark:bg-gray-700 dark:text-gray-700">
+                <div className="flex items-center justify-between">
+                    <div className="text-lg">Proposal State:</div>
+                    <div className="ml-1 text-lg">{proposalState}</div>
+                </div>
+                <div className="flex items-center justify-between">
+                    <div className="text-lg">Votes For:</div>
+                    <div className="ml-1 text-lg">{displayUnits(voteCounts?.forVotes)}</div>
+                </div>
+                <div className="flex items-center justify-between">
+                    <div className="text-lg">Votes Against:</div>
+                    <div className="ml-1 text-lg">{displayUnits(voteCounts?.againstVotes)}</div>
+                </div>
             </div>
         </>
     );
