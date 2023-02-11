@@ -27,7 +27,9 @@ export default function ViewProposal({ loanProposal, ...rest }) {
     };
 
     const isPublished = (p) => {
-        return p?.loan_proposals_status?.find((s) => s.status == "Published");
+        return (
+            p.onchain_proposal_id && p?.loan_proposals_status?.find((s) => s.status == "Published")
+        );
     };
 
     return (
@@ -74,9 +76,11 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                         )}
                     </div>
                 </div>
-                <div className="mt-3">
-                    <GovernanceInfoPanel loanProposal={loanProposal} />
-                </div>
+                {isPublished(loanProposal) && (
+                    <div className="mt-6">
+                        <GovernanceInfoPanel loanProposal={loanProposal} />
+                    </div>
+                )}
                 <div className="mt-6">
                     <h3 className="text-3xl text-gray-400 dark:text-gray-400">Who Are We</h3>
                     <p className="mt-3 text-gray-800 dark:text-gray-200">

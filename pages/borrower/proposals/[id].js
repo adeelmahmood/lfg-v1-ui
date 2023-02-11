@@ -11,6 +11,7 @@ import {
     ExclamationCircleIcon,
 } from "@heroicons/react/24/solid";
 import PublishLoanDialog from "../../../components/borrower/governance/PublishLoanDialog";
+import CastVoteDialog from "../../../components/borrower/governance/CastVoteDialog";
 
 export default function LoanProposal() {
     const router = useRouter();
@@ -93,9 +94,9 @@ export default function LoanProposal() {
                 {loanProposal && (
                     <>
                         <ViewProposal loanProposal={loanProposal} />
-                        <div>
-                            <button className="btn-primary w-full">Vote on this Proposal</button>
-                        </div>
+                        {loanProposal.onchain_proposal_id && (
+                            <CastVoteDialog loanProposal={loanProposal} forceLong={true} />
+                        )}
                     </>
                 )}
             </div>

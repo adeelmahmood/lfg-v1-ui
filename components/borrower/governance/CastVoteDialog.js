@@ -13,12 +13,16 @@ import { Fragment, useEffect, useState } from "react";
 import useIsMounted from "../../../hooks/useIsMounted";
 import { CheckIcon, ChevronUpDownIcon, EnvelopeOpenIcon } from "@heroicons/react/24/solid";
 import DialogComponent from "../../DialogComponent";
-import { ethers } from "ethers";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS } from "../../../utils/Constants";
 import { findEvent, saveEvent } from "../../../utils/Events";
+import { displayUnits } from "../../../utils/Math";
 
-export default function CastVoteDialog({ isModelOpen = false, modelCloseHandler, loanProposal }) {
+export default function CastVoteDialog({
+    isModelOpen = false,
+    modelCloseHandler,
+    loanProposal,
+    forceLong = false,
+}) {
     let [castVoteModalOpen, setCastVoteModalOpen] = useState(isModelOpen);
 
     const supabase = useSupabaseClient();
@@ -28,20 +32,22 @@ export default function CastVoteDialog({ isModelOpen = false, modelCloseHandler,
     const [isLoading, setIsLoading] = useState(false);
     const [isDelegated, setIsDelegated] = useState(false);
     const [hasVoted, setHasVoted] = useState(false);
+    const [votingPower, setVotingPower] = useState();
+    const [totalVotingPower, setTotalVotingPower] = useState();
 
     const { address, isConnected } = useAccount();
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const governorAddress = addresses[chainId].LoanGovernor;
-    const govToken = addresses[chainId].GovToken;
+    const govTokenAddress = addresses[chainId].GovToken;
 
     const options = [
         {
-            name: "Vote for proposal to be accepted",
+            name: "Accept this proposal",
             id: 1,
             descr: "Vote in favor of this proposal being approved",
         },
         {
-            name: "Vote for propopsal to be rejected",
+            name: "Reject this proposal",
             id: 0,
             descr: "Vote against this proposal being approved",
         },
@@ -53,6 +59,35 @@ export default function CastVoteDialog({ isModelOpen = false, modelCloseHandler,
     ];
     const [description, setDescription] = useState("");
     const [vote, setVote] = useState(1);
+
+    useContractRead({
+        address: govTokenAddress,
+        abi: govTokenAbi,
+        functionName: "balanceOf",
+        args: [address],
+        onSuccess(data) {
+            const balance = displayUnits(data);
+            setVotingPower(balance);
+        },
+        onError(err) {
+            console.log("gov token balance contract read error", err.message);
+        },
+        enabled: isConnected,
+    });
+
+    useContractRead({
+        address: govTokenAddress,
+        abi: govTokenAbi,
+        functionName: "totalSupply",
+        onSuccess(data) {
+            const balance = displayUnits(data);
+            setTotalVotingPower(balance);
+        },
+        onError(err) {
+            console.log("gov token balance contract read error", err.message);
+        },
+        enabled: isConnected,
+    });
 
     useContractRead({
         address: governorAddress,
@@ -73,7 +108,7 @@ export default function CastVoteDialog({ isModelOpen = false, modelCloseHandler,
         error: delegatePrepareError,
         isError: isDelegatePrepareError,
     } = usePrepareContractWrite({
-        address: govToken,
+        address: govTokenAddress,
         abi: govTokenAbi,
         functionName: "delegate",
         args: [address],
@@ -149,6 +184,10 @@ export default function CastVoteDialog({ isModelOpen = false, modelCloseHandler,
         modelCloseHandler?.();
     }
 
+    const percentage = (num, total) => {
+        return (num / total) * 100;
+    };
+
     useEffect(() => {
         setIsLoading(isDelegateLoading || isDelegateTxLoading || isVoteLoading || isVoteTxLoading);
     }, [isDelegateLoading, isDelegateTxLoading, isVoteLoading || isVoteTxLoading]);
@@ -156,23 +195,33 @@ export default function CastVoteDialog({ isModelOpen = false, modelCloseHandler,
     return (
         <>
             {hasVoted ? (
-                <div className="flex items-center rounded-lg bg-green-600 px-4 py-2 text-gray-200">
+                <div className="flex items-center justify-center rounded-lg bg-green-600 px-4 py-2">
                     <CheckIcon className="inline h-6 fill-current text-gray-100" />
-                    <span className="ml-2 hidden text-base font-semibold leading-7 md:inline">
+                    <div
+                        className={`ml-2 text-base font-semibold leading-7 text-gray-100 md:inline ${
+                            !forceLong && "hidden"
+                        }`}
+                    >
                         You have Voted
-                    </span>
+                    </div>
                 </div>
             ) : (
                 <div>
                     <button
-                        className="btn-primary flex items-center text-base"
+                        className="btn-primary flex w-full items-center justify-center text-center"
                         onClick={(e) => {
                             e.preventDefault();
                             setCastVoteModalOpen(true);
                         }}
                     >
-                        <EnvelopeOpenIcon className="inline h-6 fill-current text-white dark:text-gray-800" />
-                        <span className="ml-2 hidden md:inline">Vote on this Proposal</span>
+                        <EnvelopeOpenIcon className="inline h-6 fill-current text-gray-100 dark:text-gray-800" />
+                        <span
+                            className={`ml-2 text-base font-semibold leading-7 text-gray-100 dark:text-gray-800 md:inline ${
+                                !forceLong && "hidden"
+                            }`}
+                        >
+                            Vote on this Proposal
+                        </span>
                     </button>
                 </div>
             )}
@@ -182,9 +231,65 @@ export default function CastVoteDialog({ isModelOpen = false, modelCloseHandler,
                 isModelOpen={castVoteModalOpen}
                 modelCloseHandler={closeModal}
             >
-                <div className="mx-auto mt-4 w-full max-w-md">
+                <div className="mt-4 w-full max-w-md">
+                    <div className="rounded-lg border border-gray-500 px-4 py-4">
+                        <div className="flex items-center justify-between">
+                            <div className="font-semibold text-gray-800">Your Voting Power</div>
+                            <div className="font-semibold text-gray-800">{votingPower}</div>
+                        </div>
+                        <div className="mt-2 flex items-center justify-between ">
+                            <div className="text-gray-800">% of Total Voting Power</div>
+                            <div className="text-gray-800">
+                                {percentage(votingPower, totalVotingPower)}%
+                            </div>
+                        </div>
+                    </div>
+
+                    <p className="mt-4 text-center text-lg">Step 1</p>
+                    <p className="mt-2 text-center">Assign a delegate for voting</p>
+                    <button
+                        className="btn-primary mt-2 inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                        onClick={() => handleDelegate?.()}
+                        disabled={!isConnected || isLoading || isDelegated}
+                    >
+                        Self Delegate
+                        {isMounted() && isLoading && !isDelegated ? (
+                            <svg
+                                className="text-indigo ml-3 h-6 w-6 animate-spin"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                            >
+                                <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                ></circle>
+                                <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                ></path>
+                            </svg>
+                        ) : null}
+                    </button>
+
+                    <div className="mt-10 flex items-center">
+                        <div className="flex-grow border-t border-gray-400 dark:border-gray-200"></div>
+                        <span className="mx-4 flex-shrink text-gray-400 dark:text-gray-200">
+                            And
+                        </span>
+                        <div className="flex-grow border-t border-gray-400 dark:border-gray-200"></div>
+                    </div>
+
+                    <p className="mt-6 text-center text-lg">Step 2</p>
+                    <p className="mt-2 text-center">Make your voting selections</p>
+
                     <Listbox value={vote} onChange={setVote}>
-                        <div className="relative mt-1">
+                        <div className="relative mt-2">
                             <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
                                 <span className="block truncate font-semibold text-gray-800">
                                     {options.filter((o) => o.id == vote)[0].name}
@@ -242,9 +347,9 @@ export default function CastVoteDialog({ isModelOpen = false, modelCloseHandler,
                     </Listbox>
                 </div>
 
-                <div className="mx-auto mt-4 w-full max-w-md">
+                <div className="mt-4 w-full max-w-md">
                     <textarea
-                        className="mb-2 w-full rounded-lg border-gray-300 text-gray-800 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        className="w-full rounded-lg border-gray-300 text-gray-800 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         rows={4}
                         placeholder="Provide a reasoning for your vote"
                         onChange={(e) => setDescription(e.target.value)}
@@ -252,51 +357,17 @@ export default function CastVoteDialog({ isModelOpen = false, modelCloseHandler,
                     />
                 </div>
 
-                <div className="mt-4 flex w-full items-center gap-4">
+                <div className="mt-0 flex w-full items-center gap-4">
                     <button
                         type="button"
-                        className="inline-flex rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200
-                                                focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed 
-                                                disabled:opacity-50"
-                        onClick={() => handleDelegate?.()}
-                        disabled={!isConnected || isLoading || isDelegated}
-                    >
-                        Delegate
-                        {isMounted() && isLoading && !isDelegated ? (
-                            <svg
-                                className="text-indigo ml-3 h-5 w-5 animate-spin"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                            >
-                                <circle
-                                    className="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    strokeWidth="4"
-                                ></circle>
-                                <path
-                                    className="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                ></path>
-                            </svg>
-                        ) : null}
-                    </button>
-                    <button
-                        type="button"
-                        className="inline-flex rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200
-                                                focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed 
-                                                disabled:opacity-50"
+                        className="btn-primary mt-2 inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
                         onClick={() => handleVote?.()}
                         disabled={!isConnected || isLoading || !isDelegated}
                     >
                         Vote
                         {isMounted() && isLoading && isDelegated ? (
                             <svg
-                                className="text-indigo ml-3 h-5 w-5 animate-spin"
+                                className="text-indigo ml-3 h-6 w-6 animate-spin"
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
@@ -318,7 +389,7 @@ export default function CastVoteDialog({ isModelOpen = false, modelCloseHandler,
                         ) : null}
                     </button>
                 </div>
-                <div className="mt-2">
+                <div className="mt-4">
                     {(isPrepareError || isError || isDelegatePrepareError || isDelegateError) && (
                         <div className="text-red-500">
                             {

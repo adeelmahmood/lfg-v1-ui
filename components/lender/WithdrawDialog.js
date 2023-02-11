@@ -140,14 +140,14 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
                                         <input
                                             type="text"
                                             placeholder="0.1"
-                                            className="max-w-xs appearance-none border border-gray-400 py-2 px-3 leading-tight focus:outline-none disabled:bg-gray-200"
+                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500  dark:bg-gray-800 dark:text-gray-200 dark:focus:border-blue-600 dark:focus:ring-blue-400"
                                             value={amount}
                                             disabled={maxWithdrawl}
                                             onChange={(e) => setAmount(e.target.value)}
                                         />
                                     </div>
 
-                                    <div className="mt-3">
+                                    <div className="mt-4">
                                         <div className="mb-4 flex items-center">
                                             <Switch
                                                 checked={maxWithdrawl}
@@ -163,16 +163,14 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
                                     <div className="mt-4 flex w-full items-center justify-between">
                                         <button
                                             type="button"
-                                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200
-                                                focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed 
-                                                disabled:opacity-50"
+                                            className="btn-primary mt-2 inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
                                             onClick={() => handleWithdraw?.()}
                                             disabled={!isConnected || isLoading}
                                         >
                                             Withdraw
                                             {isMounted() && isLoading ? (
                                                 <svg
-                                                    className="text-indigo ml-3 h-5 w-5 animate-spin"
+                                                    className="text-indigo ml-3 h-6 w-6 animate-spin"
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     fill="none"
                                                     viewBox="0 0 24 24"
@@ -193,6 +191,8 @@ export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }
                                                 </svg>
                                             ) : null}
                                         </button>
+                                    </div>
+                                    <div className="mt-4 flex w-full items-center">
                                         {(isPrepareError || isError) && (
                                             <div className="text-red-500">
                                                 Error: {(prepareError || error)?.message}
