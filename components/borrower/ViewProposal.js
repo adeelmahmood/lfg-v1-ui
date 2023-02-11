@@ -1,13 +1,11 @@
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { HandThumbUpIcon } from "@heroicons/react/24/solid";
-import { useState } from "react";
 import CastVoteDialog from "./governance/CastVoteDialog";
+import GovernanceInfoPanel from "./governance/GovernanceInfoPanel";
 
 export default function ViewProposal({ loanProposal, ...rest }) {
     const supabase = useSupabaseClient();
     const user = useUser();
-
-    const [proposeModal, setProposeModal] = useState(false);
 
     let USDollar = new Intl.NumberFormat("en-US", {
         style: "currency",
@@ -34,14 +32,6 @@ export default function ViewProposal({ loanProposal, ...rest }) {
 
     return (
         <>
-            {proposeModal && (
-                <ProposeLoanDialog
-                    isModelOpen={proposeModal}
-                    modelCloseHandler={() => setProposeModal(false)}
-                    loanProposal={loanProposal}
-                />
-            )}
-
             <div className="mt-8 mb-10 max-w-2xl">
                 <h2 className="mb-2 text-left text-3xl font-bold uppercase tracking-tight text-gray-800 dark:text-gray-200 md:text-4xl md:tracking-wide">
                     Loan Proposal
@@ -84,15 +74,12 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                         )}
                     </div>
                 </div>
-                <div className="relative mt-4 pb-2/3 shadow-lg">
-                    <img
-                        className="absolute h-full w-full rounded-xl object-cover object-center"
-                        src={loanProposal.banner_image}
-                        alt=""
-                    />
+                <div className="mt-3">
+                    <GovernanceInfoPanel loanProposal={loanProposal} />
                 </div>
                 <div className="mt-6">
-                    <p className="text-gray-500 dark:text-gray-200">
+                    <h3 className="text-3xl text-gray-400 dark:text-gray-400">Who Are We</h3>
+                    <p className="mt-3 text-gray-800 dark:text-gray-200">
                         {getSelected(
                             loanProposal.business_description,
                             loanProposal.business_gen_description,
@@ -101,9 +88,19 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                         )}
                     </p>
                 </div>
+                <div className="relative mt-4 pb-2/3 shadow-lg">
+                    <img
+                        className="absolute h-full w-full rounded-xl object-cover object-center"
+                        src={loanProposal.banner_image}
+                        alt=""
+                    />
+                </div>
 
-                <div className="mt-6">
-                    <p className="text-gray-800 dark:text-gray-200">
+                <div className="mt-4">
+                    <h3 className="text-3xl text-gray-400 dark:text-gray-400">
+                        How will we use the Funds
+                    </h3>
+                    <p className="mt-3 text-gray-800 dark:text-gray-200">
                         {getSelected(
                             loanProposal.loan_reasoning,
                             loanProposal.loan_gen_reasoning,

@@ -11,11 +11,16 @@ import abi from "../../constants/LendPool.json";
 import { parseUnits } from "ethers/lib/utils.js";
 import useIsMounted from "../../hooks/useIsMounted";
 import { erc20ABI } from "wagmi";
+import { findEvent, saveEvent } from "../../utils/Events";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
 export default function DepositDialog({ isModelOpen, modelCloseHandler, token }) {
     let [isOpen, setIsOpen] = useState(isModelOpen || false);
 
     const { isConnected, address } = useAccount();
+
+    const supabase = useSupabaseClient();
+    const user = useUser();
 
     const [amount, setAmount] = useState("");
     const [parsedAmount, setParsedAmount] = useState(0);
@@ -43,9 +48,6 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
             parseUnits(parsedAmount?.toString(), token?.tokenDecimals?.toNumber()),
         ],
         enabled: parsedAmount > 0,
-        onSettled(data, error) {
-            console.log("Approve prepare Settled", { data, error });
-        },
         onError(err) {
             console.log("Approve prepare error", err);
         },
@@ -83,9 +85,6 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
             parseUnits(parsedAmount?.toString(), token?.tokenDecimals?.toNumber()),
         ],
         enabled: isApproved && parsedAmount > 0,
-        onSettled(data, error) {
-            console.log("Deposit prepare Settled", { data, error });
-        },
         onError(err) {
             console.log("Deposit prepare error", err);
         },
@@ -102,7 +101,17 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
     const { isLoading: isDespoitTxLoading, isSuccess } = useWaitForTransaction({
         hash: data?.hash,
         onSuccess(data) {
-            closeModal();
+            const eventsAbi = [
+                "event DepositMade(address indexed user, address indexed token, uint256 amount)",
+            ];
+
+            findEvent(
+                eventsAbi,
+                data.logs.filter((log) => log.address == lendingPoolAddress)
+            ).then((events) => {
+                events.map((event) => saveEvent(supabase, event));
+                closeModal();
+            });
         },
         onError(err) {
             console.log("Deposit tx error", err);

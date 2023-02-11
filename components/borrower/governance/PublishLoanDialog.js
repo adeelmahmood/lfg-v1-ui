@@ -13,7 +13,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import {
     DAI_ADDRESS,
     SUPABASE_TABLE_LOAN_PROPOSALS,
-    SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS,
     SUPABASE_TABLE_LOAN_PROPOSALS_STATUS,
 } from "../../../utils/Constants";
 import { Fragment, useEffect, useState } from "react";
@@ -21,7 +20,7 @@ import useIsMounted from "../../../hooks/useIsMounted";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { ArrowUpOnSquareStackIcon } from "@heroicons/react/24/solid";
 import DialogComponent from "../../DialogComponent";
-import { findEvent } from "../../../utils/Events";
+import { findEvent, saveEvent } from "../../../utils/Events";
 
 export default function PublishLoanDialog({
     isModelOpen = false,
@@ -80,14 +79,15 @@ export default function PublishLoanDialog({
             const abi = [
                 "event ProposalCreated(uint256 proposalId, address proposer, address[] targets, uint256[] values, string[] signatures, bytes[] calldatas, uint256 startBlock, uint256 endBlock, string description)",
             ];
-            findEvent(abi, data.logs, loanProposal).then((event) => {
-                if (event) {
-                    saveEvent(event).then(() => {
-                        const proposalId = event.event_data["proposalId"];
-                        handlePublished(proposalId);
-                    });
-                } else {
-                    setDbError("error in finding publish event");
+            findEvent(
+                abi,
+                data.logs.filter((log) => log.address == governorAddress),
+                { proposal_id: loanProposal.id }
+            ).then((events) => {
+                events.map((event) => saveEvent(supabase, event));
+                if (events && events.length > 0) {
+                    const proposalId = events[0].event_data["proposalId"];
+                    handlePublished(proposalId);
                 }
             });
         },
@@ -95,13 +95,6 @@ export default function PublishLoanDialog({
             console.log("tx error", err);
         },
     });
-
-    const saveEvent = async (event) => {
-        const { error } = await supabase.from(SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS).insert(event);
-        if (error) {
-            console.log(error.message);
-        }
-    };
 
     const handlePublished = async (proposalId) => {
         const { error: e } = await supabase

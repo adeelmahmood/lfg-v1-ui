@@ -9,13 +9,10 @@ import {
     ChevronDoubleDownIcon,
     ChevronDoubleUpIcon,
     ExclamationCircleIcon,
-    ExclamationTriangleIcon,
 } from "@heroicons/react/24/solid";
 import PublishLoanDialog from "../../../components/borrower/governance/PublishLoanDialog";
-import ProposalState from "../../../components/borrower/governance/ProposalState";
-import VoteCounts from "../../../components/borrower/governance/VoteCounts";
 
-export default function LoanProposal({}) {
+export default function LoanProposal() {
     const router = useRouter();
     const { id: pid } = router.query;
 
@@ -92,17 +89,14 @@ export default function LoanProposal({}) {
                 </div>
             )}
 
-            <div className="container mx-auto flex p-6">
-                <div className="col-span-2">
-                    {loanProposal && <ViewProposal loanProposal={loanProposal} />}
-                </div>
-
-                {loanProposal?.onchain_proposal_id && (
-                    <div>
-                        <div className="ml-20">
-                            <ProposalState proposalId={loanProposal.onchain_proposal_id} />
+            <div className="container mx-auto max-w-2xl p-6">
+                {loanProposal && (
+                    <>
+                        <ViewProposal loanProposal={loanProposal} />
+                        <div>
+                            <button className="btn-primary w-full">Vote on this Proposal</button>
                         </div>
-                    </div>
+                    </>
                 )}
             </div>
         </>

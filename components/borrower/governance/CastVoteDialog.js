@@ -16,7 +16,7 @@ import DialogComponent from "../../DialogComponent";
 import { ethers } from "ethers";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS } from "../../../utils/Constants";
-import { findEvent } from "../../../utils/Events";
+import { findEvent, saveEvent } from "../../../utils/Events";
 
 export default function CastVoteDialog({ isModelOpen = false, modelCloseHandler, loanProposal }) {
     let [castVoteModalOpen, setCastVoteModalOpen] = useState(isModelOpen);
@@ -130,21 +130,19 @@ export default function CastVoteDialog({ isModelOpen = false, modelCloseHandler,
             const abi = [
                 "event VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 weight, string reason)",
             ];
-            findEvent(abi, data.logs, loanProposal).then((event) =>
-                saveEvent(event).then(() => closeModal())
-            );
+            findEvent(
+                abi,
+                data.logs.filter((log) => log.address == governorAddress),
+                { proposal_id: loanProposal.id }
+            ).then((events) => {
+                events.map((event) => saveEvent(supabase, event));
+                closeModal();
+            });
         },
         onError(err) {
             console.log("tx error", err);
         },
     });
-
-    const saveEvent = async (event) => {
-        const { error } = await supabase.from(SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS).insert(event);
-        if (error) {
-            console.log(error.message);
-        }
-    };
 
     function closeModal() {
         setCastVoteModalOpen(false);

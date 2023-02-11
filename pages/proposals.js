@@ -89,14 +89,14 @@ export default function LoanPropospals() {
 
                 <div className="mt-8">
                     {isLoading && (
-                        <div className="font-semibold dark:text-gray-200">Loading Data ...</div>
+                        <div className="text-gray-800 dark:text-gray-200">Loading Data ...</div>
                     )}
                     {!isLoading && proposals.length == 0 && (
-                        <div className="font-semibold dark:text-gray-200">No Proposals Yet</div>
+                        <div className="text-gray-800 dark:text-gray-200">No Proposals Yet</div>
                     )}
                     {proposals?.length > 0 && (
                         <>
-                            <div className="inline-block rounded-lg bg-slate-600 px-8 py-4 text-center text-lg text-gray-200 shadow-md">
+                            <div className="text-lg text-gray-800 dark:text-gray-200">
                                 All Proposals
                             </div>
                             <div className="mt-2 flex w-full flex-col items-end md:flex-row md:items-center">

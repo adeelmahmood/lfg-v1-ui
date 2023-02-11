@@ -1,9 +1,10 @@
 import { ethers } from "ethers";
+import { SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS } from "./Constants";
 
-export const findEvent = (abi, logs, loanProposal) => {
+export const findEvent = (abi, logs, moreData) => {
     return new Promise((resolve) => {
         let iface = new ethers.utils.Interface(abi);
-        logs.map((log) => {
+        const events = logs.map((log) => {
             try {
                 const eventData = iface.parseLog(log);
                 const args = {};
@@ -11,16 +12,24 @@ export const findEvent = (abi, logs, loanProposal) => {
                     if (isNaN(k)) args[k] = eventData.args[k]?.toString();
                 }
 
-                resolve({
+                return {
                     event_type: eventData.name,
-                    proposal_id: loanProposal.id,
                     event_data: args,
-                });
+                    address: log.address,
+                    ...moreData,
+                };
             } catch (e) {
                 console.error(e);
             }
         });
 
-        resolve(null);
+        resolve(events);
     });
+};
+
+export const saveEvent = async (supabase, event) => {
+    const { error } = await supabase.from(SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS).insert(event);
+    if (error) {
+        console.log(error.message);
+    }
 };
