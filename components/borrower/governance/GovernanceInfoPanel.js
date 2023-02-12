@@ -50,7 +50,7 @@ export default function GovernanceInfoPanel({ loanProposal }) {
         }
 
         getVotesBySupport(1, setForVoteCounts);
-        getVotesBySupport(2, setAgainstVoteCounts);
+        getVotesBySupport(0, setAgainstVoteCounts);
     }, []);
 
     useContractRead({
@@ -136,7 +136,7 @@ export default function GovernanceInfoPanel({ loanProposal }) {
                     </div>
                     <div className="flex items-center justify-between">
                         <div>Voting Power</div>
-                        <div className="ml-1">{displayUnits(voteCounts?.forVotes)}</div>
+                        <div className="ml-1">{displayUnits(voteCounts?.againstVotes)}</div>
                     </div>
                 </div>
             </div>

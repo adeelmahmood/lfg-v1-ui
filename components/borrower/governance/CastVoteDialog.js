@@ -180,7 +180,8 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
     }
 
     const percentage = (num, total) => {
-        return (num / total) * 100;
+        const p = (num / total) * 100;
+        return Math.round(p * 1e2) / 1e2;
     };
 
     useEffect(() => {
