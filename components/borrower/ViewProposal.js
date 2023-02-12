@@ -72,7 +72,10 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                             <span className="ml-2 hidden md:inline">Like this Proposal</span>
                         </button>
                         {isPublished(loanProposal) && (
-                            <CastVoteDialog loanProposal={loanProposal} />
+                            <CastVoteDialog
+                                loanProposal={loanProposal}
+                                onVoteSuccess={() => window.location.reload(false)}
+                            />
                         )}
                     </div>
                 </div>

@@ -17,13 +17,8 @@ import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { findEvent, saveEvent } from "../../../utils/Events";
 import { displayUnits } from "../../../utils/Math";
 
-export default function CastVoteDialog({
-    isModelOpen = false,
-    modelCloseHandler,
-    loanProposal,
-    forceLong = false,
-}) {
-    let [castVoteModalOpen, setCastVoteModalOpen] = useState(isModelOpen);
+export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong = false }) {
+    let [castVoteModalOpen, setCastVoteModalOpen] = useState();
 
     const supabase = useSupabaseClient();
     const user = useUser();
@@ -172,6 +167,7 @@ export default function CastVoteDialog({
             ).then((events) => {
                 events.map((event) => saveEvent(supabase, event));
                 closeModal();
+                onVoteSuccess?.();
             });
         },
         onError(err) {
@@ -181,7 +177,6 @@ export default function CastVoteDialog({
 
     function closeModal() {
         setCastVoteModalOpen(false);
-        modelCloseHandler?.();
     }
 
     const percentage = (num, total) => {
@@ -230,6 +225,7 @@ export default function CastVoteDialog({
                 heading="Vote on this Proposal"
                 isModelOpen={castVoteModalOpen}
                 modelCloseHandler={closeModal}
+                explicitClose={true}
             >
                 <div className="mt-4 w-full max-w-md">
                     <div className="rounded-lg border border-gray-500 px-4 py-4">
@@ -247,35 +243,38 @@ export default function CastVoteDialog({
 
                     <p className="mt-4 text-center text-lg">Step 1</p>
                     <p className="mt-2 text-center">Assign a delegate for voting</p>
-                    <button
-                        className="btn-primary mt-2 inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
-                        onClick={() => handleDelegate?.()}
-                        disabled={!isConnected || isLoading || isDelegated}
-                    >
-                        Self Delegate
-                        {isMounted() && isLoading && !isDelegated ? (
-                            <svg
-                                className="text-indigo ml-3 h-6 w-6 animate-spin"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                            >
-                                <circle
-                                    className="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    strokeWidth="4"
-                                ></circle>
-                                <path
-                                    className="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                ></path>
-                            </svg>
-                        ) : null}
-                    </button>
+
+                    <div className="mt-2 flex w-full items-center">
+                        <button
+                            className="btn-primary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                            onClick={() => handleDelegate?.()}
+                            disabled={!isConnected || isLoading || isDelegated}
+                        >
+                            Self Delegate
+                            {isMounted() && isLoading && !isDelegated ? (
+                                <svg
+                                    className="text-indigo ml-3 h-6 w-6 animate-spin"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                    ></circle>
+                                    <path
+                                        className="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                    ></path>
+                                </svg>
+                            ) : null}
+                        </button>
+                    </div>
 
                     <div className="mt-10 flex items-center">
                         <div className="flex-grow border-t border-gray-400 dark:border-gray-200"></div>
@@ -357,10 +356,10 @@ export default function CastVoteDialog({
                     />
                 </div>
 
-                <div className="mt-0 flex w-full items-center gap-4">
+                <div className="mt-2 flex w-full items-center">
                     <button
                         type="button"
-                        className="btn-primary mt-2 inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                        className="btn-primary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
                         onClick={() => handleVote?.()}
                         disabled={!isConnected || isLoading || !isDelegated}
                     >
@@ -389,19 +388,22 @@ export default function CastVoteDialog({
                         ) : null}
                     </button>
                 </div>
-                <div className="mt-4">
-                    {(isPrepareError || isError || isDelegatePrepareError || isDelegateError) && (
+
+                {(isPrepareError || isError || isDelegatePrepareError || isDelegateError) && (
+                    <div className="mt-4">
                         <div className="text-red-500">
                             {
                                 (prepareError || error || delegateError || delegatePrepareError)
                                     ?.message
                             }
                         </div>
-                    )}
-                    {isSuccess && (
+                    </div>
+                )}
+                {isSuccess && (
+                    <div className="mt-4">
                         <div className="text-green-500">Transaction submitted, Check Wallet</div>
-                    )}
-                </div>
+                    </div>
+                )}
             </DialogComponent>
         </>
     );

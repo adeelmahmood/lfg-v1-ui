@@ -73,7 +73,12 @@ export default function LoanProposal() {
                                 </button>
                             </span>
                         </p>
-                        {loanProposal && <PublishLoanDialog loanProposal={loanProposal} />}
+                        {loanProposal && (
+                            <PublishLoanDialog
+                                loanProposal={loanProposal}
+                                onPublishSuccess={() => window.location.reload(false)}
+                            />
+                        )}
                     </div>
                     {propNotPubHeaderExp && (
                         <div className="mt-4">

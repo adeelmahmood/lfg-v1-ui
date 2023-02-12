@@ -9,25 +9,20 @@ import governorAbi from "../../../constants/LoanGovernor.json";
 import loanManagerAbi from "../../../constants/LoanManager.json";
 import { ethers } from "ethers";
 import { parseEther } from "ethers/lib/utils.js";
-import { Dialog, Transition } from "@headlessui/react";
 import {
     DAI_ADDRESS,
     SUPABASE_TABLE_LOAN_PROPOSALS,
     SUPABASE_TABLE_LOAN_PROPOSALS_STATUS,
 } from "../../../utils/Constants";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useIsMounted from "../../../hooks/useIsMounted";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { ArrowUpOnSquareStackIcon } from "@heroicons/react/24/solid";
 import DialogComponent from "../../DialogComponent";
 import { findEvent, saveEvent } from "../../../utils/Events";
 
-export default function PublishLoanDialog({
-    isModelOpen = false,
-    modelCloseHandler,
-    loanProposal,
-}) {
-    const [publishModalOpen, setPublishModalOpen] = useState(isModelOpen);
+export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
+    const [publishModalOpen, setPublishModalOpen] = useState();
     const isMounted = useIsMounted();
 
     const supabase = useSupabaseClient();
@@ -112,13 +107,15 @@ export default function PublishLoanDialog({
             });
 
             if (er) setDbError(er.message);
-            else closeModal();
+            else {
+                closeModal();
+                onPublishSuccess?.();
+            }
         }
     };
 
     function closeModal() {
         setPublishModalOpen(false);
-        modelCloseHandler?.();
     }
 
     return (

@@ -103,10 +103,12 @@ export default function GovernanceInfoPanel({ loanProposal }) {
                     <span className="mr-1 hidden md:inline">Proposal State:</span>
                     <span className="font-semibold">{proposalState}</span>
                 </div>
-                <div>
-                    <span className="mr-1">Time Left:</span>
-                    <span className="font-semibold">{timeLeft}</span>
-                </div>
+                {timeLeft && (
+                    <div>
+                        <span className="mr-1">Time Left:</span>
+                        <span className="font-semibold">{timeLeft}</span>
+                    </div>
+                )}
             </div>
             <div className="grid grid-cols-1 gap-y-2 md:grid-cols-2 md:gap-y-0 md:gap-x-4">
                 <div className="space-y-2 rounded-lg border border-gray-400 px-4 py-4 text-gray-800 shadow-md dark:text-gray-200">

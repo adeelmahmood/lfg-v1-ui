@@ -2,6 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
 import {
     useAccount,
+    useContractRead,
     useContractWrite,
     usePrepareContractWrite,
     useWaitForTransaction,
@@ -13,6 +14,8 @@ import useIsMounted from "../../hooks/useIsMounted";
 import { erc20ABI } from "wagmi";
 import { findEvent, saveEvent } from "../../utils/Events";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import DialogComponent from "../DialogComponent";
+import { displayUnits } from "../../utils/Math";
 
 export default function DepositDialog({ isModelOpen, modelCloseHandler, token }) {
     let [isOpen, setIsOpen] = useState(isModelOpen || false);
@@ -25,6 +28,8 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
     const [amount, setAmount] = useState("");
     const [parsedAmount, setParsedAmount] = useState(0);
 
+    const [tokenBalance, setTokenBalance] = useState();
+
     const isMounted = useIsMounted();
     const [isLoading, setIsLoading] = useState(false);
     const [isApproved, setIsApproved] = useState(false);
@@ -33,6 +38,21 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
     const lendingPoolAddress = addresses[chainId].LendPool;
     const approveFunctionName = "approve";
     const depositFunctionName = "deposit";
+
+    useContractRead({
+        address: token?.token,
+        abi: erc20ABI,
+        functionName: "balanceOf",
+        args: [address],
+        onSuccess(data) {
+            const balance = displayUnits(data);
+            setTokenBalance(balance);
+        },
+        onError(err) {
+            console.log("token balance contract read error", err.message);
+        },
+        enabled: isConnected,
+    });
 
     // first approve token transfer to our contract
     const {
@@ -145,146 +165,131 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
 
     return (
         <>
-            <Transition appear show={isOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={closeModal}>
-                    <Transition.Child
-                        as={Fragment}
-                        enter="ease-out duration-300"
-                        enterFrom="opacity-0"
-                        enterTo="opacity-100"
-                        leave="ease-in duration-200"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                    >
-                        <div className="fixed inset-0 bg-black bg-opacity-25" />
-                    </Transition.Child>
-
-                    <div className="fixed inset-0 overflow-y-auto">
-                        <div className="flex min-h-full items-center justify-center p-4 text-center">
-                            <Transition.Child
-                                as={Fragment}
-                                enter="ease-out duration-300"
-                                enterFrom="opacity-0 scale-95"
-                                enterTo="opacity-100 scale-100"
-                                leave="ease-in duration-200"
-                                leaveFrom="opacity-100 scale-100"
-                                leaveTo="opacity-0 scale-95"
-                            >
-                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                                    <Dialog.Title
-                                        as="h3"
-                                        className="text-lg font-medium leading-6 text-gray-900"
-                                    >
-                                        Deposit {token?.tokenSymbol} Tokens
-                                    </Dialog.Title>
-                                    <div className="mt-2">
-                                        <p className="text-sm text-gray-500">
-                                            Transfer your
-                                            <span className="font-bold"> {token?.tokenName} </span>
-                                            tokens to deposit in the contract
-                                        </p>
-                                    </div>
-
-                                    <div className="mt-3">
-                                        <input
-                                            type="number"
-                                            placeholder="0.1"
-                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-blue-600 dark:focus:ring-blue-400"
-                                            value={amount}
-                                            onChange={(e) => setAmount(e.target.value)}
-                                        />
-                                    </div>
-
-                                    <div className="mt-4 flex w-full items-center gap-4">
-                                        <button
-                                            type="button"
-                                            className="btn-primary mt-2 inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
-                                            onClick={() => handleApprove?.()}
-                                            disabled={!isConnected || isLoading || isApproved}
-                                        >
-                                            Approve
-                                            {isMounted() && isLoading && !isApproved ? (
-                                                <svg
-                                                    className="text-indigo ml-3 h-6 w-6 animate-spin"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <circle
-                                                        className="opacity-25"
-                                                        cx="12"
-                                                        cy="12"
-                                                        r="10"
-                                                        stroke="currentColor"
-                                                        strokeWidth="4"
-                                                    ></circle>
-                                                    <path
-                                                        className="opacity-75"
-                                                        fill="currentColor"
-                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                                    ></path>
-                                                </svg>
-                                            ) : null}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="btn-primary mt-2 inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
-                                            onClick={() => handleDeposit?.()}
-                                            disabled={!isConnected || isLoading || !isApproved}
-                                        >
-                                            Deposit
-                                            {isMounted() && isLoading && isApproved ? (
-                                                <svg
-                                                    className="text-indigo ml-3 h-5 w-5 animate-spin"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <circle
-                                                        className="opacity-25"
-                                                        cx="12"
-                                                        cy="12"
-                                                        r="10"
-                                                        stroke="currentColor"
-                                                        strokeWidth="4"
-                                                    ></circle>
-                                                    <path
-                                                        className="opacity-75"
-                                                        fill="currentColor"
-                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                                    ></path>
-                                                </svg>
-                                            ) : null}
-                                        </button>
-                                    </div>
-                                    <div className="mt-4 flex w-full items-center">
-                                        {(isPrepareError ||
-                                            isError ||
-                                            isApprovePrepareError ||
-                                            isApproveError) && (
-                                            <div className="text-red-500">
-                                                {
-                                                    (
-                                                        prepareError ||
-                                                        error ||
-                                                        approveEror ||
-                                                        approvePrepareError
-                                                    )?.message
-                                                }
-                                            </div>
-                                        )}
-                                        {isSuccess && (
-                                            <div className="text-green-500">
-                                                Transaction submitted, Check Wallet
-                                            </div>
-                                        )}
-                                    </div>
-                                </Dialog.Panel>
-                            </Transition.Child>
+            <DialogComponent
+                heading={`Deposit ${token?.tokenSymbol} Tokens`}
+                isModelOpen={isModelOpen}
+                modelCloseHandler={closeModal}
+                explicitClose={true}
+            >
+                <div className="mt-4 w-full max-w-md">
+                    <div className="rounded-lg border border-gray-500 px-4 py-4">
+                        <div className="flex items-center justify-between">
+                            <div className="font-semibold text-gray-800">
+                                Your {token?.tokenSymbol} Balance
+                            </div>
+                            <div className="font-semibold text-gray-800">{tokenBalance}</div>
                         </div>
                     </div>
-                </Dialog>
-            </Transition>
+                    {/* <p className="mt-4 text-sm text-gray-500">
+                        Transfer your
+                        <span className="font-bold"> {token?.tokenName} </span>
+                        tokens to deposit in the contract
+                    </p> */}
+
+                    <p className="mt-4 text-center text-lg">Step 1</p>
+                    <p className="mt-2 text-center">Specify amount and approve the transfer</p>
+
+                    <div className="mt-3">
+                        <input
+                            type="number"
+                            placeholder="0.1"
+                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-blue-600 dark:focus:ring-blue-400"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="mt-2 flex w-full items-center">
+                        <button
+                            type="button"
+                            className="btn-primary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                            onClick={() => handleApprove?.()}
+                            disabled={!isConnected || isLoading || isApproved}
+                        >
+                            Approve
+                            {isMounted() && isLoading && !isApproved ? (
+                                <svg
+                                    className="text-indigo ml-3 h-6 w-6 animate-spin"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                    ></circle>
+                                    <path
+                                        className="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                    ></path>
+                                </svg>
+                            ) : null}
+                        </button>
+                    </div>
+
+                    <div className="mt-10 flex items-center">
+                        <div className="flex-grow border-t border-gray-400 dark:border-gray-200"></div>
+                        <span className="mx-4 flex-shrink text-gray-400 dark:text-gray-200">
+                            And
+                        </span>
+                        <div className="flex-grow border-t border-gray-400 dark:border-gray-200"></div>
+                    </div>
+
+                    <p className="mt-6 text-center text-lg">Step 2</p>
+                    <p className="mt-2 text-center">Finalize deposit</p>
+
+                    <div className="mt-2 flex w-full items-center">
+                        <button
+                            type="button"
+                            className="btn-primary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                            onClick={() => handleDeposit?.()}
+                            disabled={!isConnected || isLoading || !isApproved}
+                        >
+                            Deposit
+                            {isMounted() && isLoading && isApproved ? (
+                                <svg
+                                    className="text-indigo ml-3 h-6 w-6 animate-spin"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                    ></circle>
+                                    <path
+                                        className="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                    ></path>
+                                </svg>
+                            ) : null}
+                        </button>
+                    </div>
+                </div>
+
+                {(isPrepareError || isError || isApprovePrepareError || isApproveError) && (
+                    <div className="mt-4 flex w-full items-center">
+                        <div className="text-red-500">
+                            {(prepareError || error || approveEror || approvePrepareError)?.message}
+                        </div>
+                    </div>
+                )}
+                {isSuccess && (
+                    <div className="mt-4 flex w-full items-center">
+                        <div className="text-green-500">Transaction submitted, Check Wallet</div>
+                    </div>
+                )}
+            </DialogComponent>
         </>
     );
 }

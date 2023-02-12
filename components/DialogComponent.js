@@ -1,16 +1,23 @@
 import { Dialog, Transition } from "@headlessui/react";
+import {
+    CursorArrowRaysIcon,
+    LockClosedIcon,
+    MoonIcon,
+    XMarkIcon,
+} from "@heroicons/react/24/solid";
 import { Fragment, useEffect, useState } from "react";
 
 export default function DialogComponent({
     isModelOpen = false,
     modelCloseHandler,
     heading,
+    explicitClose = false,
     children,
 }) {
     let [isOpen, setIsOpen] = useState(isModelOpen);
 
     function closeModal() {
-        modelCloseHandler?.();
+        if (!explicitClose) modelCloseHandler?.();
     }
 
     useEffect(() => {
@@ -44,7 +51,7 @@ export default function DialogComponent({
                                 leaveFrom="opacity-100 scale-100"
                                 leaveTo="opacity-0 scale-95"
                             >
-                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                <Dialog.Panel className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                                     {heading && (
                                         <Dialog.Title
                                             as="h3"
@@ -54,6 +61,15 @@ export default function DialogComponent({
                                         </Dialog.Title>
                                     )}
                                     {children}
+                                    {explicitClose && (
+                                        <button
+                                            type="button"
+                                            className="btn-clear mt-2 inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                                            onClick={modelCloseHandler}
+                                        >
+                                            Cancel
+                                        </button>
+                                    )}
                                 </Dialog.Panel>
                             </Transition.Child>
                         </div>
