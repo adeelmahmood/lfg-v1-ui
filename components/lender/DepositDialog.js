@@ -16,6 +16,7 @@ import { findEvent, saveEvent } from "../../utils/Events";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import DialogComponent from "../DialogComponent";
 import { displayUnits } from "../../utils/Math";
+import { addTokenToMetaMask } from "../../utils/Metamask";
 
 export default function DepositDialog({ isModelOpen, modelCloseHandler, token }) {
     let [isOpen, setIsOpen] = useState(isModelOpen || false);
@@ -36,6 +37,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const lendingPoolAddress = addresses[chainId].LendPool;
+    const govTokenAddress = addresses[chainId].GovToken;
     const approveFunctionName = "approve";
     const depositFunctionName = "deposit";
 
@@ -171,7 +173,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                 modelCloseHandler={closeModal}
                 explicitClose={true}
             >
-                <div className="mt-4 w-full max-w-md">
+                <div className="mt-4 mb-4 w-full max-w-md">
                     <div className="rounded-lg border border-gray-500 px-4 py-4">
                         <div className="flex items-center justify-between">
                             <div className="font-semibold text-gray-800">
@@ -186,14 +188,16 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                         tokens to deposit in the contract
                     </p> */}
 
-                    <p className="mt-4 text-center text-lg">Step 1</p>
-                    <p className="mt-2 text-center">Specify amount and approve the transfer</p>
+                    <p className="mt-4 text-center text-lg dark:text-gray-800">Step 1</p>
+                    <p className="mt-2 text-center dark:text-gray-800">
+                        Specify amount and approve the transfer
+                    </p>
 
                     <div className="mt-3">
                         <input
                             type="number"
                             placeholder="0.1"
-                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-blue-600 dark:focus:ring-blue-400"
+                            className="w-full appearance-none rounded-lg border-gray-300 accent-red-500 shadow-sm outline-none focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:bg-white dark:text-gray-800 dark:focus:border-slate-600 dark:focus:ring-slate-600"
                             value={amount}
                             onChange={(e) => setAmount(e.target.value)}
                         />
@@ -202,7 +206,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                     <div className="mt-2 flex w-full items-center">
                         <button
                             type="button"
-                            className="btn-primary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                            className="btn-secondary-dark inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
                             onClick={() => handleApprove?.()}
                             disabled={!isConnected || isLoading || isApproved}
                         >
@@ -233,20 +237,18 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                     </div>
 
                     <div className="mt-10 flex items-center">
-                        <div className="flex-grow border-t border-gray-400 dark:border-gray-200"></div>
-                        <span className="mx-4 flex-shrink text-gray-400 dark:text-gray-200">
-                            And
-                        </span>
-                        <div className="flex-grow border-t border-gray-400 dark:border-gray-200"></div>
+                        <div className="flex-grow border-t border-gray-400"></div>
+                        <span className="mx-4 flex-shrink text-gray-400">And</span>
+                        <div className="flex-grow border-t border-gray-400"></div>
                     </div>
 
-                    <p className="mt-6 text-center text-lg">Step 2</p>
-                    <p className="mt-2 text-center">Finalize deposit</p>
+                    <p className="mt-6 text-center text-lg dark:text-gray-800">Step 2</p>
+                    <p className="mt-2 text-center dark:text-gray-800">Finalize deposit</p>
 
                     <div className="mt-2 flex w-full items-center">
                         <button
                             type="button"
-                            className="btn-primary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                            className="btn-secondary-dark inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
                             onClick={() => handleDeposit?.()}
                             disabled={!isConnected || isLoading || !isApproved}
                         >
@@ -274,6 +276,24 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                                 </svg>
                             ) : null}
                         </button>
+                    </div>
+
+                    <div className="mt-4">
+                        <p className="text-sm">
+                            After deposit, use this link to add governance tokens to your wallet
+                            <a
+                                href="#"
+                                className="ml-1 font-semibold text-indigo-500"
+                                onClick={() =>
+                                    addTokenToMetaMask({
+                                        token: govTokenAddress,
+                                        tokenSymbol: "LGT",
+                                    })
+                                }
+                            >
+                                Add to Metamask
+                            </a>
+                        </p>
                     </div>
                 </div>
 

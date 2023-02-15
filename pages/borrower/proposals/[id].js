@@ -2,6 +2,8 @@ import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../../../utils/Constants";
+import addresses from "../../../constants/contract.json";
+import governorAbi from "../../../constants/LoanGovernor.json";
 import ViewProposal from "../../../components/borrower/ViewProposal";
 import TopGradient from "../../../components/TopGradient";
 import Navbar from "../../../components/Navbar";
@@ -12,6 +14,7 @@ import {
 } from "@heroicons/react/24/solid";
 import PublishLoanDialog from "../../../components/borrower/governance/PublishLoanDialog";
 import CastVoteDialog from "../../../components/borrower/governance/CastVoteDialog";
+import { useAccount, useBlockNumber, useContractRead } from "wagmi";
 
 export default function LoanProposal() {
     const router = useRouter();
@@ -20,8 +23,30 @@ export default function LoanProposal() {
     const supabase = useSupabaseClient();
     const user = useUser();
 
+    const { isConnected } = useAccount();
+    const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
+    const governorAddress = addresses[chainId].LoanGovernor;
+
+    const [governanceState, setGovernanceState] = useState(-1);
+
+    const { data: currentBlock } = useBlockNumber();
+
     const [loanProposal, setLoanProposal] = useState();
     const [published, setPublished] = useState(true);
+
+    useContractRead({
+        address: governorAddress,
+        abi: governorAbi,
+        functionName: "state",
+        args: [loanProposal?.onchain_proposal_id],
+        onSuccess(data) {
+            setGovernanceState(data);
+        },
+        onError(err) {
+            console.log("governor state contract read error", err.message);
+        },
+        enabled: isConnected && loanProposal?.onchain_proposal_id != null,
+    });
 
     useEffect(() => {
         async function fetchProposal(pid) {
@@ -48,6 +73,18 @@ export default function LoanProposal() {
 
     const isPublished = (p) => {
         return p?.loan_proposals_status?.find((s) => s.status == "Published");
+    };
+
+    const canVote = () => {
+        return governanceState == 0 || governanceState == 1;
+    };
+
+    const canQueue = () => {
+        return governanceState == 4;
+    };
+
+    const canExecute = () => {
+        return governanceState == 5;
     };
 
     return (
@@ -98,8 +135,13 @@ export default function LoanProposal() {
             <div className="container mx-auto max-w-2xl p-6">
                 {loanProposal && (
                     <>
-                        <ViewProposal loanProposal={loanProposal} />
-                        {loanProposal.onchain_proposal_id && (
+                        <ViewProposal
+                            loanProposal={loanProposal}
+                            canVote={canVote}
+                            canQueue={canQueue}
+                            canExecute={canExecute}
+                        />
+                        {loanProposal.onchain_proposal_id && canVote() && (
                             <CastVoteDialog loanProposal={loanProposal} forceLong={true} />
                         )}
                     </>

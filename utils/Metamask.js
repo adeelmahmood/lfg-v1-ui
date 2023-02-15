@@ -1,5 +1,5 @@
 export const addTokenToMetaMask = async (token) => {
-    if (!allowAddTokensToMM || !window.ethereum) return;
+    if (!window.ethereum) return;
 
     try {
         const wasAdded = await window.ethereum?.request({
@@ -9,7 +9,7 @@ export const addTokenToMetaMask = async (token) => {
                 options: {
                     address: token?.token, // The address that the token is at.
                     symbol: token?.tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
-                    decimals: token?.tokenDecimals?.toNumber(), // The number of decimals in the token
+                    decimals: token?.tokenDecimals?.toNumber() || 18, // The number of decimals in the token
                     //   image: tokenImage, // A string url of the token logo
                 },
             },

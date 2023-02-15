@@ -6,23 +6,20 @@ import {
 } from "wagmi";
 import addresses from "../../../constants/contract.json";
 import governorAbi from "../../../constants/LoanGovernor.json";
-import loanManagerAbi from "../../../constants/LoanManager.json";
 import { ethers } from "ethers";
-import { parseEther } from "ethers/lib/utils.js";
 import {
-    DAI_ADDRESS,
-    SUPABASE_TABLE_LOAN_PROPOSALS,
+    SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS,
     SUPABASE_TABLE_LOAN_PROPOSALS_STATUS,
 } from "../../../utils/Constants";
 import { useEffect, useState } from "react";
 import useIsMounted from "../../../hooks/useIsMounted";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { ArrowUpOnSquareStackIcon, RocketLaunchIcon } from "@heroicons/react/24/solid";
+import { BoltIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
 import DialogComponent from "../../DialogComponent";
 import { findEvent, saveEvent } from "../../../utils/Events";
 
-export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
-    const [publishModalOpen, setPublishModalOpen] = useState();
+export default function ExecutePropoposalDialog({ loanProposal, onExecutedSuccess }) {
+    const [executeModalOpen, setExecuteModalOpen] = useState();
     const isMounted = useIsMounted();
 
     const supabase = useSupabaseClient();
@@ -33,22 +30,27 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
     const { address, isConnected } = useAccount();
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const governorAddress = addresses[chainId].LoanGovernor;
-    const loanManagerAddress = addresses[chainId].LoanManager;
-    const governorFunctionName = "propose";
+    const governorFunctionName = "execute";
 
-    const proposeFunctionName = "issueLoan";
-    const proposeFunctionArgs = [address, DAI_ADDRESS, parseEther(String(loanProposal.amount))];
-    const proposeDescription = `@@Loan Proposal {{${loanProposal.id}}}@@`;
-
-    const [encodedFunctionCall, setEncodedFunctionCall] = useState();
+    const [proposeData, setProposeData] = useState(null);
 
     useEffect(() => {
-        if (!encodedFunctionCall) {
-            const loanMangerIface = new ethers.utils.Interface(loanManagerAbi);
-            setEncodedFunctionCall(
-                loanMangerIface.encodeFunctionData(proposeFunctionName, proposeFunctionArgs)
-            );
+        async function getProposalEncodedData() {
+            const { data, error } = await supabase
+                .from(SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS)
+                .select("event_data")
+                .eq("proposal_id", loanProposal.id)
+                .eq("event_type", "ProposalCreated")
+                .single();
+
+            if (error) {
+                console.log(error.message);
+            } else {
+                setProposeData(data.event_data);
+            }
         }
+
+        getProposalEncodedData();
     }, []);
 
     const {
@@ -59,8 +61,13 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
         address: governorAddress,
         abi: governorAbi,
         functionName: governorFunctionName,
-        enabled: encodedFunctionCall,
-        args: [[loanManagerAddress], [0], [encodedFunctionCall], proposeDescription],
+        enabled: proposeData?.targets != null,
+        args: [
+            proposeData?.targets?.split(",") || [],
+            proposeData?.values?.split(",") || [0],
+            proposeData?.calldatas?.split(",") || [],
+            proposeData?.description ? ethers.utils.id(proposeData?.description) : null,
+        ],
         onError(err) {
             console.log("prepare error", err);
         },
@@ -71,9 +78,7 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
     const { isLoading: isTxLoading, isSuccess: isSuccess } = useWaitForTransaction({
         hash: data?.hash,
         onSuccess(data) {
-            const abi = [
-                "event ProposalCreated(uint256 proposalId, address proposer, address[] targets, uint256[] values, string[] signatures, bytes[] calldatas, uint256 startBlock, uint256 endBlock, string description)",
-            ];
+            const abi = ["event ProposalExecuted(uint256 proposalId)"];
             findEvent(
                 abi,
                 data.logs.filter((log) => log.address == governorAddress),
@@ -82,7 +87,7 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
                 events.map((event) => saveEvent(supabase, event));
                 if (events && events.length > 0) {
                     const proposalId = events[0].event_data["proposalId"];
-                    handlePublished(proposalId);
+                    handleQueued(proposalId);
                 }
             });
         },
@@ -91,31 +96,21 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
         },
     });
 
-    const handlePublished = async (proposalId) => {
-        const { error: e } = await supabase
-            .from(SUPABASE_TABLE_LOAN_PROPOSALS)
-            .update({
-                onchain_proposal_id: proposalId.toString(),
-            })
-            .eq("id", loanProposal.id);
+    const handleQueued = async (proposalId) => {
+        const { error: er } = await supabase.from(SUPABASE_TABLE_LOAN_PROPOSALS_STATUS).insert({
+            status: "Executed",
+            proposal_id: loanProposal.id,
+        });
 
-        if (e) setDbError(e.message);
+        if (er) setDbError(er.message);
         else {
-            const { error: er } = await supabase.from(SUPABASE_TABLE_LOAN_PROPOSALS_STATUS).insert({
-                status: "Published",
-                proposal_id: loanProposal.id,
-            });
-
-            if (er) setDbError(er.message);
-            else {
-                closeModal();
-                onPublishSuccess?.();
-            }
+            closeModal();
+            onExecutedSuccess?.();
         }
     };
 
     function closeModal() {
-        setPublishModalOpen(false);
+        setExecuteModalOpen(false);
     }
 
     return (
@@ -124,21 +119,23 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
                 className="btn-primary text-base"
                 onClick={(e) => {
                     e.preventDefault();
-                    setPublishModalOpen(true);
+                    setExecuteModalOpen(true);
                 }}
             >
-                <RocketLaunchIcon className="inline h-6 fill-current align-top text-white dark:text-gray-800" />
-                <span className="ml-2 hidden md:inline">Publish this Proposal</span>
+                <BoltIcon className="inline h-6 fill-current align-top text-white dark:text-gray-800" />
+                <span className="ml-2 hidden md:inline">Execute this Proposal</span>
             </button>
 
             <DialogComponent
-                heading="Publish Proposal"
-                isModelOpen={publishModalOpen}
+                heading="Execute Proposal"
+                isModelOpen={executeModalOpen}
                 modelCloseHandler={closeModal}
             >
                 <div className="mt-2">
                     <p className="text-sm text-gray-500 dark:text-gray-800">
-                        Publish this proposal to start the voting process
+                        The proposal is all set. Execute this proposal to disburse the funds to the
+                        loan requestor.
+                        <span className="font-semibold">This action cannot be undone!</span>
                     </p>
                 </div>
 
@@ -149,7 +146,7 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
                         onClick={() => handle?.()}
                         disabled={!isConnected || isLoading || isTxLoading}
                     >
-                        Publish Proposal
+                        Execute Proposal
                         {isMounted() && (isLoading || isTxLoading) ? (
                             <svg
                                 className="text-indigo ml-3 h-6 w-6 animate-spin"

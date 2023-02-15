@@ -181,7 +181,7 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
 
     const percentage = (num, total) => {
         const p = (num / total) * 100;
-        return Math.round(p * 1e2) / 1e2;
+        return !isNaN(p) && p > 0 ? Math.round(p * 1e2) / 1e2 : 0;
     };
 
     useEffect(() => {
@@ -242,12 +242,14 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
                         </div>
                     </div>
 
-                    <p className="mt-4 text-center text-lg">Step 1</p>
-                    <p className="mt-2 text-center">Assign a delegate for voting</p>
+                    <p className="mt-4 text-center text-lg dark:text-gray-800">Step 1</p>
+                    <p className="mt-2 text-center dark:text-gray-800">
+                        Assign a delegate for voting
+                    </p>
 
                     <div className="mt-2 flex w-full items-center">
                         <button
-                            className="btn-primary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                            className="btn-secondary-dark inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
                             onClick={() => handleDelegate?.()}
                             disabled={!isConnected || isLoading || isDelegated}
                         >
@@ -278,15 +280,15 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
                     </div>
 
                     <div className="mt-10 flex items-center">
-                        <div className="flex-grow border-t border-gray-400 dark:border-gray-200"></div>
-                        <span className="mx-4 flex-shrink text-gray-400 dark:text-gray-200">
-                            And
-                        </span>
-                        <div className="flex-grow border-t border-gray-400 dark:border-gray-200"></div>
+                        <div className="flex-grow border-t border-gray-400"></div>
+                        <span className="mx-4 flex-shrink text-gray-400">And</span>
+                        <div className="flex-grow border-t border-gray-400"></div>
                     </div>
 
-                    <p className="mt-6 text-center text-lg">Step 2</p>
-                    <p className="mt-2 text-center">Make your voting selections</p>
+                    <p className="mt-6 text-center text-lg dark:text-gray-800">Step 2</p>
+                    <p className="mt-2 text-center dark:text-gray-800">
+                        Make your voting selections
+                    </p>
 
                     <Listbox value={vote} onChange={setVote}>
                         <div className="relative mt-2">
@@ -360,7 +362,7 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
                 <div className="mt-2 flex w-full items-center">
                     <button
                         type="button"
-                        className="btn-primary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                        className="btn-secondary-dark inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
                         onClick={() => handleVote?.()}
                         disabled={!isConnected || isLoading || !isDelegated}
                     >

@@ -64,7 +64,7 @@ export default function DialogComponent({
                                     {explicitClose && (
                                         <button
                                             type="button"
-                                            className="btn-clear mt-2 inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                                            className="btn-clear mt-2 inline-flex w-full justify-center"
                                             onClick={modelCloseHandler}
                                         >
                                             Cancel

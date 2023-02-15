@@ -2,8 +2,10 @@ import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { HandThumbUpIcon } from "@heroicons/react/24/solid";
 import CastVoteDialog from "./governance/CastVoteDialog";
 import GovernanceInfoPanel from "./governance/GovernanceInfoPanel";
+import QueuePropoposalDialog from "./governance/QueuePropoposalDialog";
+import ExecutePropoposalDialog from "./governance/ExecuteProposalDialog";
 
-export default function ViewProposal({ loanProposal, ...rest }) {
+export default function ViewProposal({ loanProposal, canVote, canQueue, canExecute, ...rest }) {
     const supabase = useSupabaseClient();
     const user = useUser();
 
@@ -68,19 +70,33 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                     </div>
                     <div className="flex flex-col items-end space-y-2">
                         <button className="btn-clear text-base" disabled={true}>
-                            <HandThumbUpIcon className="inline h-6 fill-current align-top text-gray-800 dark:text-gray-200" />
+                            <HandThumbUpIcon className="inline h-6 fill-current align-top text-gray-800" />
                             <span className="ml-2 hidden md:inline">Like this Proposal</span>
                         </button>
-                        {isPublished(loanProposal) && (
+                        {isPublished(loanProposal) && canVote?.() && (
                             <CastVoteDialog
                                 loanProposal={loanProposal}
                                 onVoteSuccess={() => window.location.reload(false)}
                             />
                         )}
+
+                        {isPublished(loanProposal) && canQueue?.() && (
+                            <QueuePropoposalDialog
+                                loanProposal={loanProposal}
+                                onQueuedSuccess={() => window.location.reload(false)}
+                            />
+                        )}
+
+                        {isPublished(loanProposal) && canExecute?.() && (
+                            <ExecutePropoposalDialog
+                                loanProposal={loanProposal}
+                                onQueuedSuccess={() => window.location.reload(false)}
+                            />
+                        )}
                     </div>
                 </div>
                 {isPublished(loanProposal) && (
-                    <div className="mt-6">
+                    <div className="mt-4">
                         <GovernanceInfoPanel loanProposal={loanProposal} />
                     </div>
                 )}

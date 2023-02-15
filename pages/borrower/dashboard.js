@@ -32,7 +32,6 @@ export default function BorrowerGenInfo() {
             )
             .order("created_at", { ascending: false })
             .eq("user_id", user.id);
-        console.log("did the order");
 
         setIsLoading(false);
         if (error) setError(error.message);

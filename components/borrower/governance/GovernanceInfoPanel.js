@@ -1,4 +1,4 @@
-import { useAccount, useBlockNumber, useContractRead } from "wagmi";
+import { useAccount, useBlockNumber, useContractRead, useProvider } from "wagmi";
 import addresses from "../../../constants/contract.json";
 import governorAbi from "../../../constants/LoanGovernor.json";
 import { useEffect, useState } from "react";
@@ -26,10 +26,10 @@ export default function GovernanceInfoPanel({ loanProposal }) {
     const [voteCounts, setVoteCounts] = useState();
 
     const states = [
-        "Pending",
-        "Active",
+        "Voting In Progress", //"Pending",
+        "Voting In Progress", //"Active",
         "Canceled",
-        "Defeated",
+        "Rejected", //"Defeated",
         "Succeeded",
         "Queued",
         "Expired",
@@ -59,8 +59,46 @@ export default function GovernanceInfoPanel({ loanProposal }) {
         functionName: "proposalDeadline",
         args: [proposalId],
         onSuccess(data) {
-            const blocksLeft = data - currentBlock;
-            if (blocksLeft > 0) setTimeLeft(prettyMilliseconds(blocksLeft * 12 * 1000)); //~12 sec per block, sec to ms
+            const blocksLeft = data - currentBlock + 1; //plus one coz voting ends after last block
+            if (blocksLeft > 0) {
+                setTimeLeft(prettyMilliseconds(blocksLeft * 12 * 1000)); //~12 sec per block, sec to ms
+            }
+        },
+        onError(err) {
+            console.log("governor proposalDeadline contract read error", err.message);
+        },
+        enabled: isConnected && proposalId,
+    });
+
+    const epochDate = (s) => {
+        const d = new Date(0);
+        d.setUTCSeconds(s);
+        console.log(d);
+    };
+
+    const provider = useProvider();
+    const [proposalEta, setProposalEta] = useState();
+
+    useEffect(() => {
+        async function getInfo() {
+            const block = await provider.getBlock(currentBlock);
+            const timestamp = block.timestamp;
+            const secsLeft = proposalEta - timestamp;
+            if (secsLeft > 0) {
+                setTimeLeft(prettyMilliseconds(secsLeft * 1000)); //sec to ms
+            }
+        }
+
+        if (proposalEta) getInfo();
+    }, [proposalEta]);
+
+    useContractRead({
+        address: governorAddress,
+        abi: governorAbi,
+        functionName: "proposalEta",
+        args: [proposalId],
+        onSuccess(data) {
+            setProposalEta(data);
         },
         onError(err) {
             console.log("governor proposalDeadline contract read error", err.message);
@@ -88,6 +126,7 @@ export default function GovernanceInfoPanel({ loanProposal }) {
         functionName: "proposalVotes",
         args: [proposalId],
         onSuccess(data) {
+            console.log(data);
             setVoteCounts(data);
         },
         onError(err) {
