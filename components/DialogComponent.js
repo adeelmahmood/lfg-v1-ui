@@ -1,10 +1,4 @@
 import { Dialog, Transition } from "@headlessui/react";
-import {
-    CursorArrowRaysIcon,
-    LockClosedIcon,
-    MoonIcon,
-    XMarkIcon,
-} from "@heroicons/react/24/solid";
 import { Fragment, useEffect, useState } from "react";
 
 export default function DialogComponent({

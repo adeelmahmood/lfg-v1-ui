@@ -97,7 +97,12 @@ export default function ViewProposal({ loanProposal, canVote, canQueue, canExecu
                 </div>
                 {isPublished(loanProposal) && (
                     <div className="mt-4">
-                        <GovernanceInfoPanel loanProposal={loanProposal} />
+                        <GovernanceInfoPanel
+                            loanProposal={loanProposal}
+                            canVote={canVote}
+                            canQueue={canQueue}
+                            canExecute={canExecute}
+                        />
                     </div>
                 )}
                 <div className="mt-6">

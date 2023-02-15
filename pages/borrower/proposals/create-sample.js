@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import {
-    SUPABASE_STORAGE_LOAN_PROPOSALS,
     SUPABASE_TABLE_LOAN_PROPOSALS,
     SUPABASE_TABLE_LOAN_PROPOSALS_STATUS,
 } from "../../../utils/Constants";
@@ -9,7 +8,15 @@ import {
 export default function LoanProposal() {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-    function s(length) {
+    function s(words, chars) {
+        let result = "";
+        for (let i = 0; i < words; i++) {
+            result += c(chars) + " ";
+        }
+        return result;
+    }
+
+    function c(length) {
         let result = " ";
         const charactersLength = characters.length;
         for (let i = 0; i < length; i++) {
@@ -20,12 +27,12 @@ export default function LoanProposal() {
     }
 
     const [loanProposal, setLoanProposal] = useState({
-        business_title: s(10),
-        business_tagline: s(10),
-        business_description: s(10),
-        business_gen_description: s(10),
-        loan_reasoning: s(10),
-        loan_gen_reasoning: s(10),
+        business_title: s(3, 3) + s(3, 4) + s(2, 2) + s(1, 4),
+        business_tagline: "",
+        business_description: s(50, 10),
+        business_gen_description: "",
+        loan_reasoning: s(50, 10),
+        loan_gen_reasoning: "",
         tagline_manual_picked: true,
         tagline_gen_picked: false,
         description_manual_picked: true,
@@ -35,7 +42,7 @@ export default function LoanProposal() {
         banner_image: "https://source.unsplash.com/random",
         banner_image_metadata: {},
         identity_verification_requested: false,
-        amount: 1000,
+        amount: 5000,
     });
 
     const supabase = useSupabaseClient();

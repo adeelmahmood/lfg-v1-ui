@@ -1,13 +1,15 @@
 import { useAccount, useBlockNumber, useContractRead, useProvider } from "wagmi";
 import addresses from "../../../constants/contract.json";
 import governorAbi from "../../../constants/LoanGovernor.json";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { displayUnits } from "../../../utils/Math";
 import prettyMilliseconds from "pretty-ms";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS } from "../../../utils/Constants";
+import { ChevronDoubleDownIcon, ChevronDoubleUpIcon } from "@heroicons/react/24/solid";
+import { Transition } from "@headlessui/react";
 
-export default function GovernanceInfoPanel({ loanProposal }) {
+export default function GovernanceInfoPanel({ loanProposal, canVote, canQueue, canExecute }) {
     const [proposalState, setProposalState] = useState("Not Governable");
     const [proposalId, setProposalId] = useState(loanProposal?.onchain_proposal_id);
 
@@ -21,9 +23,16 @@ export default function GovernanceInfoPanel({ loanProposal }) {
     const { data: currentBlock } = useBlockNumber();
     const [timeLeft, setTimeLeft] = useState();
 
-    const [forVotesCount, setForVoteCounts] = useState(0);
-    const [againstVotesCount, setAgainstVoteCounts] = useState(0);
+    const provider = useProvider();
+    const [proposalEta, setProposalEta] = useState();
+
+    const [forVotes, setForVote] = useState([]);
+    const [againstVotes, setAgainstVotes] = useState([]);
     const [voteCounts, setVoteCounts] = useState();
+
+    const [statusExpanded, setStatusExpanded] = useState(false);
+    const [forVotesExpanded, setForVotesExpanded] = useState(true);
+    const [againstVotesExpanded, setAgainstVotesExpanded] = useState(true);
 
     const states = [
         "Voting In Progress", //"Pending",
@@ -38,19 +47,19 @@ export default function GovernanceInfoPanel({ loanProposal }) {
 
     useEffect(() => {
         async function getVotesBySupport(mode, setData) {
-            const { count, error } = await supabase
+            const { data, error } = await supabase
                 .from(SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS)
-                .select("*", { count: "exact", head: true })
+                .select("*")
                 .eq("proposal_id", loanProposal.id)
                 .eq("event_data->>support", mode);
             if (error) {
                 console.log(error.message);
             }
-            setData?.(count);
+            setData?.(data);
         }
 
-        getVotesBySupport(1, setForVoteCounts);
-        getVotesBySupport(0, setAgainstVoteCounts);
+        getVotesBySupport(1, setForVote);
+        getVotesBySupport(0, setAgainstVotes);
     }, []);
 
     useContractRead({
@@ -67,30 +76,8 @@ export default function GovernanceInfoPanel({ loanProposal }) {
         onError(err) {
             console.log("governor proposalDeadline contract read error", err.message);
         },
-        enabled: isConnected && proposalId,
+        enabled: isConnected && proposalId && canVote?.() === true,
     });
-
-    const epochDate = (s) => {
-        const d = new Date(0);
-        d.setUTCSeconds(s);
-        console.log(d);
-    };
-
-    const provider = useProvider();
-    const [proposalEta, setProposalEta] = useState();
-
-    useEffect(() => {
-        async function getInfo() {
-            const block = await provider.getBlock(currentBlock);
-            const timestamp = block.timestamp;
-            const secsLeft = proposalEta - timestamp;
-            if (secsLeft > 0) {
-                setTimeLeft(prettyMilliseconds(secsLeft * 1000)); //sec to ms
-            }
-        }
-
-        if (proposalEta) getInfo();
-    }, [proposalEta]);
 
     useContractRead({
         address: governorAddress,
@@ -103,7 +90,7 @@ export default function GovernanceInfoPanel({ loanProposal }) {
         onError(err) {
             console.log("governor proposalDeadline contract read error", err.message);
         },
-        enabled: isConnected && proposalId,
+        enabled: isConnected && proposalId && canExecute?.() === true,
     });
 
     useContractRead({
@@ -126,7 +113,6 @@ export default function GovernanceInfoPanel({ loanProposal }) {
         functionName: "proposalVotes",
         args: [proposalId],
         onSuccess(data) {
-            console.log(data);
             setVoteCounts(data);
         },
         onError(err) {
@@ -135,48 +121,196 @@ export default function GovernanceInfoPanel({ loanProposal }) {
         enabled: isConnected && proposalId,
     });
 
+    const trimAddress = (addr) => {
+        return addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
+    };
+
+    useEffect(() => {
+        async function translateProposalEtaToTimeLeft() {
+            const block = await provider.getBlock(currentBlock);
+            const timestamp = block.timestamp;
+            const secsLeft = proposalEta - timestamp;
+            if (secsLeft > 0) {
+                setTimeLeft(prettyMilliseconds(secsLeft * 1000)); //sec to ms
+            }
+        }
+
+        if (proposalEta) translateProposalEtaToTimeLeft();
+    }, [proposalEta]);
+
+    const ToggleDetailsComp = ({
+        handleToggle,
+        isDetailsOpen,
+        content,
+        details,
+        showToggle = true,
+    }) => {
+        return (
+            <>
+                <button
+                    className={`group relative flex w-full ${
+                        isDetailsOpen ? "rounded-t-lg" : "rounded-lg"
+                    }  px-4 py-2 hover:bg-gray-100`}
+                    onClick={() => {
+                        if (showToggle) handleToggle?.();
+                    }}
+                >
+                    {content}
+                    {showToggle && (
+                        <span
+                            onClick={handleToggle}
+                            className="absolute left-[50%] hidden md:block"
+                        >
+                            {isDetailsOpen ? (
+                                <ChevronDoubleUpIcon className="inline h-5 fill-current align-top text-gray-400 group-hover:text-gray-800 dark:text-gray-400 group-hover:dark:text-gray-200" />
+                            ) : (
+                                <ChevronDoubleDownIcon className="dark:text-gray-4000 inline h-5 fill-current align-top text-gray-400 group-hover:text-gray-800 group-hover:dark:text-gray-200" />
+                            )}
+                        </span>
+                    )}
+                </button>
+                <Transition
+                    as="div"
+                    show={showToggle && isDetailsOpen}
+                    enter="transition-opacity duration-300"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="transition-opacity duration-150"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                    appear={true}
+                >
+                    {details}
+                </Transition>
+            </>
+        );
+    };
+
     return (
         <>
-            <div className="mb-2 flex items-center justify-between rounded-lg border border-gray-400 py-2 px-4 text-gray-600 dark:text-gray-200">
-                <div>
-                    <span className="mr-1 hidden md:inline">Proposal State:</span>
-                    <span className="font-semibold">{proposalState}</span>
-                </div>
-                {timeLeft && (
-                    <div>
-                        <span className="mr-1">Time Left:</span>
-                        <span className="font-semibold">{timeLeft}</span>
-                    </div>
-                )}
+            <div className="mb-2 rounded-lg border border-gray-400 text-gray-600 dark:text-gray-200">
+                <ToggleDetailsComp
+                    handleToggle={() => setStatusExpanded(!statusExpanded)}
+                    isDetailsOpen={statusExpanded}
+                    content={
+                        <div className="flex w-full items-center justify-between">
+                            <div>
+                                <span className="mr-1 hidden md:inline">State:</span>
+                                <span className="font-semibold">{proposalState}</span>
+                            </div>
+                            {timeLeft && (
+                                <div>
+                                    <span className="mr-1">Time Left:</span>
+                                    <span className="font-semibold">{timeLeft}</span>
+                                </div>
+                            )}
+                        </div>
+                    }
+                    showToggle={loanProposal.loan_proposals_status?.length > 0}
+                    details={loanProposal.loan_proposals_status
+                        ?.slice(0)
+                        .reverse()
+                        .map((status, i) => {
+                            const options = {
+                                month: "short",
+                                day: "numeric",
+                                hour: "numeric",
+                                minute: "numeric",
+                            };
+                            const d = new Date(status.created_at).toLocaleDateString(
+                                undefined,
+                                options
+                            );
+                            return (
+                                <div
+                                    key={i}
+                                    className="flex items-center justify-between border-t border-gray-300 px-4 py-2 pt-2"
+                                >
+                                    <div>{status.status}</div>
+                                    <div>{d}</div>
+                                </div>
+                            );
+                        })}
+                />
             </div>
             <div className="grid grid-cols-1 gap-y-2 md:grid-cols-2 md:gap-y-0 md:gap-x-4">
-                <div className="space-y-2 rounded-lg border border-gray-400 px-4 py-4 text-gray-800 shadow-md dark:text-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div className="font-semibold text-emerald-800 dark:text-emerald-300">
-                            Votes For
-                        </div>
-                        <div className="ml-1 font-semibold text-emerald-800 dark:text-emerald-300">
-                            {forVotesCount}
-                        </div>
-                    </div>
-                    <div className="flex items-center justify-between ">
-                        <div>Voting Power</div>
-                        <div className="ml-1">{displayUnits(voteCounts?.forVotes)}</div>
-                    </div>
+                <div className="rounded-lg border border-gray-400 shadow-md">
+                    <ToggleDetailsComp
+                        handleToggle={() => setForVotesExpanded(!forVotesExpanded)}
+                        isDetailsOpen={forVotesExpanded}
+                        content={
+                            <div className="flex w-full flex-col">
+                                <div className="flex items-center justify-between py-2">
+                                    <div className="font-semibold text-emerald-800 dark:text-emerald-300">
+                                        Votes For
+                                    </div>
+                                    <div className="ml-1 font-semibold text-emerald-800 dark:text-emerald-300">
+                                        {forVotes?.length}
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-between">
+                                    <div>Voting Power</div>
+                                    <div className="ml-1">{displayUnits(voteCounts?.forVotes)}</div>
+                                </div>
+                            </div>
+                        }
+                        showToggle={forVotes.length > 0}
+                        details={forVotes?.map((vote, i) => {
+                            const data = vote.event_data;
+                            return (
+                                <div
+                                    key={i}
+                                    className="flex items-center justify-between border-t border-gray-300 px-4 py-2 pt-2"
+                                >
+                                    <div>
+                                        <span className="">{trimAddress(data.voter)}</span>
+                                    </div>
+                                    <div>{displayUnits(data.weight)}</div>
+                                </div>
+                            );
+                        })}
+                    />
                 </div>
-                <div className="space-y-2 rounded-lg border border-gray-400 px-4 py-4 text-gray-800 shadow-md dark:text-gray-200">
-                    <div className="flex items-center justify-between">
-                        <div className="font-semibold text-orange-800 dark:text-orange-400">
-                            Votes Against
-                        </div>
-                        <div className="ml-1 font-semibold text-orange-800 dark:text-orange-400">
-                            {againstVotesCount}
-                        </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <div>Voting Power</div>
-                        <div className="ml-1">{displayUnits(voteCounts?.againstVotes)}</div>
-                    </div>
+                <div className="rounded-lg border border-gray-400 shadow-md">
+                    <ToggleDetailsComp
+                        handleToggle={() => setAgainstVotesExpanded(!againstVotesExpanded)}
+                        isDetailsOpen={againstVotesExpanded}
+                        content={
+                            <div className="flex w-full flex-col">
+                                <div className="flex items-center justify-between py-2">
+                                    <div className="font-semibold text-orange-800 dark:text-emerald-300">
+                                        Votes Against
+                                    </div>
+                                    <div className="ml-1 font-semibold text-emerald-800 dark:text-emerald-300">
+                                        {againstVotes?.length}
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-between">
+                                    <div>Voting Power</div>
+                                    <div className="ml-1">
+                                        {displayUnits(voteCounts?.againstVotes)}
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        showToggle={againstVotes.length > 0}
+                        details={againstVotes?.map((vote, i) => {
+                            const data = vote.event_data;
+                            return (
+                                <div
+                                    key={i}
+                                    className="flex items-center justify-between border-t border-gray-300 px-4 py-2 pt-2"
+                                >
+                                    <div>
+                                        <span className="">{trimAddress(data.voter)}</span>
+                                    </div>
+                                    <div>{displayUnits(data.weight)}</div>
+                                </div>
+                            );
+                        })}
+                    />
                 </div>
             </div>
         </>
