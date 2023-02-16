@@ -10,6 +10,7 @@ import BusinessInformation from "../../../components/borrower/BusinessInformatio
 import LoanReason from "../../../components/borrower/LoanReason";
 import PreviewAndSubmit from "../../../components/borrower/PreviewAndSubmit";
 import { CheckIcon, CheckBadgeIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
+import Tags from "../../../components/borrower/Tags";
 
 export default function LoanProposal() {
     const [loanProposal, setLoanProposal] = useState({
@@ -17,6 +18,7 @@ export default function LoanProposal() {
         business_tagline: "",
         business_description: "",
         business_gen_description: "",
+        tags: "",
         loan_reasoning: "",
         loan_gen_reasoning: "",
         tagline_manual_picked: false,
@@ -51,6 +53,12 @@ export default function LoanProposal() {
             title: "Business Information",
             completed: false,
             component: BusinessInformation,
+        },
+        {
+            href: "Tags",
+            title: "Tags",
+            completed: false,
+            component: Tags,
         },
         {
             href: "LoanReasoning",

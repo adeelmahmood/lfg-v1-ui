@@ -132,7 +132,7 @@ export default function QueuePropoposalDialog({ loanProposal, onQueuedSuccess })
                 modelCloseHandler={closeModal}
             >
                 <div className="mt-2">
-                    <p className="text-sm text-gray-500 dark:text-gray-800">
+                    <p className="text-sm text-gray-500 dark:text-gray-200">
                         Queue this proposal to start the count down for executing this proposal
                     </p>
                 </div>

@@ -231,32 +231,38 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
                 <div className="mt-4 w-full max-w-md">
                     <div className="rounded-lg border border-gray-500 px-4 py-4">
                         <div className="flex items-center justify-between">
-                            <div className="font-semibold text-gray-800">Your Voting Power</div>
-                            <div className="font-semibold text-gray-800">{votingPower}</div>
+                            <div className="font-semibold text-gray-800 dark:text-gray-200">
+                                Your Voting Power
+                            </div>
+                            <div className="font-semibold text-gray-800 dark:text-gray-200">
+                                {votingPower}
+                            </div>
                         </div>
                         <div className="mt-2 flex items-center justify-between ">
-                            <div className="text-gray-800">% of Total Voting Power</div>
-                            <div className="text-gray-800">
+                            <div className="text-gray-800 dark:text-gray-200">
+                                % of Total Voting Power
+                            </div>
+                            <div className="text-gray-800 dark:text-gray-200">
                                 {percentage(votingPower, totalVotingPower)}%
                             </div>
                         </div>
                     </div>
 
-                    <p className="mt-4 text-center text-lg dark:text-gray-800">Step 1</p>
-                    <p className="mt-2 text-center dark:text-gray-800">
+                    <p className="mt-4 text-center text-lg dark:text-gray-200">Step 1</p>
+                    <p className="mt-2 text-center dark:text-gray-200">
                         Assign a delegate for voting
                     </p>
 
                     <div className="mt-2 flex w-full items-center">
                         <button
-                            className="btn-secondary-dark inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                            className="btn-secondary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
                             onClick={() => handleDelegate?.()}
                             disabled={!isConnected || isLoading || isDelegated}
                         >
                             Self Delegate
                             {isMounted() && isLoading && !isDelegated ? (
                                 <svg
-                                    className="text-indigo ml-3 h-6 w-6 animate-spin"
+                                    className="text-indigo ml-3 h-6 w-6 animate-spin dark:text-gray-200"
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
                                     viewBox="0 0 24 24"
@@ -281,18 +287,20 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
 
                     <div className="mt-10 flex items-center">
                         <div className="flex-grow border-t border-gray-400"></div>
-                        <span className="mx-4 flex-shrink text-gray-400">And</span>
+                        <span className="mx-4 flex-shrink text-gray-400 dark:text-gray-200">
+                            And
+                        </span>
                         <div className="flex-grow border-t border-gray-400"></div>
                     </div>
 
-                    <p className="mt-6 text-center text-lg dark:text-gray-800">Step 2</p>
-                    <p className="mt-2 text-center dark:text-gray-800">
+                    <p className="mt-6 text-center text-lg dark:text-gray-200">Step 2</p>
+                    <p className="mt-2 text-center dark:text-gray-200">
                         Make your voting selections
                     </p>
 
                     <Listbox value={vote} onChange={setVote}>
                         <div className="relative mt-2">
-                            <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+                            <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 dark:bg-gray-200 sm:text-sm">
                                 <span className="block truncate font-semibold text-gray-800">
                                     {options.filter((o) => o.id == vote)[0].name}
                                 </span>
@@ -351,7 +359,7 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
 
                 <div className="mt-4 w-full max-w-md">
                     <textarea
-                        className="w-full rounded-lg border-gray-300 text-gray-800 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        className="w-full rounded-lg border-gray-300 text-gray-800 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-200"
                         rows={4}
                         placeholder="Provide a reasoning for your vote"
                         onChange={(e) => setDescription(e.target.value)}
@@ -362,7 +370,7 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
                 <div className="mt-2 flex w-full items-center">
                     <button
                         type="button"
-                        className="btn-secondary-dark inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                        className="btn-secondary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
                         onClick={() => handleVote?.()}
                         disabled={!isConnected || isLoading || !isDelegated}
                     >

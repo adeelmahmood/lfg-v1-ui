@@ -137,7 +137,7 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
                 modelCloseHandler={closeModal}
             >
                 <div className="mt-2">
-                    <p className="text-sm text-gray-500 dark:text-gray-800">
+                    <p className="text-sm text-gray-500 dark:text-gray-200">
                         Publish this proposal to start the voting process
                     </p>
                 </div>

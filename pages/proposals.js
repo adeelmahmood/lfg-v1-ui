@@ -12,6 +12,7 @@ import {
     ExclamationCircleIcon,
 } from "@heroicons/react/24/solid";
 import Link from "next/link";
+import LoanProposal from "./borrower/proposals/[id]";
 
 export default function LoanPropospals() {
     const supabase = useSupabaseClient();
@@ -68,6 +69,10 @@ export default function LoanPropospals() {
         document.getElementById("slider").scrollLeft += 800;
     };
 
+    const getStatus = (p) => {
+        return p?.loan_proposals_status?.length > 0 && p.loan_proposals_status[0].status;
+    };
+
     return (
         <>
             <TopGradient />
@@ -108,21 +113,16 @@ export default function LoanPropospals() {
                                         return (
                                             <div
                                                 key={i}
-                                                className="relative inline-block h-[420px] w-[320px] overflow-hidden rounded-xl shadow-md dark:bg-gray-700/50 md:duration-300 md:ease-in-out md:hover:scale-105"
+                                                className="relative inline-block overflow-hidden rounded-xl bg-gray-50 shadow-md dark:bg-gray-800"
                                             >
-                                                <Link href={`/borrower/proposals/${p.id}`}>
-                                                    <div className="relative pb-2/3">
-                                                        <img
-                                                            className="absolute h-full w-full object-cover object-center"
-                                                            src={p.banner_image}
-                                                            alt=""
-                                                        />
-                                                    </div>
-
-                                                    {isVerified(p) ? (
+                                                <Link
+                                                    href={`/borrower/proposals/${p.id}`}
+                                                    className="group"
+                                                >
+                                                    {/* {!isVerified(p) ? (
                                                         <div
                                                             aria-hidden="true"
-                                                            className="absolute -right-12 top-4 m-0 grid h-12 w-44 rotate-45 place-items-center rounded-lg bg-green-600 shadow-md"
+                                                            className="absolute -right-8 top-4 m-0 grid h-8 w-32 rotate-45 place-items-center rounded-lg bg-green-600 opacity-90 shadow-md"
                                                         >
                                                             <CheckCircleIcon
                                                                 className="absolute  inline h-8 -rotate-45 fill-current text-white"
@@ -132,17 +132,17 @@ export default function LoanPropospals() {
                                                     ) : (
                                                         <div
                                                             aria-hidden="true"
-                                                            className="absolute -right-12 top-4 m-0 grid h-12 w-44 rotate-45 place-items-center rounded-lg bg-orange-600 shadow-md"
+                                                            className="absolute -right-8 top-4 m-0 grid h-8 w-32 rotate-45 place-items-center rounded-lg bg-orange-600 opacity-90 shadow-md"
                                                         >
                                                             <ExclamationCircleIcon
-                                                                className="absolute inline h-8 -rotate-45 fill-current text-white"
+                                                                className="absolute inline h-6 -rotate-45 fill-current text-white"
                                                                 title={getVerificationReason(p)}
                                                             />
                                                         </div>
-                                                    )}
+                                                    )} */}
 
                                                     <div className="h-full whitespace-normal px-6 py-4">
-                                                        <div className="text-xl font-bold dark:text-gray-300">
+                                                        <div className="mt-2 text-xl font-bold dark:text-gray-200">
                                                             {getSelected(
                                                                 p.business_title,
                                                                 p.business_tagline,
@@ -150,7 +150,14 @@ export default function LoanPropospals() {
                                                                 p.tagline_gen_picked
                                                             )}
                                                         </div>
-                                                        <p className="mt-2 max-w-xs text-base text-gray-700 dark:text-gray-400">
+                                                        <div className="my-4 p-2">
+                                                            <img
+                                                                className="h-[200px] w-full rounded-xl object-cover object-center group-hover:scale-105 group-hover:duration-300 group-hover:ease-in-out"
+                                                                src={p.banner_image}
+                                                                alt=""
+                                                            />
+                                                        </div>
+                                                        <p className="mt-2 max-w-xs text-base text-gray-700 dark:text-gray-200">
                                                             {trimText(
                                                                 getSelected(
                                                                     p.business_description,
@@ -161,17 +168,26 @@ export default function LoanPropospals() {
                                                                 50
                                                             )}
                                                         </p>
-                                                        <p className="mt-2 text-base text-gray-700 dark:text-gray-400">
-                                                            {trimText(
-                                                                getSelected(
-                                                                    p.loan_reasoning,
-                                                                    p.loan_gen_reasoning,
-                                                                    p.reasoning_manual_picked,
-                                                                    p.reasoning_gen_picked
-                                                                ),
-                                                                50
-                                                            )}
-                                                        </p>
+                                                        <div className="mt-2 flex items-center justify-between">
+                                                            <span className="text-base text-gray-700 dark:text-gray-400">
+                                                                Proposal Status
+                                                            </span>
+                                                            <span className="text-base font-semibold text-gray-700 dark:text-gray-200">
+                                                                {getStatus(p)}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="mt-4 px-6 pb-4">
+                                                        {p.tags?.split(",").map((tag, i) => {
+                                                            return (
+                                                                <span
+                                                                    key={i}
+                                                                    className="mr-2 mb-2 inline-block rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700 dark:bg-gray-300 dark:text-gray-900"
+                                                                >
+                                                                    {tag}
+                                                                </span>
+                                                            );
+                                                        })}
                                                     </div>
                                                 </Link>
                                             </div>

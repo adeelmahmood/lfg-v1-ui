@@ -26,10 +26,10 @@ export default async function (req, res) {
         return;
     }
 
-    if (!["tagline", "summarize", "emphasize"].includes(action)) {
+    if (!["tagline", "summarize", "emphasize", "tags"].includes(action)) {
         res.status(400).json({
             error: {
-                message: "Please enter a valid action (tagline or summarize)",
+                message: "Please enter a valid action (tagline, summarize, emphasize, tags)",
             },
         });
         return;
@@ -60,6 +60,16 @@ export default async function (req, res) {
                 prompt: generateEmphasizePrompt(description),
                 temperature: 0.7,
                 max_tokens: 256,
+                top_p: 1,
+                frequency_penalty: 0,
+                presence_penalty: 0,
+            });
+        } else if (action == "tags") {
+            completion = await openai.createCompletion({
+                model: "text-davinci-003",
+                prompt: generateTagsPrompt(description),
+                temperature: 0,
+                max_tokens: 50,
                 top_p: 1,
                 frequency_penalty: 0,
                 presence_penalty: 0,
@@ -106,4 +116,12 @@ function generateEmphasizePrompt(description) {
 ${description}
 
 `;
+}
+
+function generateTagsPrompt(description) {
+    return `The following is a description of a company's business model and the tags that could classify it:
+
+${description}
+
+Tags:`;
 }

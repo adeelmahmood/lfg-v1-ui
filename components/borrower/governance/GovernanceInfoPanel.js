@@ -150,7 +150,7 @@ export default function GovernanceInfoPanel({ loanProposal, canVote, canQueue, c
                 <button
                     className={`group relative flex w-full ${
                         isDetailsOpen ? "rounded-t-lg" : "rounded-lg"
-                    }  px-4 py-2 hover:bg-gray-100`}
+                    }  px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800`}
                     onClick={() => {
                         if (showToggle) handleToggle?.();
                     }}
@@ -162,9 +162,9 @@ export default function GovernanceInfoPanel({ loanProposal, canVote, canQueue, c
                             className="absolute left-[50%] hidden md:block"
                         >
                             {isDetailsOpen ? (
-                                <ChevronDoubleUpIcon className="inline h-5 fill-current align-top text-gray-400 group-hover:text-gray-800 dark:text-gray-400 group-hover:dark:text-gray-200" />
+                                <ChevronDoubleUpIcon className="inline h-5 fill-current align-top text-gray-500 group-hover:text-gray-800 dark:text-gray-400 dark:group-hover:text-gray-200" />
                             ) : (
-                                <ChevronDoubleDownIcon className="dark:text-gray-4000 inline h-5 fill-current align-top text-gray-400 group-hover:text-gray-800 group-hover:dark:text-gray-200" />
+                                <ChevronDoubleDownIcon className="inline h-5 fill-current align-top text-gray-500 group-hover:text-gray-800 dark:text-gray-400 dark:group-hover:text-gray-200" />
                             )}
                         </span>
                     )}
@@ -188,7 +188,7 @@ export default function GovernanceInfoPanel({ loanProposal, canVote, canQueue, c
 
     return (
         <>
-            <div className="mb-2 rounded-lg border border-gray-400 text-gray-600 dark:text-gray-200">
+            <div className="mb-2 rounded-lg border border-gray-400">
                 <ToggleDetailsComp
                     handleToggle={() => setStatusExpanded(!statusExpanded)}
                     isDetailsOpen={statusExpanded}
@@ -234,7 +234,7 @@ export default function GovernanceInfoPanel({ loanProposal, canVote, canQueue, c
                 />
             </div>
             <div className="grid grid-cols-1 gap-y-2 md:grid-cols-2 md:gap-y-0 md:gap-x-4">
-                <div className="rounded-lg border border-gray-400 shadow-md">
+                <div className="overflow-hidden rounded-lg border border-gray-400 shadow-md">
                     <ToggleDetailsComp
                         handleToggle={() => setForVotesExpanded(!forVotesExpanded)}
                         isDetailsOpen={forVotesExpanded}
@@ -272,17 +272,17 @@ export default function GovernanceInfoPanel({ loanProposal, canVote, canQueue, c
                         })}
                     />
                 </div>
-                <div className="rounded-lg border border-gray-400 shadow-md">
+                <div className="overflow-hidden rounded-lg border border-gray-400 shadow-md">
                     <ToggleDetailsComp
                         handleToggle={() => setAgainstVotesExpanded(!againstVotesExpanded)}
                         isDetailsOpen={againstVotesExpanded}
                         content={
                             <div className="flex w-full flex-col">
                                 <div className="flex items-center justify-between py-2">
-                                    <div className="font-semibold text-orange-800 dark:text-emerald-300">
+                                    <div className="font-semibold text-orange-800 dark:text-orange-300">
                                         Votes Against
                                     </div>
-                                    <div className="ml-1 font-semibold text-emerald-800 dark:text-emerald-300">
+                                    <div className="ml-1 font-semibold text-orange-800 dark:text-orange-300">
                                         {againstVotes?.length}
                                     </div>
                                 </div>
