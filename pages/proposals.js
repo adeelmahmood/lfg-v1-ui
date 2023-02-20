@@ -4,15 +4,8 @@ import Navbar from "../components/Navbar";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../utils/Constants";
-import {
-    ArrowLongLeftIcon,
-    ArrowLongRightIcon,
-    CheckCircleIcon,
-    ChevronRightIcon,
-    ExclamationCircleIcon,
-} from "@heroicons/react/24/solid";
+import { ArrowLongLeftIcon, ArrowLongRightIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
-import LoanProposal from "./borrower/proposals/[id]";
 
 export default function LoanPropospals() {
     const supabase = useSupabaseClient();
@@ -28,8 +21,7 @@ export default function LoanPropospals() {
             .select(
                 `*, loan_proposals_status (*), user_identity_verifications ( verification_status, verification_message)`
             )
-            .order("created_at", { ascending: false })
-            .eq("user_id", user.id);
+            .order("created_at", { ascending: false });
 
         setIsLoading(false);
         setProposals(data);
@@ -70,7 +62,8 @@ export default function LoanPropospals() {
     };
 
     const getStatus = (p) => {
-        return p?.loan_proposals_status?.length > 0 && p.loan_proposals_status[0].status;
+        const len = p?.loan_proposals_status?.length || 0;
+        return len > 0 && p.loan_proposals_status[len - 1].status;
     };
 
     return (
@@ -107,42 +100,34 @@ export default function LoanPropospals() {
                             <div className="mt-2 flex w-full flex-col items-end md:flex-row md:items-center">
                                 <div
                                     id="slider"
-                                    className="h-full w-full space-x-8 overflow-x-scroll scroll-smooth whitespace-nowrap rounded-lg scrollbar-hide"
+                                    className="h-full w-full snap-x space-x-8 overflow-x-scroll scroll-smooth whitespace-nowrap rounded-lg scrollbar-hide"
                                 >
                                     {proposals?.map((p, i) => {
+                                        const status = getStatus(p);
                                         return (
                                             <div
                                                 key={i}
-                                                className="relative inline-block overflow-hidden rounded-xl bg-gray-50 shadow-md dark:bg-gray-800"
+                                                className="relative inline-block h-[580px] w-[320px] snap-center overflow-hidden rounded-xl shadow-md dark:bg-slate-700 md:h-[580px] md:w-[400px]"
                                             >
                                                 <Link
                                                     href={`/borrower/proposals/${p.id}`}
                                                     className="group"
                                                 >
-                                                    {/* {!isVerified(p) ? (
+                                                    {["Published"].includes(status) && (
                                                         <div
                                                             aria-hidden="true"
-                                                            className="absolute -right-8 top-4 m-0 grid h-8 w-32 rotate-45 place-items-center rounded-lg bg-green-600 opacity-90 shadow-md"
+                                                            className={`absolute -right-8 top-4 m-0 grid h-8 w-32 rotate-45 place-items-center rounded-lg text-sm opacity-90 shadow-md ${
+                                                                status == "Published"
+                                                                    ? "bg-emerald-500 text-white"
+                                                                    : ""
+                                                            }`}
                                                         >
-                                                            <CheckCircleIcon
-                                                                className="absolute  inline h-8 -rotate-45 fill-current text-white"
-                                                                title="Identity Verified Successfully"
-                                                            />
+                                                            {status}
                                                         </div>
-                                                    ) : (
-                                                        <div
-                                                            aria-hidden="true"
-                                                            className="absolute -right-8 top-4 m-0 grid h-8 w-32 rotate-45 place-items-center rounded-lg bg-orange-600 opacity-90 shadow-md"
-                                                        >
-                                                            <ExclamationCircleIcon
-                                                                className="absolute inline h-6 -rotate-45 fill-current text-white"
-                                                                title={getVerificationReason(p)}
-                                                            />
-                                                        </div>
-                                                    )} */}
+                                                    )}
 
-                                                    <div className="h-full whitespace-normal px-6 py-4">
-                                                        <div className="mt-2 text-xl font-bold dark:text-gray-200">
+                                                    <div className="whitespace-normal px-6 py-4">
+                                                        <div className="mt-2 h-16 text-xl font-bold dark:text-gray-200">
                                                             {getSelected(
                                                                 p.business_title,
                                                                 p.business_tagline,
@@ -150,14 +135,14 @@ export default function LoanPropospals() {
                                                                 p.tagline_gen_picked
                                                             )}
                                                         </div>
-                                                        <div className="my-4 p-2">
+                                                        <div className="p-2">
                                                             <img
-                                                                className="h-[200px] w-full rounded-xl object-cover object-center group-hover:scale-105 group-hover:duration-300 group-hover:ease-in-out"
+                                                                className="h-72 w-full rounded-xl object-cover object-center group-hover:scale-105 group-hover:duration-300 group-hover:ease-in-out"
                                                                 src={p.banner_image}
                                                                 alt=""
                                                             />
                                                         </div>
-                                                        <p className="mt-2 max-w-xs text-base text-gray-700 dark:text-gray-200">
+                                                        <p className="mt-2 max-w-xs text-base text-gray-700 dark:text-gray-200 md:h-16">
                                                             {trimText(
                                                                 getSelected(
                                                                     p.business_description,
@@ -165,24 +150,16 @@ export default function LoanPropospals() {
                                                                     p.description_manual_picked,
                                                                     p.description_gen_picked
                                                                 ),
-                                                                50
+                                                                100
                                                             )}
                                                         </p>
-                                                        <div className="mt-2 flex items-center justify-between">
-                                                            <span className="text-base text-gray-700 dark:text-gray-400">
-                                                                Proposal Status
-                                                            </span>
-                                                            <span className="text-base font-semibold text-gray-700 dark:text-gray-200">
-                                                                {getStatus(p)}
-                                                            </span>
-                                                        </div>
                                                     </div>
-                                                    <div className="mt-4 px-6 pb-4">
+                                                    <div className="flex w-full flex-wrap px-4">
                                                         {p.tags?.split(",").map((tag, i) => {
                                                             return (
                                                                 <span
                                                                     key={i}
-                                                                    className="mr-2 mb-2 inline-block rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700 dark:bg-gray-300 dark:text-gray-900"
+                                                                    className="mr-2 mb-2 rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700 dark:bg-gray-300 dark:text-gray-900"
                                                                 >
                                                                     {tag}
                                                                 </span>

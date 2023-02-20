@@ -1,13 +1,21 @@
 import * as React from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { useRouter } from "next/router";
 
 export default function ({ ...rest }) {
     const supabase = useSupabaseClient();
     const user = useUser();
+    const router = useRouter();
+
+    const signOut = async () => {
+        console.log("signing out");
+        await supabase.auth.signOut();
+        router.push("/");
+    };
 
     return (
-        <div className="z-100 flex items-center justify-center" {...rest}>
+        <div className="flex items-center justify-center" {...rest}>
             <div className="relative text-left">
                 <Menu>
                     {({ open }) => (
@@ -77,10 +85,7 @@ export default function ({ ...rest }) {
                                                             ? "bg-gray-100 text-gray-900"
                                                             : "text-gray-700"
                                                     } flex w-full justify-between px-4 py-2 text-left text-sm leading-5`}
-                                                    onClick={async () => {
-                                                        await supabase.auth.signOut();
-                                                        router.push("/");
-                                                    }}
+                                                    onClick={signOut}
                                                 >
                                                     Sign out
                                                 </a>

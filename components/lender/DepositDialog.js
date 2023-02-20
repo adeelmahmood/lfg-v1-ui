@@ -176,10 +176,12 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                 <div className="mt-4 mb-4 w-full max-w-md">
                     <div className="rounded-lg border border-gray-500 px-4 py-4">
                         <div className="flex items-center justify-between">
-                            <div className="font-semibold text-gray-800">
+                            <div className="font-semibold text-gray-800 dark:text-gray-200">
                                 Your {token?.tokenSymbol} Balance
                             </div>
-                            <div className="font-semibold text-gray-800">{tokenBalance}</div>
+                            <div className="font-semibold text-gray-800 dark:text-gray-200">
+                                {tokenBalance}
+                            </div>
                         </div>
                     </div>
                     {/* <p className="mt-4 text-sm text-gray-500">
@@ -188,8 +190,8 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                         tokens to deposit in the contract
                     </p> */}
 
-                    <p className="mt-4 text-center text-lg dark:text-gray-800">Step 1</p>
-                    <p className="mt-2 text-center dark:text-gray-800">
+                    <p className="mt-4 text-center text-lg dark:text-gray-200">Step 1</p>
+                    <p className="mt-2 text-center dark:text-gray-200">
                         Specify amount and approve the transfer
                     </p>
 
@@ -206,7 +208,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                     <div className="mt-2 flex w-full items-center">
                         <button
                             type="button"
-                            className="btn-secondary-dark inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                            className="btn-secondary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
                             onClick={() => handleApprove?.()}
                             disabled={!isConnected || isLoading || isApproved}
                         >
@@ -242,13 +244,13 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                         <div className="flex-grow border-t border-gray-400"></div>
                     </div>
 
-                    <p className="mt-6 text-center text-lg dark:text-gray-800">Step 2</p>
-                    <p className="mt-2 text-center dark:text-gray-800">Finalize deposit</p>
+                    <p className="mt-6 text-center text-lg dark:text-gray-200">Step 2</p>
+                    <p className="mt-2 text-center dark:text-gray-200">Finalize deposit</p>
 
                     <div className="mt-2 flex w-full items-center">
                         <button
                             type="button"
-                            className="btn-secondary-dark inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                            className="btn-secondary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
                             onClick={() => handleDeposit?.()}
                             disabled={!isConnected || isLoading || !isApproved}
                         >
@@ -279,11 +281,11 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                     </div>
 
                     <div className="mt-4">
-                        <p className="text-sm">
+                        <p className="text-sm dark:text-gray-200">
                             After deposit, use this link to add governance tokens to your wallet
                             <a
                                 href="#"
-                                className="ml-1 font-semibold text-indigo-500"
+                                className="ml-1 text-xs font-semibold text-indigo-500 dark:text-emerald-300"
                                 onClick={() =>
                                     addTokenToMetaMask({
                                         token: govTokenAddress,

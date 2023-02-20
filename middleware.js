@@ -25,5 +25,5 @@ export async function middleware(req) {
 }
 
 export const config = {
-    matcher: "/borrower/:path*",
+    matcher: ["/borrower/:path*", "/proposals"],
 };

@@ -6,18 +6,17 @@ import {
 } from "wagmi";
 import addresses from "../../../constants/contract.json";
 import governorAbi from "../../../constants/LoanGovernor.json";
-import loanManagerAbi from "../../../constants/LoanManager.json";
+import lendPoolAbi from "../../../constants/LendPool.json";
 import { ethers } from "ethers";
 import { parseEther } from "ethers/lib/utils.js";
 import {
-    DAI_ADDRESS,
     SUPABASE_TABLE_LOAN_PROPOSALS,
     SUPABASE_TABLE_LOAN_PROPOSALS_STATUS,
 } from "../../../utils/Constants";
 import { useEffect, useState } from "react";
 import useIsMounted from "../../../hooks/useIsMounted";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { ArrowUpOnSquareStackIcon, RocketLaunchIcon } from "@heroicons/react/24/solid";
+import { RocketLaunchIcon } from "@heroicons/react/24/solid";
 import DialogComponent from "../../DialogComponent";
 import { findEvent, saveEvent } from "../../../utils/Events";
 
@@ -33,20 +32,26 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
     const { address, isConnected } = useAccount();
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const governorAddress = addresses[chainId].LoanGovernor;
-    const loanManagerAddress = addresses[chainId].LoanManager;
+    const lendPoolAddress = addresses[chainId].LendPool;
     const governorFunctionName = "propose";
 
-    const proposeFunctionName = "issueLoan";
-    const proposeFunctionArgs = [address, DAI_ADDRESS, parseEther(String(loanProposal.amount))];
-    const proposeDescription = `@@Loan Proposal {{${loanProposal.id}}}@@`;
+    const daiAddress = addresses[chainId].DAI;
+
+    const proposeFunctionName = "borrow";
+    const proposeFunctionArgs = [
+        daiAddress,
+        parseEther(String(loanProposal.amount)),
+        loanProposal.recipientAddress,
+    ];
+    const proposeDescription = `@@Borrow Proposal {{${loanProposal.id}}}@@`;
 
     const [encodedFunctionCall, setEncodedFunctionCall] = useState();
 
     useEffect(() => {
         if (!encodedFunctionCall) {
-            const loanMangerIface = new ethers.utils.Interface(loanManagerAbi);
+            const lendPoolIface = new ethers.utils.Interface(lendPoolAbi);
             setEncodedFunctionCall(
-                loanMangerIface.encodeFunctionData(proposeFunctionName, proposeFunctionArgs)
+                lendPoolIface.encodeFunctionData(proposeFunctionName, proposeFunctionArgs)
             );
         }
     }, []);
@@ -60,7 +65,7 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
         abi: governorAbi,
         functionName: governorFunctionName,
         enabled: encodedFunctionCall,
-        args: [[loanManagerAddress], [0], [encodedFunctionCall], proposeDescription],
+        args: [[lendPoolAddress], [0], [encodedFunctionCall], proposeDescription],
         onError(err) {
             console.log("prepare error", err);
         },

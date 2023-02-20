@@ -132,10 +132,10 @@ export default function ExecutePropoposalDialog({ loanProposal, onExecutedSucces
                 modelCloseHandler={closeModal}
             >
                 <div className="mt-2">
-                    <p className="text-sm text-gray-500 dark:text-gray-800">
+                    <p className="text-sm text-gray-500 dark:text-gray-200">
                         The proposal is all set. Execute this proposal to disburse the funds to the
                         loan requestor.
-                        <span className="font-semibold">This action cannot be undone!</span>
+                        <div className="mt-4 mb-4 font-semibold">This action cannot be undone!</div>
                     </p>
                 </div>
 

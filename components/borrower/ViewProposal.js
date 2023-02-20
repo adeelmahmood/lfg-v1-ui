@@ -141,6 +141,21 @@ export default function ViewProposal({ loanProposal, canVote, canQueue, canExecu
                 <div className="mt-6 font-semibold text-gray-800 dark:text-gray-200">
                     <p>Loan Amount Requested: {USDollar.format(loanProposal.amount)}</p>
                 </div>
+
+                {loanProposal.tags && (
+                    <div className="mt-6 flex w-full flex-wrap px-4">
+                        {loanProposal.tags?.split(",").map((tag, i) => {
+                            return (
+                                <span
+                                    key={i}
+                                    className="mr-2 mb-2 rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700 dark:bg-gray-300 dark:text-gray-900"
+                                >
+                                    {tag}
+                                </span>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
         </>
     );
