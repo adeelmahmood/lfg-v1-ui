@@ -13,6 +13,7 @@ export const config = {
 const handler = async (req, res) => {
     const supabase = createServerSupabaseClient({ req, res });
 
+    // handle event
     if (req.method == "POST") {
         const sig = req.headers["stripe-signature"];
         const buf = await buffer(req);
