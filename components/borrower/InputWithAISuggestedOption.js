@@ -1,5 +1,4 @@
 import { ArrowLongRightIcon, CheckBadgeIcon, CheckIcon } from "@heroicons/react/24/solid";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 export default function InputWithAISuggestedOption({
@@ -27,8 +26,6 @@ export default function InputWithAISuggestedOption({
     const [usingGen, setUsingGen] = useState(data[genPickFieldName]);
 
     const [error, setError] = useState();
-
-    const router = useRouter();
 
     const handleGenerate = async () => {
         try {

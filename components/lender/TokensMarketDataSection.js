@@ -180,9 +180,7 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                                         {displayUnits(token.walletBalance, token.tokenDecimals)}
                                     </td>
                                     <td className="py-4 px-6 text-center dark:text-gray-200">
-                                        {displayPercent(depositAPY)}% (stable:
-                                        {displayPercent(stableBorrowAPY)}) - (var:
-                                        {displayPercent(variableBorrowAPY)})
+                                        {displayPercent(depositAPY)}%
                                     </td>
                                     <td className="py-4 px-6 text-center">
                                         <a

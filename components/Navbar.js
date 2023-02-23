@@ -70,6 +70,13 @@ const Navbar = ({}) => {
                         >
                             Explore
                         </a>
+                        <span className="mx-2 hidden w-0.5 bg-gray-600/25 sm:block"></span>
+                        <a
+                            href="#"
+                            className="block rounded px-2 py-1 font-semibold text-indigo-600 hover:bg-indigo-500 hover:text-white dark:text-gray-300 dark:hover:bg-slate-900"
+                        >
+                            Reserves
+                        </a>
 
                         <div className="mt-3 mb-4 lg:hidden">
                             <ConnectButton />

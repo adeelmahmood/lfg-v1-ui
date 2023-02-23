@@ -1,8 +1,8 @@
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { buffer } from "micro";
 
-const stripe = require("stripe")(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY);
-const webhookSecret = process.env.NEXT_PUBLIC_STRIPE_WH_SECRET;
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const webhookSecret = process.env.STRIPE_WH_SECRET;
 
 export const config = {
     api: {

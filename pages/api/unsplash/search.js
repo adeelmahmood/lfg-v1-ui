@@ -1,7 +1,7 @@
 import { createApi } from "unsplash-js";
 
 const unsplashApi = createApi({
-    accessKey: process.env.NEXT_PUBLIC_UNSPLASH_API_KEY,
+    accessKey: process.env.UNSPLASH_API_KEY,
 });
 
 export default async function handler(req, res) {

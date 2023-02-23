@@ -10,8 +10,8 @@ export const displayRay = (number) => {
 export const displayPercent = (number) => {
     if (number == undefined) return 0;
 
-    const percent = number * 100;
-    return Math.round(percent * 1e4) / 1e4;
+    number *= 100;
+    return Math.round((number + Number.EPSILON) * 100) / 100;
 };
 
 export const displayUnits = (number, decimals = 18) => {

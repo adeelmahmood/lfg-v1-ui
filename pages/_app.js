@@ -11,7 +11,6 @@ import { mainnet, polygon, optimism, arbitrum, hardhat, goerli } from "wagmi/cha
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { useState } from "react";
-import Script from "next/script";
 import { ThemeProvider } from "next-themes";
 
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
@@ -25,7 +24,7 @@ const { chains, provider } = configureChains(chainToUse, [
     publicProvider(),
 ]);
 const { connectors } = getDefaultWallets({
-    appName: "Lending Marketplace",
+    appName: "XYZ Lending Marketplace",
     chains,
 });
 const wagmiClient = createClient({

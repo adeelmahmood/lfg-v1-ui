@@ -14,7 +14,7 @@ import {
 } from "@heroicons/react/24/solid";
 import PublishLoanDialog from "../../../components/borrower/governance/PublishLoanDialog";
 import CastVoteDialog from "../../../components/borrower/governance/CastVoteDialog";
-import { useAccount, useBlockNumber, useContractRead } from "wagmi";
+import { useAccount, useContractRead } from "wagmi";
 
 export default function LoanProposal() {
     const router = useRouter();
@@ -28,8 +28,6 @@ export default function LoanProposal() {
     const governorAddress = addresses[chainId].LoanGovernor;
 
     const [governanceState, setGovernanceState] = useState(-1);
-
-    const { data: currentBlock } = useBlockNumber();
 
     const [loanProposal, setLoanProposal] = useState();
     const [published, setPublished] = useState(true);

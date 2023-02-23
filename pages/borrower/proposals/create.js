@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../../components/Navbar";
 import TopGradient from "../../../components/TopGradient";
 import VerifyIdentity from "../../../components/borrower/VerifyIdentity";
@@ -9,10 +9,24 @@ import Tagline from "../../../components/borrower/Tagline";
 import BusinessInformation from "../../../components/borrower/BusinessInformation";
 import LoanReason from "../../../components/borrower/LoanReason";
 import PreviewAndSubmit from "../../../components/borrower/PreviewAndSubmit";
-import { CheckIcon, CheckBadgeIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
+import { CheckIcon } from "@heroicons/react/24/solid";
 import Tags from "../../../components/borrower/Tags";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { useRouter } from "next/router";
+import {
+    SUPABASE_STORAGE_LOAN_PROPOSALS,
+    SUPABASE_TABLE_LOAN_PROPOSALS,
+} from "../../../utils/Constants";
+import SignAgreement from "../../../components/borrower/SignAgreement";
 
 export default function LoanProposal() {
+    const supabase = useSupabaseClient();
+    const user = useUser();
+
+    const router = useRouter();
+
+    const { id } = router.query;
+
     const [loanProposal, setLoanProposal] = useState({
         business_title: "",
         business_tagline: "",
@@ -29,12 +43,36 @@ export default function LoanProposal() {
         reasoning_gen_picked: false,
         banner_image: "",
         banner_image_metadata: {},
-        identity_verification_requested: false,
         amount: 0,
+        recipientAddress: "",
+        identity_verification_requested: false,
+        agreement_signed: false,
     });
 
-    const [stage, setStage] = useState("GetStarted");
+    async function loadProposal() {
+        console.log("********** LOADING PROPOSAL ************");
+        // edit mode - attempt to load from database
+        const { data, error } = await supabase
+            .from(SUPABASE_TABLE_LOAN_PROPOSALS)
+            .select(`*`)
+            .eq("user_id", user.id)
+            .eq("id", id)
+            .single();
 
+        if (error) {
+            console.log(error.message);
+        }
+
+        if (data) {
+            console.log(data);
+            setLoanProposal({
+                ...loanProposal,
+                ...data,
+            });
+        }
+    }
+
+    const [stage, setStage] = useState("GetStarted");
     const [stages, setStages] = useState([
         {
             href: "GetStarted",
@@ -90,6 +128,12 @@ export default function LoanProposal() {
             completed: false,
             component: VerifyIdentity,
         },
+        {
+            href: "SignAgreement",
+            title: "Sign Agreement",
+            completed: false,
+            component: SignAgreement,
+        },
     ]);
 
     const prevStage = () => {
@@ -110,10 +154,14 @@ export default function LoanProposal() {
         let href = e.target.href;
         href = href.indexOf("/") != -1 ? href.substring(href.lastIndexOf("/") + 1) : href;
         const targetStage = stages.find((s) => s.href == href);
-        if (targetStage?.completed) {
-            setStage(targetStage.href);
-        }
+        // if (targetStage?.completed) {
+        setStage(targetStage.href);
+        // }
     };
+
+    useEffect(() => {
+        if (user && router.isReady && id) loadProposal();
+    }, [user, router.isReady]);
 
     return (
         <>

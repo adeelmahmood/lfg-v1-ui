@@ -66,11 +66,10 @@ export default function Home() {
                                 </div>
 
                                 <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2">
-                                    <div className="items-center justify-center space-y-4 rounded-lg py-4 px-6 text-center shadow-md dark:bg-gray-800">
+                                    <div className="flex flex-col items-center justify-between space-y-4 rounded-lg py-4 px-6 text-center shadow-md dark:bg-gray-800">
                                         <p className="text-lg leading-8 text-gray-600 dark:text-gray-300">
-                                            Deposit and earn interest. Participate in a
-                                            community-driven lending protocol. Vote on borrow
-                                            proposals and learn about what they do.
+                                            Earn interest and participate in the governance. Explore
+                                            and vote on upcoming proposals.
                                         </p>
                                         <Link href="/dashboard" className="btn-primary">
                                             Become a Lender
@@ -82,11 +81,10 @@ export default function Home() {
                                             <h2 className="text-2xl">Deposited Collateral</h2>
                                         </div>
                                     </div>
-                                    <div className="items-center justify-center space-y-4 rounded-lg px-6 py-4 text-center shadow-md dark:bg-gray-800">
+                                    <div className="flex flex-col items-center justify-between space-y-4 rounded-lg py-4 px-6 text-center shadow-md dark:bg-gray-800">
                                         <p className="text-lg leading-8 text-gray-600 dark:text-gray-300">
-                                            Provide exposure to your business to crypto community
-                                            and apply for zero to low collateral loans. Develop a
-                                            community.
+                                            Interact with a community of crypto lenders to get
+                                            access to uncollateralized loans.
                                         </p>
                                         <Link href="/borrower/dashboard" className="btn-primary">
                                             Become a Borrower

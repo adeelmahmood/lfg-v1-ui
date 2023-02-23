@@ -4,9 +4,17 @@ import Navbar from "../../components/Navbar";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../../utils/Constants";
-import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import DialogComponent from "../../components/DialogComponent";
+import {
+    CheckCircleIcon,
+    CheckIcon,
+    DocumentCheckIcon,
+    ShieldCheckIcon,
+    ShieldExclamationIcon,
+} from "@heroicons/react/24/solid";
+import { stripeVerification } from "../../utils/Stripe";
+import { generateSignatureRequest, getHelloSignClient } from "../../utils/HelloSign";
 
 export default function BorrowerGenInfo() {
     const supabase = useSupabaseClient();
@@ -14,6 +22,10 @@ export default function BorrowerGenInfo() {
 
     const [isLoading, setIsLoading] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [isSigning, setIsSigning] = useState(false);
+    const [signed, setSigned] = useState([]);
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [verified, setVerified] = useState([]);
     const [error, setError] = useState();
 
     const [proposals, setProposals] = useState([]);
@@ -28,14 +40,18 @@ export default function BorrowerGenInfo() {
             .select(
                 `*, 
                 loan_proposals_status (*), 
-                user_identity_verifications ( verification_status, verification_message)`
+                user_identity_verifications ( verification_status, verification_message),
+                loan_agreement_signatures ( signature_request_id, status, signed_at)`
             )
             .order("created_at", { ascending: false })
             .eq("user_id", user.id);
 
         setIsLoading(false);
-        if (error) setError(error.message);
-        else setProposals(data);
+        if (error) {
+            setError(error.message);
+        } else {
+            setProposals(data);
+        }
     };
 
     const deleteProposal = (p) => {
@@ -55,6 +71,7 @@ export default function BorrowerGenInfo() {
         } else {
             setProposals(proposals.filter((pr) => pr.id != p.id));
         }
+        setIsDeleting(false);
     };
 
     useEffect(() => {
@@ -70,22 +87,80 @@ export default function BorrowerGenInfo() {
         return text && text.length > limit ? text.substring(0, limit) + " ..." : text;
     };
 
-    const isVerified = (p) => {
-        return (
-            p?.user_identity_verifications?.length > 0 &&
-            p.user_identity_verifications[0]?.verification_status == "verified"
+    const isSigned = (p) => {
+        return p.loan_agreement_signatures?.find((s) => s.status == "signed") != null;
+    };
+
+    const isSignSubmitted = (pid) => {
+        return signed.indexOf(pid) > -1;
+    };
+
+    const isVerificationSubmitted = (pid) => {
+        console.log(
+            "checking isVerificationSubmitted = " +
+                pid +
+                " in " +
+                verified +
+                " == " +
+                (verified.indexOf(pid) > -1)
         );
+        return verified.indexOf(pid) > -1;
     };
 
     const getStatus = (p) => {
         return p?.loan_proposals_status?.length > 0 && p.loan_proposals_status[0].status;
     };
 
+    const isVerified = (p) => {
+        return (
+            p.user_identity_verifications?.find((x) => x.verification_status == "verified") != null
+        );
+    };
     const getVerificationReason = (p) => {
         return p?.user_identity_verifications?.length > 0 &&
             p.user_identity_verifications[0].verification_message
             ? p.user_identity_verifications[0].verification_message
-            : "Unverified";
+            : "No Verifications Submitted Yet!";
+    };
+
+    const handleSignAgreement = async (p) => {
+        try {
+            setIsSigning(true);
+
+            const signUrl = await generateSignatureRequest({ proposalId: p.id });
+            const client = await getHelloSignClient();
+
+            client.open(signUrl, { testMode: true, allowCancel: true });
+            client.on("sign", (data) => {
+                //signing completed
+                setSigned((signed) => [...signed, p.id]);
+            });
+        } catch (error) {
+            console.log(error.message);
+        }
+        setIsSigning(false);
+    };
+
+    const handleVerification = async (p) => {
+        try {
+            setIsVerifying(true);
+
+            const err = await stripeVerification({ pid: p.id });
+
+            if (err?.message) {
+                setError(err.message);
+            } else if (err?.type == "user_action" && err?.code == "consent_declined") {
+                setError("User declined the consent");
+            } else if (err?.type == "user_action" && err?.code == "session_cancelled") {
+                // do nothing
+            } else {
+                // verification completed
+                setVerified((verified) => [...verified, p.id]);
+            }
+        } catch (e) {
+            setError(e.message);
+        }
+        setIsVerifying(false);
     };
 
     return (
@@ -131,14 +206,14 @@ export default function BorrowerGenInfo() {
                 </p>
 
                 <div>
-                    <a href="/borrower/proposals/create" className="btn-secondary w-full">
+                    <a href="/borrower/proposals/create" className="btn-primary">
                         Create New Loan Proposal
                     </a>
                 </div>
 
                 {error && <p className="mt-4 text-red-500">{error}</p>}
 
-                <div className="mt-4 hidden w-full overflow-x-auto rounded-lg shadow-md sm:flex  md:w-3/4">
+                <div className="mt-4 hidden w-full overflow-x-auto rounded-lg shadow-md sm:flex">
                     <table className="w-full text-left text-sm text-gray-800">
                         <thead className="bg-slate-600 text-xs uppercase tracking-wider text-gray-200 dark:bg-gray-600">
                             <tr>
@@ -146,10 +221,13 @@ export default function BorrowerGenInfo() {
                                     Proposal
                                 </th>
                                 <th scope="col" className="py-3 px-6 text-center">
+                                    Status
+                                </th>
+                                <th scope="col" className="py-3 px-6 text-center">
                                     Identity Verified
                                 </th>
                                 <th scope="col" className="py-3 px-6 text-center">
-                                    Status
+                                    Agreement Signed
                                 </th>
                                 <th scope="col" className="py-3 px-6 text-center">
                                     View
@@ -182,7 +260,7 @@ export default function BorrowerGenInfo() {
                                         <td className="py-4 px-6" colSpan={2}>
                                             <div className="flex">
                                                 <img
-                                                    className="h-24 w-24 rounded-full object-cover object-center"
+                                                    className="h-28 w-44 rounded-full object-cover object-center"
                                                     src={p.banner_image}
                                                     alt=""
                                                 />
@@ -214,13 +292,32 @@ export default function BorrowerGenInfo() {
                                         </td>
                                         <td className="py-4 px-6 text-center dark:text-gray-200">
                                             {isVerified(p) ? (
-                                                <span className="font-medium text-green-600">
-                                                    Verified
-                                                </span>
+                                                <ShieldCheckIcon className="inline h-10 fill-current text-emerald-500 dark:text-gray-200" />
+                                            ) : isVerificationSubmitted(p.id) ? (
+                                                <span>Submitted</span>
                                             ) : (
-                                                <span className="font-medium text-red-500">
-                                                    {getVerificationReason(p)}
-                                                </span>
+                                                <button
+                                                    className="btn-clear"
+                                                    onClick={() => handleVerification(p)}
+                                                    disabled={isVerifying}
+                                                >
+                                                    Verify
+                                                </button>
+                                            )}
+                                        </td>
+                                        <td className="py-4 px-6 text-center dark:text-gray-200">
+                                            {isSigned(p) ? (
+                                                <DocumentCheckIcon className="inline h-10 fill-current text-emerald-500 dark:text-gray-200" />
+                                            ) : isSignSubmitted(p.id) ? (
+                                                <span>Submitted</span>
+                                            ) : (
+                                                <button
+                                                    className="btn-clear"
+                                                    onClick={() => handleSignAgreement(p)}
+                                                    disabled={isSigning}
+                                                >
+                                                    Sign
+                                                </button>
                                             )}
                                         </td>
                                         <td className="py-4 px-6 text-center">
@@ -232,16 +329,12 @@ export default function BorrowerGenInfo() {
                                             </Link>
                                         </td>
                                         <td className="py-4 px-6 text-center">
-                                            <button
-                                                href="#"
+                                            <Link
+                                                href={`/borrower/proposals/create?id=${p.id}`}
                                                 className="btn-clear"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                }}
-                                                disabled={true}
                                             >
                                                 Edit
-                                            </button>
+                                            </Link>
                                         </td>
                                         <td className="py-4 px-6 text-center">
                                             <a
@@ -267,7 +360,7 @@ export default function BorrowerGenInfo() {
                         return (
                             <div
                                 key={i}
-                                className="relative w-full space-y-5 overflow-hidden rounded-xl shadow-lg dark:bg-gray-700/50"
+                                className="relative w-full space-y-5 overflow-hidden rounded-xl bg-indigo-50 shadow-lg dark:bg-gray-700/50"
                             >
                                 <div>
                                     <div className="flex px-4 pt-4">
@@ -300,38 +393,71 @@ export default function BorrowerGenInfo() {
                                     </div>
                                 </div>
                                 <div className="flex flex-col px-4 pb-4">
-                                    <div className="flex justify-between border-b border-gray-300 dark:border-gray-500">
+                                    <div className="flex justify-between">
                                         <span className="">Proposal Status:</span>
                                         <span className="font-semibold">{getStatus(p)}</span>
                                     </div>
-                                    <div className="mt-2 mb-6 flex justify-between border-b border-gray-300 dark:border-gray-500">
-                                        <span className="mr-2">Identity Verified:</span>
+                                    <div className="mt-4 flex flex-col space-y-2">
                                         {isVerified(p) ? (
-                                            <span className="font-medium text-green-600">
-                                                Verified
-                                            </span>
+                                            <div className="flex justify-between">
+                                                <div className="flex w-full justify-center rounded-lg border border-gray-400 px-4 py-2 text-center">
+                                                    <CheckCircleIcon className="mr-2 inline h-6 fill-current text-green-500" />
+                                                    <span className="font-semibold">
+                                                        Identity Verified
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ) : isVerificationSubmitted(p.id) ? (
+                                            <div className="flex w-full justify-center rounded-lg border border-gray-400 px-4 py-2 text-center">
+                                                Submitted
+                                            </div>
                                         ) : (
-                                            <span className="font-medium text-red-500">
-                                                {getVerificationReason(p)}
-                                            </span>
+                                            <button
+                                                className="btn-primary flex items-center justify-center py-1 font-normal"
+                                                onClick={() => handleVerification(p)}
+                                                disabled={isVerifying}
+                                            >
+                                                <ShieldExclamationIcon className="mr-2 inline h-6 fill-current text-gray-100" />
+                                                Verify Identity
+                                            </button>
                                         )}
-                                    </div>
-                                    <div className="flex flex-col space-y-2">
+                                        {isSigned(p) ? (
+                                            <div className="flex justify-between">
+                                                <div className="flex w-full justify-center rounded-lg border border-gray-400 px-4 py-2 text-center">
+                                                    <DocumentCheckIcon className="mr-2 inline h-6 fill-current text-green-500" />
+                                                    <span className="font-semibold">
+                                                        Agreement Signed
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ) : isSignSubmitted(p.id) ? (
+                                            <div className="flex w-full justify-center rounded-lg border border-gray-400 px-4 py-2 text-center">
+                                                Submitted
+                                            </div>
+                                        ) : (
+                                            <button
+                                                className="btn-primary flex items-center justify-center py-1 font-normal"
+                                                onClick={() => handleSignAgreement(p)}
+                                                disabled={isSigning}
+                                            >
+                                                <ShieldExclamationIcon className="mr-2 inline h-6 fill-current text-gray-100" />
+                                                Sign Agreement
+                                            </button>
+                                        )}
                                         <Link
                                             href={`/borrower/proposals/${p.id}`}
-                                            className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-center text-xs font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                            className="btn-clear py-1.5 text-center"
                                         >
                                             View Proposal
                                         </Link>
-                                        <button
-                                            href={`/borrower/proposals/${p.id}`}
-                                            className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-xs font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                            disabled={true}
+                                        <Link
+                                            href={`/borrower/proposals/create?id=${p.id}`}
+                                            className="btn-clear py-1.5 text-center"
                                         >
                                             Edit Proposal
-                                        </button>
+                                        </Link>
                                         <button
-                                            className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-xs font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                            className="btn-clear py-1.5 text-center"
                                             onClick={() => deleteProposal(p)}
                                         >
                                             Delete Proposal

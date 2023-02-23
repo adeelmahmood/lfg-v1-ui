@@ -19,7 +19,10 @@ export default function LoanPropospals() {
         const { data, error } = await supabase
             .from(SUPABASE_TABLE_LOAN_PROPOSALS)
             .select(
-                `*, loan_proposals_status (*), user_identity_verifications ( verification_status, verification_message)`
+                `*, 
+                loan_proposals_status (*), 
+                user_identity_verifications ( verification_status, verification_message),
+                loan_agreement_signatures ( signature_request_id, status, signed_at)`
             )
             .order("created_at", { ascending: false });
 
@@ -38,20 +41,6 @@ export default function LoanPropospals() {
 
     const trimText = (text, limit) => {
         return text && text.length > limit ? text.substring(0, limit) + "..." : text;
-    };
-
-    const isVerified = (p) => {
-        return (
-            p?.user_identity_verifications?.length > 0 &&
-            p.user_identity_verifications[0]?.verification_status == "verified"
-        );
-    };
-
-    const getVerificationReason = (p) => {
-        return p?.user_identity_verifications?.length > 0 &&
-            p.user_identity_verifications[0].verification_message
-            ? p.user_identity_verifications[0].verification_message
-            : "Unverified";
     };
 
     const leftScroll = () => {

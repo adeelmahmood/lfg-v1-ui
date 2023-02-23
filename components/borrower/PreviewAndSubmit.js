@@ -11,14 +11,20 @@ export default function PreviewAndSubmit({ loanProposal, setLoanProposal, handle
     const supabase = useSupabaseClient();
     const user = useUser();
 
+    const router = useRouter();
+
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
+
+    const isNew = () => {
+        return loanProposal.id == null;
+    };
 
     const handleNext = async () => {
         setIsLoading(true);
         const { data, error } = await supabase
             .from(SUPABASE_TABLE_LOAN_PROPOSALS)
-            .insert({
+            .upsert({
                 ...loanProposal,
                 user_id: user.id,
             })
@@ -28,27 +34,33 @@ export default function PreviewAndSubmit({ loanProposal, setLoanProposal, handle
             setIsLoading(false);
             setError(error.message);
         } else {
-            // add status entry
-            const { error: statusError } = await supabase
-                .from(SUPABASE_TABLE_LOAN_PROPOSALS_STATUS)
-                .insert({
-                    status: "Created",
-                    proposal_id: data.id,
-                });
+            if (isNew()) {
+                // add status entry
+                const { error: statusError } = await supabase
+                    .from(SUPABASE_TABLE_LOAN_PROPOSALS_STATUS)
+                    .insert({
+                        status: "Created",
+                        proposal_id: data.id,
+                    });
 
-            setIsLoading(false);
+                if (statusError) {
+                    setError(statusError.message);
+                } else {
+                    // add persisted record id
+                    setLoanProposal({
+                        ...loanProposal,
+                        id: data.id,
+                    });
 
-            if (statusError) {
-                setError(statusError.message);
+                    // update route to add proposal id
+                    router.push({ query: { id: data.id } }, undefined, { shallow: true });
+
+                    handle?.();
+                }
             } else {
-                // add persisted record id
-                setLoanProposal({
-                    ...loanProposal,
-                    id: data.id,
-                });
-
                 handle?.();
             }
+            setIsLoading(false);
         }
     };
 
@@ -72,7 +84,7 @@ export default function PreviewAndSubmit({ loanProposal, setLoanProposal, handle
                         onClick={handleNext}
                         disabled={isLoading}
                     >
-                        Submit
+                        {isNew() ? "Create" : "Save"}
                     </button>
                 </div>
             </div>
