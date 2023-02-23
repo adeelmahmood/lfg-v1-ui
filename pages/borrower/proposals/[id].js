@@ -15,6 +15,7 @@ import {
 import PublishLoanDialog from "../../../components/borrower/governance/PublishLoanDialog";
 import CastVoteDialog from "../../../components/borrower/governance/CastVoteDialog";
 import { useAccount, useContractRead } from "wagmi";
+import { isPublished } from "../../../utils/ProposalChecks";
 
 export default function LoanProposal() {
     const router = useRouter();
@@ -68,10 +69,6 @@ export default function LoanProposal() {
     }, [user, router.isReady]);
 
     const [propNotPubHeaderExp, setPropNotPubHeaderExp] = useState(false);
-
-    const isPublished = (p) => {
-        return p?.loan_proposals_status?.find((s) => s.status == "Published");
-    };
 
     const canVote = () => {
         return governanceState == 0 || governanceState == 1;

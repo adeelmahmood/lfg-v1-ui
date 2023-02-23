@@ -8,11 +8,11 @@ import {
     ArrowLongLeftIcon,
     ArrowLongRightIcon,
     CheckBadgeIcon,
-    CheckCircleIcon,
-    CheckIcon,
     ChevronRightIcon,
 } from "@heroicons/react/24/solid";
 import Link from "next/link";
+import { isSigned, isVerified } from "../utils/ProposalChecks";
+import useIsMounted from "../hooks/useIsMounted";
 
 export default function LoanPropospals() {
     const supabase = useSupabaseClient();
@@ -20,6 +20,8 @@ export default function LoanPropospals() {
 
     const [proposals, setProposals] = useState();
     const [isLoading, setIsLoading] = useState(true);
+
+    const isMounted = useIsMounted();
 
     const fetchProposals = async () => {
         setIsLoading(true);
@@ -51,21 +53,14 @@ export default function LoanPropospals() {
     };
 
     const leftScroll = () => {
-        document.getElementById("slider").scrollLeft -= 800;
+        document.getElementById("slider").scrollLeft -= 280;
     };
     const rightScroll = () => {
-        document.getElementById("slider").scrollLeft += 800;
+        document.getElementById("slider").scrollLeft += 280;
     };
 
-    const getStatus = (p) => {
-        const len = p?.loan_proposals_status?.length || 0;
-        return len > 0 && p.loan_proposals_status[len - 1].status;
-    };
-
-    const allChecksPassed = async (p) => {
-        const isVerified = false;
-        const isSigned = false;
-        return isVerified && isSigned;
+    const allChecksPassed = (p) => {
+        return isVerified(p) && isSigned(p);
     };
 
     return (
@@ -102,17 +97,16 @@ export default function LoanPropospals() {
                                     className="h-full w-full snap-x space-x-8 overflow-x-scroll scroll-smooth whitespace-nowrap rounded-lg scrollbar-hide"
                                 >
                                     {proposals?.map((p, i) => {
-                                        const status = getStatus(p);
                                         return (
                                             <div
                                                 key={i}
-                                                className="relative inline-block h-[580px] w-[320px] snap-center overflow-hidden rounded-xl bg-indigo-50 shadow-md dark:bg-slate-700 md:h-[580px] md:w-[400px]"
+                                                className="relative inline-block h-[600px] w-[320px] snap-mandatory snap-center overflow-hidden rounded-xl bg-gray-50 shadow-md dark:bg-slate-700 md:h-[580px] md:w-[400px]"
                                             >
                                                 <Link
                                                     href={`/borrower/proposals/${p.id}`}
                                                     className="group"
                                                 >
-                                                    {allChecksPassed(p) && (
+                                                    {isMounted && allChecksPassed(p) && (
                                                         <div
                                                             aria-hidden="true"
                                                             className="absolute -right-12 top-8 m-0 grid h-8 w-48 rotate-45 place-items-center rounded-lg bg-emerald-400 text-sm text-white shadow-md"
@@ -149,12 +143,12 @@ export default function LoanPropospals() {
                                                             )}
                                                         </p>
                                                     </div>
-                                                    <div className="flex w-full flex-wrap px-4">
+                                                    <div className="mt-2 flex w-full flex-wrap px-4 md:mt-4">
                                                         {p.tags?.split(",").map((tag, i) => {
                                                             return (
                                                                 <span
                                                                     key={i}
-                                                                    className="mr-2 mb-2 rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700 dark:bg-gray-300 dark:text-gray-900"
+                                                                    className="mr-2 mb-2 rounded-full bg-white px-3 py-1 text-sm font-semibold text-gray-700 shadow-md dark:bg-gray-300 dark:text-gray-900"
                                                                 >
                                                                     {tag}
                                                                 </span>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAccount, useContractRead } from "wagmi";
 import addresses from "../../constants/contract.json";
 import abi from "../../constants/LendPool.json";
-import { calculateAPY, displayPercent, displayUnits } from "../../utils/Math";
+import { calculateAPY, displayPercent, displayRay, displayUnits } from "../../utils/Math";
 import ImageWithFallback from "../ImageWithFallback";
 import { Switch } from "@headlessui/react";
 import DepositDialog from "./DepositDialog";
@@ -180,7 +180,9 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                                         {displayUnits(token.walletBalance, token.tokenDecimals)}
                                     </td>
                                     <td className="py-4 px-6 text-center dark:text-gray-200">
-                                        {displayPercent(depositAPY)}%
+                                        {displayPercent(depositAPY)}% -{" "}
+                                        {displayPercent(displayRay(token.variableBorrowRate))}-
+                                        {displayPercent(displayRay(token.stableBorrowRate))}
                                     </td>
                                     <td className="py-4 px-6 text-center">
                                         <a

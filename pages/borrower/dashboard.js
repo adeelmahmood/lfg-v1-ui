@@ -15,6 +15,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { stripeVerification } from "../../utils/Stripe";
 import { generateSignatureRequest, getHelloSignClient } from "../../utils/HelloSign";
+import { isVerified, isSigned } from "../../utils/ProposalChecks";
 
 export default function BorrowerGenInfo() {
     const supabase = useSupabaseClient();
@@ -87,23 +88,11 @@ export default function BorrowerGenInfo() {
         return text && text.length > limit ? text.substring(0, limit) + " ..." : text;
     };
 
-    const isSigned = (p) => {
-        return p.loan_agreement_signatures?.find((s) => s.status == "signed") != null;
-    };
-
     const isSignSubmitted = (pid) => {
         return signed.indexOf(pid) > -1;
     };
 
     const isVerificationSubmitted = (pid) => {
-        console.log(
-            "checking isVerificationSubmitted = " +
-                pid +
-                " in " +
-                verified +
-                " == " +
-                (verified.indexOf(pid) > -1)
-        );
         return verified.indexOf(pid) > -1;
     };
 
@@ -111,11 +100,6 @@ export default function BorrowerGenInfo() {
         return p?.loan_proposals_status?.length > 0 && p.loan_proposals_status[0].status;
     };
 
-    const isVerified = (p) => {
-        return (
-            p.user_identity_verifications?.find((x) => x.verification_status == "verified") != null
-        );
-    };
     const getVerificationReason = (p) => {
         return p?.user_identity_verifications?.length > 0 &&
             p.user_identity_verifications[0].verification_message
@@ -260,7 +244,7 @@ export default function BorrowerGenInfo() {
                                         <td className="py-4 px-6" colSpan={2}>
                                             <div className="flex">
                                                 <img
-                                                    className="h-28 w-44 rounded-full object-cover object-center"
+                                                    className="h-28 w-44 rounded-lg object-cover object-center"
                                                     src={p.banner_image}
                                                     alt=""
                                                 />
@@ -292,7 +276,7 @@ export default function BorrowerGenInfo() {
                                         </td>
                                         <td className="py-4 px-6 text-center dark:text-gray-200">
                                             {isVerified(p) ? (
-                                                <ShieldCheckIcon className="inline h-10 fill-current text-emerald-500 dark:text-gray-200" />
+                                                <ShieldCheckIcon className="inline h-10 fill-current text-emerald-500 dark:text-emerald-200" />
                                             ) : isVerificationSubmitted(p.id) ? (
                                                 <span>Submitted</span>
                                             ) : (
@@ -307,7 +291,7 @@ export default function BorrowerGenInfo() {
                                         </td>
                                         <td className="py-4 px-6 text-center dark:text-gray-200">
                                             {isSigned(p) ? (
-                                                <DocumentCheckIcon className="inline h-10 fill-current text-emerald-500 dark:text-gray-200" />
+                                                <DocumentCheckIcon className="inline h-10 fill-current text-emerald-500 dark:text-emerald-200" />
                                             ) : isSignSubmitted(p.id) ? (
                                                 <span>Submitted</span>
                                             ) : (
@@ -417,7 +401,7 @@ export default function BorrowerGenInfo() {
                                                 onClick={() => handleVerification(p)}
                                                 disabled={isVerifying}
                                             >
-                                                <ShieldExclamationIcon className="mr-2 inline h-6 fill-current text-gray-100" />
+                                                <ShieldExclamationIcon className="mr-2 inline h-6 fill-current text-gray-100 dark:text-orange-600" />
                                                 Verify Identity
                                             </button>
                                         )}
@@ -440,7 +424,7 @@ export default function BorrowerGenInfo() {
                                                 onClick={() => handleSignAgreement(p)}
                                                 disabled={isSigning}
                                             >
-                                                <ShieldExclamationIcon className="mr-2 inline h-6 fill-current text-gray-100" />
+                                                <ShieldExclamationIcon className="mr-2 inline h-6 fill-current text-gray-100 dark:text-orange-600" />
                                                 Sign Agreement
                                             </button>
                                         )}

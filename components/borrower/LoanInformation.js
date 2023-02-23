@@ -36,6 +36,7 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
         abi,
         functionName: "getBorrowToken",
         onSuccess(data) {
+            console.log(data);
             setIsLoading(false);
             setVariableRate(data.variableBorrowRate);
         },
@@ -71,7 +72,7 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                             {displayUnits(liquidityData.availableToBorrow)} eth
                         </div>
                     </div>
-                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                    <p className="mt-2 max-w-md text-sm text-gray-500 dark:text-gray-400">
                         We limit indivudual borrowers to a max of
                         <span className="ml-1 font-semibold">10%</span> of the available borrowing
                         power.
@@ -83,7 +84,7 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                             {liquidityData ? borrowLimit() : "0"} eth
                         </div>
                     </div>
-                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                    <p className="mt-2 max-w-md text-sm text-gray-500 dark:text-gray-400">
                         The limit is suggested because the pool liquidity may change by the time
                         this proposal is published.
                     </p>
@@ -94,7 +95,7 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                             {displayPercent(displayRay(variableRate))}%
                         </div>
                     </div>
-                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                    <p className="mt-2 max-w-md text-sm text-gray-500 dark:text-gray-400">
                         We currently only offer
                         <span className="ml-1 underline">variable interest rate</span> for all
                         borrowers.
