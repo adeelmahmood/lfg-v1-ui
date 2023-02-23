@@ -4,7 +4,14 @@ import Navbar from "../components/Navbar";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../utils/Constants";
-import { ArrowLongLeftIcon, ArrowLongRightIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
+import {
+    ArrowLongLeftIcon,
+    ArrowLongRightIcon,
+    CheckBadgeIcon,
+    CheckCircleIcon,
+    CheckIcon,
+    ChevronRightIcon,
+} from "@heroicons/react/24/solid";
 import Link from "next/link";
 
 export default function LoanPropospals() {
@@ -55,6 +62,12 @@ export default function LoanPropospals() {
         return len > 0 && p.loan_proposals_status[len - 1].status;
     };
 
+    const allChecksPassed = async (p) => {
+        const isVerified = false;
+        const isSigned = false;
+        return isVerified && isSigned;
+    };
+
     return (
         <>
             <TopGradient />
@@ -83,9 +96,6 @@ export default function LoanPropospals() {
                     )}
                     {proposals?.length > 0 && (
                         <>
-                            <div className="text-lg text-gray-800 dark:text-gray-200">
-                                All Proposals
-                            </div>
                             <div className="mt-2 flex w-full flex-col items-end md:flex-row md:items-center">
                                 <div
                                     id="slider"
@@ -96,22 +106,18 @@ export default function LoanPropospals() {
                                         return (
                                             <div
                                                 key={i}
-                                                className="relative inline-block h-[580px] w-[320px] snap-center overflow-hidden rounded-xl shadow-md dark:bg-slate-700 md:h-[580px] md:w-[400px]"
+                                                className="relative inline-block h-[580px] w-[320px] snap-center overflow-hidden rounded-xl bg-indigo-50 shadow-md dark:bg-slate-700 md:h-[580px] md:w-[400px]"
                                             >
                                                 <Link
                                                     href={`/borrower/proposals/${p.id}`}
                                                     className="group"
                                                 >
-                                                    {["Published"].includes(status) && (
+                                                    {allChecksPassed(p) && (
                                                         <div
                                                             aria-hidden="true"
-                                                            className={`absolute -right-8 top-4 m-0 grid h-8 w-32 rotate-45 place-items-center rounded-lg text-sm opacity-90 shadow-md ${
-                                                                status == "Published"
-                                                                    ? "bg-emerald-500 text-white"
-                                                                    : ""
-                                                            }`}
+                                                            className="absolute -right-12 top-8 m-0 grid h-8 w-48 rotate-45 place-items-center rounded-lg bg-emerald-400 text-sm text-white shadow-md"
                                                         >
-                                                            {status}
+                                                            <CheckBadgeIcon className="inline h-8 -rotate-12 transform fill-current text-white dark:text-gray-200" />
                                                         </div>
                                                     )}
 
