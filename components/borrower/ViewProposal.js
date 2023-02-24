@@ -1,5 +1,5 @@
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { HandThumbUpIcon } from "@heroicons/react/24/solid";
+import { HandThumbUpIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
 import CastVoteDialog from "./governance/CastVoteDialog";
 import GovernanceInfoPanel from "./governance/GovernanceInfoPanel";
 import QueuePropoposalDialog from "./governance/QueuePropoposalDialog";
@@ -68,8 +68,8 @@ export default function ViewProposal({ loanProposal, canVote, canQueue, canExecu
                             </span>
                         </div>
                     </div>
-                    <div className="flex flex-col items-end space-y-2">
-                        <button className="btn-clear text-base" disabled={true}>
+                    <div className="flex flex-col items-end justify-center space-y-2">
+                        <button className="btn-clear text-base">
                             <HandThumbUpIcon className="inline h-6 fill-current align-top text-gray-800" />
                             <span className="ml-2 hidden md:inline">Like this Proposal</span>
                         </button>
@@ -156,6 +156,13 @@ export default function ViewProposal({ loanProposal, canVote, canQueue, canExecu
                         })}
                     </div>
                 )}
+
+                <div className="mt-6">
+                    <button className="btn-primary w-full text-base">
+                        <QuestionMarkCircleIcon className="inline h-6 fill-current align-top text-gray-200" />
+                        <span className="ml-2 hidden md:inline">Ask a Question</span>
+                    </button>
+                </div>
             </div>
         </>
     );

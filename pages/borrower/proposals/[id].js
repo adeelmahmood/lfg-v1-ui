@@ -8,14 +8,17 @@ import ViewProposal from "../../../components/borrower/ViewProposal";
 import TopGradient from "../../../components/TopGradient";
 import Navbar from "../../../components/Navbar";
 import {
+    CheckCircleIcon,
     ChevronDoubleDownIcon,
     ChevronDoubleUpIcon,
     ExclamationCircleIcon,
+    ExclamationTriangleIcon,
+    InformationCircleIcon,
+    ShieldExclamationIcon,
 } from "@heroicons/react/24/solid";
 import PublishLoanDialog from "../../../components/borrower/governance/PublishLoanDialog";
-import CastVoteDialog from "../../../components/borrower/governance/CastVoteDialog";
 import { useAccount, useContractRead } from "wagmi";
-import { isPublished } from "../../../utils/ProposalChecks";
+import { isPublished, isSigned, isVerified } from "../../../utils/ProposalChecks";
 
 export default function LoanProposal() {
     const router = useRouter();
@@ -54,8 +57,9 @@ export default function LoanProposal() {
                 .from(SUPABASE_TABLE_LOAN_PROPOSALS)
                 .select(
                     `*, 
-                    loan_proposals_status (*), 
-                    user_identity_verifications ( verification_status, verification_message)`
+                loan_proposals_status (*), 
+                user_identity_verifications ( verification_status, verification_message),
+                loan_agreement_signatures ( signature_request_id, status, signed_at)`
                 )
                 .eq("id", pid)
                 .single();
@@ -88,10 +92,10 @@ export default function LoanProposal() {
             <Navbar />
 
             {!published && (
-                <div className="mt-2 flex flex-col items-start bg-yellow-600 p-4 shadow-lg dark:bg-yellow-600">
+                <div className="mt-2 flex flex-col items-start bg-yellow-600 py-4 px-8 shadow-lg dark:bg-yellow-600">
                     <div className="flex w-full justify-between">
                         <p className="flex items-center text-lg font-semibold text-gray-100">
-                            <ExclamationCircleIcon className="hidden h-6 fill-current text-gray-200 sm:inline" />
+                            <ExclamationTriangleIcon className="hidden h-8 fill-current text-gray-200 sm:inline" />
                             <span className="ml-2">
                                 This proposal has not been published yet!
                                 <button
@@ -114,14 +118,33 @@ export default function LoanProposal() {
                     </div>
                     {propNotPubHeaderExp && (
                         <div className="mt-4">
-                            <div className="text-gray-100" id="topPropWarningHeaderExpInfo">
+                            <div className="text-gray-200" id="topPropWarningHeaderExpInfo">
                                 Until a proposal is published, it is not visible by the broader
                                 community to be able to discover and vote on.
                             </div>
-                            <div className="text-gray-100">
-                                This is an <span className="underline">essential step</span> in
-                                completing the loan proposal process.
-                            </div>
+                            <p className="mt-2 text-gray-200">
+                                Here is the checklist of items that need to be completed before a
+                                proposal is considered eligible to be published
+                            </p>
+                            <ul className="mt-4">
+                                <li className="flex items-center">
+                                    {isVerified(loanProposal) ? (
+                                        <CheckCircleIcon className="inline h-8 fill-current text-gray-100 dark:text-gray-200" />
+                                    ) : (
+                                        <ExclamationCircleIcon className="inline h-8 fill-current text-gray-100 dark:text-gray-200" />
+                                    )}
+
+                                    <label className="ml-2 text-gray-100">Identity Verified</label>
+                                </li>
+                                <li className="mt-2 flex items-center">
+                                    {isSigned(loanProposal) ? (
+                                        <CheckCircleIcon className="inline h-8 fill-current text-gray-100 dark:text-gray-200" />
+                                    ) : (
+                                        <ExclamationCircleIcon className="inline h-8 fill-current text-gray-100 dark:text-gray-200" />
+                                    )}
+                                    <label className="ml-2 text-gray-100">Agreement Signed</label>
+                                </li>
+                            </ul>
                         </div>
                     )}
                 </div>
@@ -136,9 +159,6 @@ export default function LoanProposal() {
                             canQueue={canQueue}
                             canExecute={canExecute}
                         />
-                        {loanProposal.onchain_proposal_id && canVote() && (
-                            <CastVoteDialog loanProposal={loanProposal} forceLong={true} />
-                        )}
                     </>
                 )}
             </div>

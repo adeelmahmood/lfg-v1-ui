@@ -84,7 +84,7 @@ export default function VerifyIdentity({ loanProposal, setLoanProposal, handle, 
                     </button>
                     <button
                         className="btn-secondary w-full"
-                        onClick={() => router.push("/borrower/dashboard")}
+                        onClick={handle}
                         disabled={!isCompleted}
                     >
                         Next

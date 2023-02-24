@@ -19,6 +19,7 @@ import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { RocketLaunchIcon } from "@heroicons/react/24/solid";
 import DialogComponent from "../../DialogComponent";
 import { findEvent, saveEvent } from "../../../utils/Events";
+import { isSigned, isVerified } from "../../../utils/ProposalChecks";
 
 export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
     const [publishModalOpen, setPublishModalOpen] = useState();
@@ -127,6 +128,7 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
         <>
             <button
                 className="btn-primary text-base"
+                disabled={!isVerified(loanProposal) || !isSigned(loanProposal)}
                 onClick={(e) => {
                     e.preventDefault();
                     setPublishModalOpen(true);
