@@ -31,52 +31,52 @@ export default async function handler(req, res) {
     } = await supabase.auth.getSession();
 
     if (session?.user && proposalId) {
-        // first check in the database if there is already a signature
-        const { data: signatureInDb, error } = await supabase
-            .from(SUPABASE_TABLE_LOAN_AGREEMENT_SIGNATURES)
-            .select("*")
-            .eq("proposal_id", proposalId)
-            .eq("user_id", session.user.id)
-            .single();
-
-        // generate sign url from persisted signature request
-        if (signatureInDb) {
-            const result = await embeddedApi.embeddedSignUrl(signatureInDb.signature_id);
-            res.status(200).json({ ...result.body });
-            return;
-        }
-
-        const signer1 = {
-            emailAddress: session.user.email,
-            name: session.user.user_metadata?.full_name || name,
-            order: 0,
-        };
-
-        const signingOptions = {
-            draw: true,
-            type: true,
-            upload: true,
-            phone: true,
-            defaultType: "draw",
-        };
-
-        const data = {
-            clientId: CLIENT_ID,
-            title: "Loan Agreement",
-            subject: "Loan Agreement",
-            message: "Sign this loan agreement",
-            signers: [signer1],
-            ccEmailAddresses: [WEBSITE_EMAILADDRESS],
-            files: [fs.createReadStream(HELLOSIGN_TEMPLATE_PDF_PATH)],
-            metadata: {
-                user_id: session.user.id,
-                proposal_id: proposalId,
-            },
-            signingOptions,
-            testMode: true,
-        };
-
         try {
+            // first check in the database if there is already a signature
+            const { data: signatureInDb, error } = await supabase
+                .from(SUPABASE_TABLE_LOAN_AGREEMENT_SIGNATURES)
+                .select("*")
+                .eq("proposal_id", proposalId)
+                .eq("user_id", session.user.id)
+                .single();
+
+            // generate sign url from persisted signature request
+            if (signatureInDb) {
+                const result = await embeddedApi.embeddedSignUrl(signatureInDb.signature_id);
+                res.status(200).json({ ...result.body });
+                return;
+            }
+
+            const signer1 = {
+                emailAddress: session.user.email,
+                name: session.user.user_metadata?.full_name || name,
+                order: 0,
+            };
+
+            const signingOptions = {
+                draw: true,
+                type: true,
+                upload: true,
+                phone: true,
+                defaultType: "draw",
+            };
+
+            const data = {
+                clientId: CLIENT_ID,
+                title: "Loan Agreement",
+                subject: "Loan Agreement",
+                message: "Sign this loan agreement",
+                signers: [signer1],
+                ccEmailAddresses: [WEBSITE_EMAILADDRESS],
+                files: [fs.createReadStream(HELLOSIGN_TEMPLATE_PDF_PATH)],
+                metadata: {
+                    user_id: session.user.id,
+                    proposal_id: proposalId,
+                },
+                signingOptions,
+                testMode: true,
+            };
+
             const result = await signatureRequestApi.signatureRequestCreateEmbedded(data);
             // persist this signature request in the database
             const { error: er } = await supabase
