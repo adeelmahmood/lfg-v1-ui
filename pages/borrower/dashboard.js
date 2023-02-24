@@ -106,11 +106,12 @@ export default function BorrowerGenInfo() {
             client.open(signUrl, { testMode: true, allowCancel: true });
             client.on("sign", async (data) => {
                 //signing completed
-
-                const { error } = await supabase.from(SUPABASE_TABLE_LOAN_PROPOSALS).update({
-                    agreement_signed: true,
-                });
-                eq("id", loanProposal.id);
+                const { error } = await supabase
+                    .from(SUPABASE_TABLE_LOAN_PROPOSALS)
+                    .update({
+                        agreement_signed: true,
+                    })
+                    .eq("id", loanProposal.id);
 
                 if (error) {
                     setError(error.message);
@@ -136,10 +137,12 @@ export default function BorrowerGenInfo() {
                 // do nothing
             } else {
                 // verification completed
-                const { error } = await supabase.from(SUPABASE_TABLE_LOAN_PROPOSALS).update({
-                    identity_verification_requested: true,
-                });
-                eq("id", loanProposal.id);
+                const { error } = await supabase
+                    .from(SUPABASE_TABLE_LOAN_PROPOSALS)
+                    .update({
+                        identity_verification_requested: true,
+                    })
+                    .eq("id", loanProposal.id);
 
                 if (error) {
                     setError(error.message);
