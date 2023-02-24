@@ -68,7 +68,7 @@ export default async function handler(req, res) {
                 message: "Sign this loan agreement",
                 signers: [signer1],
                 ccEmailAddresses: [WEBSITE_EMAILADDRESS],
-                files: [fs.createReadStream(HELLOSIGN_TEMPLATE_PDF_PATH + "abc")],
+                files: [fs.createReadStream(HELLOSIGN_TEMPLATE_PDF_PATH)],
                 metadata: {
                     user_id: session.user.id,
                     proposal_id: proposalId,
