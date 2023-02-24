@@ -1,5 +1,4 @@
-import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     useAccount,
     useContractRead,
@@ -16,7 +15,6 @@ import { findEvent, saveEvent } from "../../utils/Events";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import DialogComponent from "../DialogComponent";
 import { displayUnits } from "../../utils/Math";
-import { addTokenToMetaMask } from "../../utils/Metamask";
 
 export default function DepositDialog({ isModelOpen, modelCloseHandler, token }) {
     let [isOpen, setIsOpen] = useState(isModelOpen || false);
@@ -37,7 +35,6 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const lendingPoolAddress = addresses[chainId].LendPool;
-    const govTokenAddress = addresses[chainId].GovToken;
     const approveFunctionName = "approve";
     const depositFunctionName = "deposit";
 
@@ -282,19 +279,8 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
 
                     <div className="mt-4">
                         <p className="text-sm dark:text-gray-200">
-                            After deposit, use this link to add governance tokens to your wallet
-                            <a
-                                href="#"
-                                className="ml-1 text-xs font-semibold text-indigo-500 dark:text-emerald-300"
-                                onClick={() =>
-                                    addTokenToMetaMask({
-                                        token: govTokenAddress,
-                                        tokenSymbol: "LGT",
-                                    })
-                                }
-                            >
-                                Add to Metamask
-                            </a>
+                            After deposit, make sure to add governance tokens to your wallet from
+                            the link on the page.
                         </p>
                     </div>
                 </div>

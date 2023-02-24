@@ -65,12 +65,11 @@ export default function Dashboard() {
                 <p className="mt-2 max-w-3xl text-left leading-8 text-gray-600 dark:text-gray-300">
                     Here you can deposit tokens and earn interest. Later on we will add some way to
                     show open proposals or it might be on another page. Either way, you should be
-                    able to do all the lender stuff here. Some other things might go here. Another
-                    one and another one.
+                    able to do all the lender stuff here.
                 </p>
 
                 <section id="portfolio">
-                    <div className="items-left mt-10 mb-20 flex flex-col gap-8 md:mt-6 md:flex-row md:items-start">
+                    <div className="mt-8 mb-16 flex flex-col items-start">
                         <PortfolioSection />
                     </div>
                 </section>

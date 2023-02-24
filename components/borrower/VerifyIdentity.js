@@ -2,6 +2,7 @@ import { useState } from "react";
 import { stripeVerification } from "../../utils/Stripe";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
+import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../../utils/Constants";
 
 export default function VerifyIdentity({ loanProposal, setLoanProposal, handle, ...rest }) {
     const [isCompleted, setIsCompleted] = useState(loanProposal.identity_verification_requested);
@@ -27,7 +28,6 @@ export default function VerifyIdentity({ loanProposal, setLoanProposal, handle, 
                 // do nothing
             } else {
                 // verification completed
-
                 const { error } = await supabase.from(SUPABASE_TABLE_LOAN_PROPOSALS).update({
                     identity_verification_requested: true,
                 });

@@ -5,6 +5,7 @@ import abi from "../../constants/LendPool.json";
 import { displayUnits } from "../../utils/Math";
 import WithdrawDialog from "./WithdrawDialog";
 import ImageWithFallback from "../ImageWithFallback";
+import { addTokenToMetaMask } from "../../utils/Metamask";
 
 export default function PortfolioSection() {
     const { isConnected, address } = useAccount();
@@ -17,6 +18,7 @@ export default function PortfolioSection() {
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const lendingPoolAddress = addresses[chainId].LendPool;
+    const govTokenAddress = addresses[chainId].GovToken;
 
     useContractRead({
         address: lendingPoolAddress,
@@ -48,8 +50,8 @@ export default function PortfolioSection() {
                 />
             )}
 
-            <div className="grid grid-cols-1 gap-y-4 sm:hidden">
-                <h2 className="rounded-lg bg-slate-600 py-4 px-4 font-semibold uppercase tracking-wider text-gray-200 dark:bg-blue-600 dark:text-gray-200">
+            <div className="grid w-full grid-cols-1 gap-y-4 sm:hidden">
+                <h2 className="rounded-lg bg-gray-800 py-4 px-4 font-semibold uppercase tracking-wider text-gray-200 dark:bg-emerald-600 dark:text-gray-200">
                     Your Deposits
                 </h2>
                 {isLoading && (
@@ -61,7 +63,7 @@ export default function PortfolioSection() {
                 {portfolioData.map((token, index) => {
                     return (
                         <div
-                            className="w-full rounded-lg bg-gray-100 shadow dark:bg-gray-700"
+                            className="w-full rounded-lg bg-gray-50 shadow dark:bg-gray-800"
                             key={index}
                         >
                             <div className="flex items-center space-x-2 rounded-t-lg p-3">
@@ -71,7 +73,7 @@ export default function PortfolioSection() {
                                     src={`https://cdn.jsdelivr.net/npm/cryptocurrency-icons@latest/svg/icon/${token.symbol.toLowerCase()}.svg`}
                                     fallbackSrc="https://cdn.jsdelivr.net/npm/cryptocurrency-icons@latest/svg/icon/generic.svg"
                                 />
-                                <div className="font-semibold">
+                                <div className="font-semibold text-gray-800 dark:text-gray-200">
                                     {token.symbol} - {token.name}
                                 </div>
                             </div>
@@ -181,6 +183,21 @@ export default function PortfolioSection() {
                         })}
                     </tbody>
                 </table>
+            </div>
+            <div className="mt-4">
+                <a
+                    href="#"
+                    className="text-xs font-semibold text-indigo-500 dark:text-emerald-300"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        addTokenToMetaMask({
+                            token: govTokenAddress,
+                            tokenSymbol: "LGT",
+                        });
+                    }}
+                >
+                    Add Governance Tokens to Metamask
+                </a>
             </div>
         </>
     );

@@ -78,14 +78,14 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
             </div>
 
             <div className="grid grid-cols-1 gap-y-4 sm:hidden">
-                <h2 className="rounded-lg bg-slate-600 py-4 px-4 font-semibold uppercase tracking-wider text-gray-200 dark:bg-blue-600 dark:text-gray-200">
+                <h2 className="rounded-lg bg-gray-800 py-4 px-4 font-semibold uppercase tracking-wider text-gray-200 dark:bg-emerald-600 dark:text-gray-200">
                     Tokens Available to Supply
                 </h2>
                 {filteredTokenMarketData.map((token, index) => {
                     const { depositAPY, stableBorrowAPY, variableBorrowAPY } = calculateAPY(token);
                     return (
                         <div
-                            className="w-full rounded-lg bg-gray-100 shadow-md dark:bg-gray-700"
+                            className="w-full rounded-lg bg-gray-50 shadow-md dark:bg-gray-800"
                             key={index}
                         >
                             <div className="flex items-center space-x-2 rounded-t-lg p-3">
@@ -95,7 +95,7 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                                     src={`https://cdn.jsdelivr.net/npm/cryptocurrency-icons@latest/svg/icon/${token.tokenSymbol.toLowerCase()}.svg`}
                                     fallbackSrc="https://cdn.jsdelivr.net/npm/cryptocurrency-icons@latest/svg/icon/generic.svg"
                                 />
-                                <div className="font-semibold">
+                                <div className="font-semibold text-gray-800 dark:text-gray-200">
                                     {token.tokenSymbol} - {token.tokenName}
                                 </div>
                             </div>
@@ -180,9 +180,7 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                                         {displayUnits(token.walletBalance, token.tokenDecimals)}
                                     </td>
                                     <td className="py-4 px-6 text-center dark:text-gray-200">
-                                        {displayPercent(depositAPY)}% -{" "}
-                                        {displayPercent(displayRay(token.variableBorrowRate))}-
-                                        {displayPercent(displayRay(token.stableBorrowRate))}
+                                        {displayPercent(depositAPY)}%
                                     </td>
                                     <td className="py-4 px-6 text-center">
                                         <a
