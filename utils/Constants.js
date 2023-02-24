@@ -7,4 +7,4 @@ export const SUPABASE_STORAGE_LOAN_PROPOSALS = "loanproposals";
 
 export const WEBSITE_EMAILADDRESS = "adeelmahmood+lfg-v1@gmail.com";
 
-export const HELLOSIGN_TEMPLATE_PDF_PATH = "pages/api/hellosign/legalagreement.pdf";
+export const HELLOSIGN_TEMPLATE = "legalagreement.pdf";

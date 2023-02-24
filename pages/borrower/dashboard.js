@@ -103,7 +103,6 @@ export default function BorrowerGenInfo() {
 
     const handleSignAgreement = async (p) => {
         try {
-            console.log("signing");
             setSigning(p.id);
 
             const signUrl = await generateSignatureRequest({ proposalId: p.id });

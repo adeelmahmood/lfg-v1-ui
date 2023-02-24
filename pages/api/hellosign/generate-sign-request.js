@@ -2,12 +2,12 @@ import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 import { SignatureRequestApi, EmbeddedApi } from "@dropbox/sign";
 import {
-    HELLOSIGN_TEMPLATE_PDF_PATH,
+    HELLOSIGN_TEMPLATE,
     SUPABASE_TABLE_LOAN_AGREEMENT_SIGNATURES,
     WEBSITE_EMAILADDRESS,
 } from "../../../utils/Constants";
-
-const fs = require("fs");
+import path from "path";
+import { promises as fs } from "fs";
 
 const signatureRequestApi = new SignatureRequestApi();
 const embeddedApi = new EmbeddedApi();
@@ -61,6 +61,9 @@ export default async function handler(req, res) {
                 defaultType: "draw",
             };
 
+            const templatesDir = path.join(process.cwd(), "templates");
+            const readStream = await fs.createReadStream(templatesDir + "/" + HELLOSIGN_TEMPLATE);
+
             const data = {
                 clientId: CLIENT_ID,
                 title: "Loan Agreement",
@@ -68,7 +71,7 @@ export default async function handler(req, res) {
                 message: "Sign this loan agreement",
                 signers: [signer1],
                 ccEmailAddresses: [WEBSITE_EMAILADDRESS],
-                files: [fs.createReadStream(HELLOSIGN_TEMPLATE_PDF_PATH)],
+                files: [readStream],
                 metadata: {
                     user_id: session.user.id,
                     proposal_id: proposalId,
