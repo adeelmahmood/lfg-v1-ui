@@ -9,3 +9,11 @@ export const isVerified = (p) => {
 export const isPublished = (p) => {
     return p?.loan_proposals_status?.find((s) => s.status == "Published");
 };
+
+export const isSignSubmitted = (p) => {
+    return p?.agreemnt_signed;
+};
+
+export const isVerificationSubmitted = (p) => {
+    return p?.identity_verification_requested;
+};

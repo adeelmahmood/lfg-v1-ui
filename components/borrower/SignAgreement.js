@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { generateSignatureRequest, getHelloSignClient } from "../../utils/HelloSign";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../../utils/Constants";
 
 export default function SignAgreement({ loanProposal, setLoanProposal, handle, ...rest }) {
     const [isCompleted, setIsCompleted] = useState(loanProposal.agreement_signed);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    const supabase = useSupabaseClient();
+    const user = useUser();
     const router = useRouter();
 
     const handleSignAgreement = async () => {
@@ -18,12 +22,17 @@ export default function SignAgreement({ loanProposal, setLoanProposal, handle, .
             const client = await getHelloSignClient();
 
             client.open(signUrl, { testMode: true, allowCancel: true });
-            client.on("sign", (data) => {
-                setIsCompleted(true);
-                setLoanProposal({
-                    ...loanProposal,
+            client.on("sign", async (data) => {
+                const { error } = await supabase.from(SUPABASE_TABLE_LOAN_PROPOSALS).update({
                     agreement_signed: true,
                 });
+                eq("id", loanProposal.id);
+
+                if (error) {
+                    console.log(error.message);
+                }
+
+                setIsCompleted(true);
             });
         } catch (error) {
             setError(error.message);
