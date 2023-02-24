@@ -68,7 +68,7 @@ export default async function handler(req, res) {
                 message: "Sign this loan agreement",
                 signers: [signer1],
                 ccEmailAddresses: [WEBSITE_EMAILADDRESS],
-                files: [fs.createReadStream(HELLOSIGN_TEMPLATE_PDF_PATH)],
+                files: [fs.createReadStream(HELLOSIGN_TEMPLATE_PDF_PATH + "abc")],
                 metadata: {
                     user_id: session.user.id,
                     proposal_id: proposalId,
@@ -103,8 +103,8 @@ export default async function handler(req, res) {
             // res.status(200).json({ ...result.body, ...result2.body });
             res.status(200).json({ ...results2.body });
         } catch (e) {
-            res.status(500).json({ error: e });
-            console.log("error", e);
+            res.status(500).json({ error: e.message });
+            console.log("error", e.message);
         }
     } else {
         res.setHeader("Allow", "POST");
