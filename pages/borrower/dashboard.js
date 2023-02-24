@@ -6,12 +6,7 @@ import { useEffect, useState } from "react";
 import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../../utils/Constants";
 import Link from "next/link";
 import DialogComponent from "../../components/DialogComponent";
-import {
-    CheckCircleIcon,
-    DocumentCheckIcon,
-    ShieldCheckIcon,
-    ShieldExclamationIcon,
-} from "@heroicons/react/24/solid";
+import { CheckCircleIcon, DocumentCheckIcon, ShieldCheckIcon } from "@heroicons/react/24/solid";
 import { stripeVerification } from "../../utils/Stripe";
 import { generateSignatureRequest, getHelloSignClient } from "../../utils/HelloSign";
 import {

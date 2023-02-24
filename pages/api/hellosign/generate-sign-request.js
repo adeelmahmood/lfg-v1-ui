@@ -7,7 +7,7 @@ import {
     WEBSITE_EMAILADDRESS,
 } from "../../../utils/Constants";
 import path from "path";
-import { promises as fs } from "fs";
+import { promises as fs, createReadStream } from "fs";
 
 const signatureRequestApi = new SignatureRequestApi();
 const embeddedApi = new EmbeddedApi();
@@ -62,7 +62,7 @@ export default async function handler(req, res) {
             };
 
             const templatesDir = path.join(process.cwd(), "templates");
-            const readStream = await fs.createReadStream(templatesDir + "/" + HELLOSIGN_TEMPLATE);
+            const readStream = createReadStream(templatesDir + "/" + HELLOSIGN_TEMPLATE);
 
             const data = {
                 clientId: CLIENT_ID,
