@@ -11,7 +11,7 @@ export const isPublished = (p) => {
 };
 
 export const isSignSubmitted = (p) => {
-    return p?.agreemnt_signed;
+    return p?.agreement_signed;
 };
 
 export const isVerificationSubmitted = (p) => {

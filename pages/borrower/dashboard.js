@@ -16,14 +16,16 @@ import {
     isVerificationSubmitted,
 } from "../../utils/ProposalChecks";
 
-export default function BorrowerGenInfo() {
+export default function BorrowerDashboard() {
     const supabase = useSupabaseClient();
     const user = useUser();
 
     const [isLoading, setIsLoading] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [signing, setSigning] = useState();
+    const [justSigned, setJustSigned] = useState([]);
     const [verifying, setVerifying] = useState();
+    const [justVerified, setJustVerified] = useState([]);
     const [error, setError] = useState();
 
     const [proposals, setProposals] = useState([]);
@@ -106,6 +108,7 @@ export default function BorrowerGenInfo() {
             client.open(signUrl, { testMode: true, allowCancel: true });
             client.on("sign", async (data) => {
                 //signing completed
+                setJustSigned((justSigned) => [...justSigned, p.id]);
                 const { error } = await supabase
                     .from(SUPABASE_TABLE_LOAN_PROPOSALS)
                     .update({
@@ -137,6 +140,7 @@ export default function BorrowerGenInfo() {
                 // do nothing
             } else {
                 // verification completed
+                setJustVerified((justVerified) => [...justVerified, p.id]);
                 const { error } = await supabase
                     .from(SUPABASE_TABLE_LOAN_PROPOSALS)
                     .update({
@@ -152,6 +156,14 @@ export default function BorrowerGenInfo() {
             setError(e.message);
         }
         setVerifying();
+    };
+
+    const checkVerificationSubmitted = (p) => {
+        return isVerificationSubmitted(p) || justVerified.includes(p.id);
+    };
+
+    const checkSignSubmitted = (p) => {
+        return isSignSubmitted(p) || justSigned.includes(p.id);
     };
 
     return (
@@ -284,7 +296,7 @@ export default function BorrowerGenInfo() {
                                         <td className="py-4 px-6 text-center dark:text-gray-200">
                                             {isVerified(p) ? (
                                                 <ShieldCheckIcon className="inline h-10 fill-current text-emerald-500 dark:text-emerald-200" />
-                                            ) : isVerificationSubmitted(p) ? (
+                                            ) : checkVerificationSubmitted(p) ? (
                                                 <span>Submitted</span>
                                             ) : (
                                                 <button
@@ -299,7 +311,7 @@ export default function BorrowerGenInfo() {
                                         <td className="py-4 px-6 text-center dark:text-gray-200">
                                             {isSigned(p) ? (
                                                 <DocumentCheckIcon className="inline h-10 fill-current text-emerald-500 dark:text-emerald-200" />
-                                            ) : isSignSubmitted(p) ? (
+                                            ) : checkSignSubmitted(p) ? (
                                                 <span>Submitted</span>
                                             ) : (
                                                 <button
@@ -399,7 +411,7 @@ export default function BorrowerGenInfo() {
                                                         Verified
                                                     </span>
                                                 </div>
-                                            ) : isVerificationSubmitted(p.id) ? (
+                                            ) : checkVerificationSubmitted(p) ? (
                                                 <div className="flex w-full justify-center rounded-lg border border-gray-400 px-4 py-1.5 text-sm text-gray-800 dark:text-gray-200">
                                                     Submitted
                                                 </div>
@@ -419,7 +431,7 @@ export default function BorrowerGenInfo() {
                                                         Signed
                                                     </span>
                                                 </div>
-                                            ) : isSignSubmitted(p.id) ? (
+                                            ) : checkSignSubmitted(p) ? (
                                                 <div className="flex w-full justify-center rounded-lg border border-gray-400 px-4 py-1.5 text-sm text-gray-800 dark:text-gray-200">
                                                     Submitted
                                                 </div>
