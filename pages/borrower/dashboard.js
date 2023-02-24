@@ -111,7 +111,7 @@ export default function BorrowerGenInfo() {
                     .update({
                         agreement_signed: true,
                     })
-                    .eq("id", loanProposal.id);
+                    .eq("id", p.id);
 
                 if (error) {
                     setError(error.message);
@@ -142,7 +142,7 @@ export default function BorrowerGenInfo() {
                     .update({
                         identity_verification_requested: true,
                     })
-                    .eq("id", loanProposal.id);
+                    .eq("id", p.id);
 
                 if (error) {
                     setError(error.message);

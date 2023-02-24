@@ -37,11 +37,6 @@ const handler = async (req, res) => {
         );
 
     const [fields] = await parseForm(req);
-    // if (err) {
-    //     res.status(400).send(`Webhook Error: ${err}`);
-    //     reject();
-    //     return;
-    // }
 
     const { event, signature_request } = JSON.parse(fields.json);
 
