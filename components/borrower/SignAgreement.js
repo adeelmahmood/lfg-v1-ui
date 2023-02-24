@@ -23,10 +23,12 @@ export default function SignAgreement({ loanProposal, setLoanProposal, handle, .
 
             client.open(signUrl, { testMode: true, allowCancel: true });
             client.on("sign", async (data) => {
-                const { error } = await supabase.from(SUPABASE_TABLE_LOAN_PROPOSALS).update({
-                    agreement_signed: true,
-                });
-                eq("id", loanProposal.id);
+                const { error } = await supabase
+                    .from(SUPABASE_TABLE_LOAN_PROPOSALS)
+                    .update({
+                        agreement_signed: true,
+                    })
+                    .eq("id", loanProposal.id);
 
                 if (error) {
                     console.log(error.message);
