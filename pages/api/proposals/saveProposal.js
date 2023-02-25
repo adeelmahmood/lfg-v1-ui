@@ -33,17 +33,25 @@ export default async function handler(req, res) {
             const cantSave = await validate(loanProposal);
             if (cantSave) {
                 res.status(500).json({
-                    failedAt: "saving loan proposal",
+                    failedAt: "during validation",
                     error: cantSave,
                 });
                 return;
             }
         }
 
+        // remove relations
+        const {
+            loan_proposals_status,
+            user_identity_verifications,
+            loan_agreement_signatures,
+            ...lp
+        } = loanProposal;
+
         const { data, error } = await supabase
             .from(SUPABASE_TABLE_LOAN_PROPOSALS)
             .upsert({
-                ...loanProposal,
+                ...lp,
                 user_id: session?.user.id,
             })
             .select("id")
@@ -53,7 +61,7 @@ export default async function handler(req, res) {
             res.status(500).json({ failedAt: "saving loan proposal", error: error.message });
             return;
         } else {
-            if (isNew(loanProposal)) {
+            if (isNew(lp)) {
                 // add status entry
                 const { error: statusError } = await supabase
                     .from(SUPABASE_TABLE_LOAN_PROPOSALS_STATUS)

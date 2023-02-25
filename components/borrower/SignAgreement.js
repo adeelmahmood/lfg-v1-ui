@@ -77,7 +77,7 @@ export default function SignAgreement({ loanProposal, setLoanProposal, handle, .
                         className="btn-clear w-full"
                         onClick={() => router.push("/borrower/dashboard")}
                     >
-                        Skip Signing
+                        Skip <span className="hidden md:inline">Signing</span>
                     </button>
                     <button
                         className="btn-secondary w-full"

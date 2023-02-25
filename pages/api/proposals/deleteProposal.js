@@ -31,7 +31,7 @@ export default async function handler(req, res) {
         const cantDelete = await validate(id);
         if (cantDelete) {
             res.status(500).json({
-                failedAt: "deleting loan proposal",
+                failedAt: "during validation",
                 error: cantDelete,
             });
             return;

@@ -80,7 +80,7 @@ export default function VerifyIdentity({ loanProposal, setLoanProposal, handle, 
 
                 <div className="mt-4 flex items-start justify-between space-x-4">
                     <button className="btn-clear w-full" onClick={handle}>
-                        Skip Verification
+                        Skip <span className="hidden md:inline">Verification</span>
                     </button>
                     <button
                         className="btn-secondary w-full"
