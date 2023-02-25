@@ -1,11 +1,8 @@
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
-import {
-    SUPABASE_TABLE_LOAN_PROPOSALS,
-    SUPABASE_TABLE_LOAN_PROPOSALS_STATUS,
-} from "../../utils/Constants";
 import { useState } from "react";
 import ViewProposal from "./ViewProposal";
+import { isPublished } from "../../utils/ProposalChecks";
 
 export default function PreviewAndSubmit({ loanProposal, setLoanProposal, handle, ...rest }) {
     const supabase = useSupabaseClient();
@@ -22,46 +19,29 @@ export default function PreviewAndSubmit({ loanProposal, setLoanProposal, handle
 
     const handleNext = async () => {
         setIsLoading(true);
-        const { data, error } = await supabase
-            .from(SUPABASE_TABLE_LOAN_PROPOSALS)
-            .upsert({
-                ...loanProposal,
-                user_id: user.id,
-            })
-            .select("id")
-            .single();
-        if (error) {
-            setIsLoading(false);
-            setError(error.message);
+
+        const response = await fetch("/api/proposals/saveProposal", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ loanProposal: loanProposal }),
+        });
+
+        const data = await response.json();
+        if (response.status !== 200) {
+            console.log(data.error);
+            setError(data.error);
         } else {
-            if (isNew()) {
-                // add status entry
-                const { error: statusError } = await supabase
-                    .from(SUPABASE_TABLE_LOAN_PROPOSALS_STATUS)
-                    .insert({
-                        status: "Created",
-                        proposal_id: data.id,
-                    });
+            // add persisted record id
+            setLoanProposal({
+                ...loanProposal,
+                id: data.id,
+            });
+            // update route to add proposal id
+            router.push({ query: { id: data.id } }, undefined, { shallow: true });
 
-                if (statusError) {
-                    setError(statusError.message);
-                } else {
-                    // add persisted record id
-                    setLoanProposal({
-                        ...loanProposal,
-                        id: data.id,
-                    });
-
-                    // update route to add proposal id
-                    router.push({ query: { id: data.id } }, undefined, { shallow: true });
-
-                    handle?.();
-                }
-            } else {
-                handle?.();
-            }
-            setIsLoading(false);
+            handle?.();
         }
+        setIsLoading(false);
     };
 
     return (
@@ -82,7 +62,7 @@ export default function PreviewAndSubmit({ loanProposal, setLoanProposal, handle
                     <button
                         className="btn-secondary w-full"
                         onClick={handleNext}
-                        disabled={isLoading}
+                        disabled={isLoading || isPublished(loanProposal)}
                     >
                         {isNew() ? "Create" : "Save"}
                     </button>

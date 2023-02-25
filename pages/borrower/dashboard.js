@@ -14,11 +14,15 @@ import {
     isSigned,
     isSignSubmitted,
     isVerificationSubmitted,
+    isPublished,
 } from "../../utils/ProposalChecks";
+import { useRouter } from "next/router";
 
 export default function BorrowerDashboard() {
     const supabase = useSupabaseClient();
     const user = useUser();
+
+    const router = useRouter();
 
     const [isLoading, setIsLoading] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -27,6 +31,7 @@ export default function BorrowerDashboard() {
     const [verifying, setVerifying] = useState();
     const [justVerified, setJustVerified] = useState([]);
     const [error, setError] = useState();
+    const [deleteError, setDeleteError] = useState();
 
     const [proposals, setProposals] = useState([]);
     const [selected, setSelected] = useState();
@@ -61,17 +66,24 @@ export default function BorrowerDashboard() {
 
     const handleDeleteProposal = async (p) => {
         setIsDeleting(true);
-        const { error } = await supabase
-            .from(SUPABASE_TABLE_LOAN_PROPOSALS)
-            .delete()
-            .eq("id", p.id);
-        if (error) {
-            setError(error.message);
-            console.log(error);
-        } else {
-            setProposals(proposals.filter((pr) => pr.id != p.id));
-        }
+        setDeleteError();
+
+        const response = await fetch("/api/proposals/deleteProposal", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: p.id }),
+        });
+
+        const data = await response.json();
         setIsDeleting(false);
+
+        if (response.status !== 200) {
+            setDeleteError(data.error);
+            return false;
+        }
+
+        setProposals(proposals.filter((pr) => pr.id != data.id));
+        return true;
     };
 
     useEffect(() => {
@@ -173,15 +185,22 @@ export default function BorrowerDashboard() {
 
             <DialogComponent
                 isModelOpen={deleteModal}
-                modelCloseHandler={() => setDeleteModal(!deleteModal)}
+                modelCloseHandler={() => {
+                    setDeleteModal(!deleteModal);
+                    setDeleteError();
+                }}
                 heading="Delete Confirmation"
             >
+                {deleteError && <p className="mt-4 text-red-500">{deleteError}</p>}
                 <p className="mt-4">Are you sure you want to delete this proposal?</p>
                 <button
                     className="btn-clear mt-4"
-                    onClick={() => {
-                        setDeleteModal(false);
-                        handleDeleteProposal(selected);
+                    disabled={isDeleting}
+                    onClick={async () => {
+                        const deleted = await handleDeleteProposal(selected);
+                        if (deleted) {
+                            setDeleteModal(false);
+                        }
                     }}
                 >
                     Delete
@@ -326,30 +345,35 @@ export default function BorrowerDashboard() {
                                         <td className="py-4 px-6 text-center">
                                             <Link
                                                 href={`/borrower/proposals/${p.id}`}
-                                                className="btn-clear"
+                                                className="btn-primary flex items-center justify-center rounded-full py-1.5 text-sm font-semibold"
                                             >
                                                 View
                                             </Link>
                                         </td>
                                         <td className="py-4 px-6 text-center">
-                                            <Link
-                                                href={`/borrower/proposals/create?id=${p.id}`}
-                                                className="btn-clear"
+                                            <button
+                                                onClick={() =>
+                                                    router.push(
+                                                        `/borrower/proposals/create?id=${p.id}`
+                                                    )
+                                                }
+                                                className="btn-primary flex items-center justify-center rounded-full py-1.5 text-sm font-semibold"
+                                                disabled={isPublished(p)}
                                             >
                                                 Edit
-                                            </Link>
+                                            </button>
                                         </td>
                                         <td className="py-4 px-6 text-center">
-                                            <a
+                                            <button
                                                 href="#"
-                                                className="btn-clear"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
+                                                className="btn-clear flex items-center justify-center rounded-full py-1.5 text-sm font-semibold"
+                                                disabled={isPublished(p)}
+                                                onClick={() => {
                                                     deleteProposal(p);
                                                 }}
                                             >
                                                 Delete
-                                            </a>
+                                            </button>
                                         </td>
                                     </tr>
                                 );
@@ -452,15 +476,21 @@ export default function BorrowerDashboard() {
                                             >
                                                 View
                                             </Link>
-                                            <Link
-                                                href={`/borrower/proposals/create?id=${p.id}`}
+                                            <button
+                                                onClick={() =>
+                                                    router.push(
+                                                        `/borrower/proposals/create?id=${p.id}`
+                                                    )
+                                                }
+                                                disabled={isPublished(p)}
                                                 className="btn-primary flex items-center justify-center rounded-full py-1.5 text-sm font-semibold"
                                             >
                                                 Edit
-                                            </Link>
+                                            </button>
                                             <button
                                                 className="btn-primary flex items-center justify-center rounded-full py-1.5 text-sm font-semibold"
                                                 onClick={() => deleteProposal(p)}
+                                                disabled={isPublished(p)}
                                             >
                                                 Delete
                                             </button>

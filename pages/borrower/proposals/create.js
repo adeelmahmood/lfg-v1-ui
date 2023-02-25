@@ -13,10 +13,7 @@ import { CheckIcon } from "@heroicons/react/24/solid";
 import Tags from "../../../components/borrower/Tags";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
-import {
-    SUPABASE_STORAGE_LOAN_PROPOSALS,
-    SUPABASE_TABLE_LOAN_PROPOSALS,
-} from "../../../utils/Constants";
+import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../../../utils/Constants";
 import SignAgreement from "../../../components/borrower/SignAgreement";
 
 export default function LoanProposal() {
@@ -50,11 +47,15 @@ export default function LoanProposal() {
     });
 
     async function loadProposal() {
-        console.log("********** LOADING PROPOSAL ************");
         // edit mode - attempt to load from database
         const { data, error } = await supabase
             .from(SUPABASE_TABLE_LOAN_PROPOSALS)
-            .select(`*`)
+            .select(
+                `*, 
+            loan_proposals_status (*), 
+            user_identity_verifications ( verification_status, verification_message),
+            loan_agreement_signatures ( signature_request_id, status, signed_at)`
+            )
             .eq("user_id", user.id)
             .eq("id", id)
             .single();
@@ -64,7 +65,6 @@ export default function LoanProposal() {
         }
 
         if (data) {
-            console.log(data);
             setLoanProposal({
                 ...loanProposal,
                 ...data,
