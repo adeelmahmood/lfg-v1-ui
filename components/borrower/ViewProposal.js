@@ -1,9 +1,15 @@
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { HandThumbUpIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
+import {
+    HandThumbUpIcon,
+    InformationCircleIcon,
+    QuestionMarkCircleIcon,
+} from "@heroicons/react/24/solid";
 import CastVoteDialog from "./governance/CastVoteDialog";
 import GovernanceInfoPanel from "./governance/GovernanceInfoPanel";
 import QueuePropoposalDialog from "./governance/QueuePropoposalDialog";
 import ExecutePropoposalDialog from "./governance/ExecuteProposalDialog";
+import LikeProposal from "./LikePropoposal";
+import AskQuestion from "./AskQuestion";
 
 export default function ViewProposal({ loanProposal, canVote, canQueue, canExecute, ...rest }) {
     const supabase = useSupabaseClient();
@@ -69,10 +75,7 @@ export default function ViewProposal({ loanProposal, canVote, canQueue, canExecu
                         </div>
                     </div>
                     <div className="flex flex-col items-end justify-center space-y-2">
-                        <button className="btn-clear text-base">
-                            <HandThumbUpIcon className="inline h-6 fill-current align-top text-gray-800" />
-                            <span className="ml-2 hidden md:inline">Like this Proposal</span>
-                        </button>
+                        <LikeProposal loanProposal={loanProposal} setLoanProposal={null} />
                         {isPublished(loanProposal) && canVote?.() && (
                             <CastVoteDialog
                                 loanProposal={loanProposal}
@@ -158,10 +161,7 @@ export default function ViewProposal({ loanProposal, canVote, canQueue, canExecu
                 )}
 
                 <div className="mt-6">
-                    <button className="btn-primary w-full text-base">
-                        <QuestionMarkCircleIcon className="inline h-6 fill-current align-top text-gray-200" />
-                        <span className="ml-2 hidden md:inline">Ask a Question</span>
-                    </button>
+                    <AskQuestion loanProposal={loanProposal} setLoanProposal={null} />
                 </div>
             </div>
         </>
