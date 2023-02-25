@@ -6,6 +6,7 @@ export default function DialogComponent({
     modelCloseHandler,
     heading,
     explicitClose = false,
+    closeLabel = "Cancel",
     children,
 }) {
     let [isOpen, setIsOpen] = useState(isModelOpen);
@@ -61,7 +62,7 @@ export default function DialogComponent({
                                             className="btn-clear mt-2 inline-flex w-full justify-center"
                                             onClick={modelCloseHandler}
                                         >
-                                            Cancel
+                                            {closeLabel}
                                         </button>
                                     )}
                                 </Dialog.Panel>

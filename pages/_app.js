@@ -7,22 +7,36 @@ import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { configureChains, createClient, WagmiConfig } from "wagmi";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
-import { mainnet, polygon, optimism, arbitrum, hardhat, goerli } from "wagmi/chains";
+import { mainnet, polygon, optimism, arbitrum, hardhat, goerli, polygonMumbai } from "wagmi/chains";
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { useState } from "react";
 import { ThemeProvider } from "next-themes";
 
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
-const chainsToUse = [hardhat, goerli, mainnet];
-const chainToUse = chainsToUse.filter((chain) => chain.id == chainId);
+const chainsToUse = [
+    {
+        chain: hardhat,
+        apiKey: process.env.NEXT_PUBLIC_MAINNET_ALCHEMY_API_KEY,
+    },
+    {
+        chain: goerli,
+        apiKey: process.env.NEXT_PUBLIC_GOERLI_ALCHEMY_API_KEY,
+    },
+    {
+        chain: polygonMumbai,
+        apiKey: process.env.NEXT_PUBLIC_POLYGON_MUMBAI_ALCHEMY_API_KEY,
+    },
+];
+const chainToUse = chainsToUse.filter((chain) => chain.chain.id == chainId);
 
-const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY;
+// using main net key
+const ALCHEMY_API_KEY = chainToUse[0].apiKey;
 
-const { chains, provider } = configureChains(chainToUse, [
-    alchemyProvider({ apiKey: ALCHEMY_API_KEY }),
-    publicProvider(),
-]);
+const { chains, provider } = configureChains(
+    [chainToUse[0].chain],
+    [alchemyProvider({ apiKey: ALCHEMY_API_KEY }), publicProvider()]
+);
 const { connectors } = getDefaultWallets({
     appName: "XYZ Lending Marketplace",
     chains,

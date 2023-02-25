@@ -4,6 +4,7 @@ import { useAccount, useContractRead } from "wagmi";
 import addresses from "../../constants/contract.json";
 import abi from "../../constants/LendPool.json";
 import { displayPercent, displayRay, displayUnits } from "../../utils/Math";
+import { addTokenToMetaMask } from "../../utils/Metamask";
 
 export default function TellUsAboutYourself({ loanProposal, setLoanProposal, handle, ...rest }) {
     const [isCompleted, setIsCompleted] = useState(false);
@@ -16,6 +17,7 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const lendingPoolAddress = addresses[chainId].LendPool;
+    const borrowToken = addresses[chainId].DAI;
 
     useContractRead({
         address: lendingPoolAddress,
@@ -144,8 +146,21 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                         value={loanProposal.recipientAddress}
                         required
                     />
+                    <a
+                        href="#"
+                        className="text-xs font-semibold text-indigo-500 dark:text-emerald-300"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            addTokenToMetaMask({
+                                token: borrowToken,
+                                tokenSymbol: "DAI",
+                            });
+                        }}
+                    >
+                        Add Borrow Token to Metamask
+                    </a>
                 </div>
-                <div className="mt-4">
+                <div className="mt-6">
                     <button
                         className="btn-secondary w-full"
                         onClick={handle}

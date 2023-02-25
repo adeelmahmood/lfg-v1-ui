@@ -24,18 +24,20 @@ export default function SendWethToDaiDialog({
     const [amount, setAmount] = useState("");
     const [parsedAmount, setParsedAmount] = useState(0);
 
-    // WETH as default for FROM
-    const [fromToken, setFromToken] = useState("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2");
-    // DAI as default for TO
-    const [toToken, setToToken] = useState("0x6B175474E89094C44Da98b954EedeAC495271d0F");
-
     const isMounted = useIsMounted();
     const [isLoading, setIsLoading] = useState(false);
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const swapRouterAddress = addresses[chainId].SwapRouter;
+    const wethAddres = addresses[chainId].WETH;
+    const daiAddress = addresses[chainId].DAI;
     const approveFunctionName = "approve";
     const swapFunctionName = "swap";
+
+    // WETH as default for FROM
+    const [fromToken, setFromToken] = useState(wethAddres);
+    // DAI as default for TO
+    const [toToken, setToToken] = useState(daiAddress);
 
     // first approve weth transfer
     const {

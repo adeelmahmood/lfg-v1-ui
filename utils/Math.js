@@ -21,6 +21,13 @@ export const displayUnits = (number, decimals = 18) => {
     return val;
 };
 
+export const displayUnits8 = (number, decimals = 18) => {
+    if (number == undefined) return 0;
+    const eth = formatUnits(number, decimals);
+    const val = Math.round(eth * 1e8) / 1e8;
+    return val;
+};
+
 export const calculateAPY = (token) => {
     const RAY = 10 ** 27; // 10 to the power 27
     const SECONDS_PER_YEAR = 31536000;

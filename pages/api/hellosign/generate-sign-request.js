@@ -1,5 +1,4 @@
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-
 import { SignatureRequestApi, EmbeddedApi } from "@dropbox/sign";
 import {
     HELLOSIGN_TEMPLATE,

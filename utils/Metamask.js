@@ -2,6 +2,10 @@ export const addTokenToMetaMask = async (token) => {
     if (!window.ethereum) return;
 
     try {
+        const accounts = await window.ethereum.request({
+            method: "eth_requestAccounts",
+            params: [],
+        });
         const wasAdded = await window.ethereum?.request({
             method: "wallet_watchAsset",
             params: {

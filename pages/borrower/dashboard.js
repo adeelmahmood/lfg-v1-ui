@@ -100,7 +100,7 @@ export default function BorrowerDashboard() {
     };
 
     const getStatus = (p) => {
-        return p?.loan_proposals_status?.length > 0 && p.loan_proposals_status[0].status;
+        return p?.loan_proposals_status?.at(-1)?.status;
     };
 
     const getVerificationReason = (p) => {

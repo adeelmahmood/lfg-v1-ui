@@ -128,7 +128,7 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
         <>
             <button
                 className="btn-primary text-base"
-                disabled={!isVerified(loanProposal) || !isSigned(loanProposal)}
+                // disabled={!isVerified(loanProposal) || !isSigned(loanProposal)}
                 onClick={(e) => {
                     e.preventDefault();
                     setPublishModalOpen(true);
@@ -142,10 +142,12 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
                 heading="Publish Proposal"
                 isModelOpen={publishModalOpen}
                 modelCloseHandler={closeModal}
+                explicitClose={true}
+                closeLabel="Close"
             >
                 <div className="mt-2">
                     <p className="text-sm text-gray-500 dark:text-gray-200">
-                        Publish this proposal to start the voting process
+                        Publish this proposal to start the voting process!
                     </p>
                 </div>
 

@@ -2,7 +2,7 @@ import { useAccount, useBlockNumber, useContractRead, useProvider } from "wagmi"
 import addresses from "../../../constants/contract.json";
 import governorAbi from "../../../constants/LoanGovernor.json";
 import { Fragment, useEffect, useState } from "react";
-import { displayUnits } from "../../../utils/Math";
+import { displayUnits, displayUnits8 } from "../../../utils/Math";
 import prettyMilliseconds from "pretty-ms";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS } from "../../../utils/Constants";
@@ -19,6 +19,7 @@ export default function GovernanceInfoPanel({ loanProposal, canVote, canQueue, c
     const { isConnected } = useAccount();
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const governorAddress = addresses[chainId].LoanGovernor;
+    const blockTime = chainId == "80001" ? 2 : 12;
 
     const { data: currentBlock } = useBlockNumber();
     const [timeLeft, setTimeLeft] = useState();
@@ -70,7 +71,7 @@ export default function GovernanceInfoPanel({ loanProposal, canVote, canQueue, c
         onSuccess(data) {
             const blocksLeft = data - currentBlock + 1; //plus one coz voting ends after last block
             if (blocksLeft > 0) {
-                setTimeLeft(prettyMilliseconds(blocksLeft * 12 * 1000)); //~12 sec per block, sec to ms
+                setTimeLeft(prettyMilliseconds(blocksLeft * blockTime * 1000)); //~12 sec per block, sec to ms
             }
         },
         onError(err) {
@@ -251,7 +252,9 @@ export default function GovernanceInfoPanel({ loanProposal, canVote, canQueue, c
 
                                 <div className="flex items-center justify-between">
                                     <div>Voting Power</div>
-                                    <div className="ml-1">{displayUnits(voteCounts?.forVotes)}</div>
+                                    <div className="ml-1">
+                                        {displayUnits8(voteCounts?.forVotes)}
+                                    </div>
                                 </div>
                             </div>
                         }
@@ -266,7 +269,7 @@ export default function GovernanceInfoPanel({ loanProposal, canVote, canQueue, c
                                     <div>
                                         <span className="">{trimAddress(data.voter)}</span>
                                     </div>
-                                    <div>{displayUnits(data.weight)}</div>
+                                    <div>{displayUnits8(data.weight)}</div>
                                 </div>
                             );
                         })}
@@ -290,7 +293,7 @@ export default function GovernanceInfoPanel({ loanProposal, canVote, canQueue, c
                                 <div className="flex items-center justify-between">
                                     <div>Voting Power</div>
                                     <div className="ml-1">
-                                        {displayUnits(voteCounts?.againstVotes)}
+                                        {displayUnits8(voteCounts?.againstVotes)}
                                     </div>
                                 </div>
                             </div>
@@ -306,7 +309,7 @@ export default function GovernanceInfoPanel({ loanProposal, canVote, canQueue, c
                                     <div>
                                         <span className="">{trimAddress(data.voter)}</span>
                                     </div>
-                                    <div>{displayUnits(data.weight)}</div>
+                                    <div>{displayUnits8(data.weight)}</div>
                                 </div>
                             );
                         })}

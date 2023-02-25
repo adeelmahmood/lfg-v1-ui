@@ -13,8 +13,6 @@ import {
     ChevronDoubleUpIcon,
     ExclamationCircleIcon,
     ExclamationTriangleIcon,
-    InformationCircleIcon,
-    ShieldExclamationIcon,
 } from "@heroicons/react/24/solid";
 import PublishLoanDialog from "../../../components/borrower/governance/PublishLoanDialog";
 import { useAccount, useContractRead } from "wagmi";

@@ -32,6 +32,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
     const isMounted = useIsMounted();
     const [isLoading, setIsLoading] = useState(false);
     const [isApproved, setIsApproved] = useState(false);
+    const [otherError, setOtherError] = useState();
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const lendingPoolAddress = addresses[chainId].LendPool;
@@ -106,6 +107,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
         enabled: isApproved && parsedAmount > 0,
         onError(err) {
             console.log("Deposit prepare error", err);
+            setOtherError(err);
         },
     });
 
@@ -134,6 +136,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
         },
         onError(err) {
             console.log("Deposit tx error", err);
+            setOtherError(err.message);
         },
     });
 
@@ -285,10 +288,22 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                     </div>
                 </div>
 
-                {(isPrepareError || isError || isApprovePrepareError || isApproveError) && (
+                {(isPrepareError ||
+                    isError ||
+                    isApprovePrepareError ||
+                    isApproveError ||
+                    otherError) && (
                     <div className="mt-4 flex w-full items-center">
                         <div className="text-red-500">
-                            {(prepareError || error || approveEror || approvePrepareError)?.message}
+                            {
+                                (
+                                    prepareError ||
+                                    error ||
+                                    approveEror ||
+                                    approvePrepareError ||
+                                    otherError
+                                )?.message
+                            }
                         </div>
                     </div>
                 )}

@@ -59,7 +59,10 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
             {depositModal && (
                 <DepositDialog
                     isModelOpen={depositModal}
-                    modelCloseHandler={() => setDepositModal(false)}
+                    modelCloseHandler={() => {
+                        setDepositModal(false);
+                        window.location.reload(false);
+                    }}
                     token={selectedToken}
                 />
             )}

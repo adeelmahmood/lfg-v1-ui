@@ -3,10 +3,10 @@ import { Fragment, useEffect, useState } from "react";
 import {
     useAccount,
     useContractWrite,
-    useFeeData,
     usePrepareContractWrite,
     useWaitForTransaction,
 } from "wagmi";
+import addresses from "../../constants/contract.json";
 import wethAbi from "../../constants/abis/weth.json";
 import { parseEther } from "ethers/lib/utils.js";
 import useIsMounted from "../../hooks/useIsMounted";
@@ -20,7 +20,8 @@ export default function SendEthToWethDialog({ isModelOpen, modelCloseHandler }) 
     const isMounted = useIsMounted();
     const [isLoading, setIsLoading] = useState(false);
 
-    const wethAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
+    const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
+    const wethAddress = addresses[chainId].WETH;
     const functionName = "deposit";
 
     const {

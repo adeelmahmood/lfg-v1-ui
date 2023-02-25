@@ -1,9 +1,4 @@
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import {
-    HandThumbUpIcon,
-    InformationCircleIcon,
-    QuestionMarkCircleIcon,
-} from "@heroicons/react/24/solid";
 import CastVoteDialog from "./governance/CastVoteDialog";
 import GovernanceInfoPanel from "./governance/GovernanceInfoPanel";
 import QueuePropoposalDialog from "./governance/QueuePropoposalDialog";
