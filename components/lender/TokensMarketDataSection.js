@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { useAccount, useContractRead } from "wagmi";
 import addresses from "../../constants/contract.json";
 import abi from "../../constants/LendPool.json";
-import { calculateAPY, displayPercent, displayRay, displayUnits } from "../../utils/Math";
+import {
+    calculateAPY,
+    displayPercent,
+    displayRay,
+    displayUnits,
+    displayUnits8,
+} from "../../utils/Math";
 import ImageWithFallback from "../ImageWithFallback";
 import { Switch } from "@headlessui/react";
 import DepositDialog from "./DepositDialog";
@@ -104,7 +110,7 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                             </div>
                             <div className="flex items-center justify-between p-2 px-4">
                                 <div>Wallet Balance</div>
-                                <div>{displayUnits(token.walletBalance, token.tokenDecimals)}</div>
+                                <div>{displayUnits8(token.walletBalance, token.tokenDecimals)}</div>
                             </div>
                             <div className="flex items-center justify-between p-2 px-4">
                                 <div>APY</div>
@@ -180,7 +186,7 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
                                         </div>
                                     </td>
                                     <td className="py-4 px-6 text-center dark:text-gray-200">
-                                        {displayUnits(token.walletBalance, token.tokenDecimals)}
+                                        {displayUnits8(token.walletBalance, token.tokenDecimals)}
                                     </td>
                                     <td className="py-4 px-6 text-center dark:text-gray-200">
                                         {displayPercent(depositAPY)}%

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAccount, useContractRead, useContractWrite } from "wagmi";
 import addresses from "../../constants/contract.json";
 import abi from "../../constants/LendPool.json";
-import { displayUnits } from "../../utils/Math";
+import { displayUnits, displayUnits8 } from "../../utils/Math";
 import WithdrawDialog from "./WithdrawDialog";
 import ImageWithFallback from "../ImageWithFallback";
 import { addTokenToMetaMask } from "../../utils/Metamask";
@@ -79,11 +79,11 @@ export default function PortfolioSection() {
                             </div>
                             <div className="flex items-center justify-between p-2 px-4">
                                 <div>Deposited Balance</div>
-                                <div>{displayUnits(token.balance, token.decimals)}</div>
+                                <div>{displayUnits8(token.balance, token.decimals)}</div>
                             </div>
                             <div className="flex items-center justify-between p-2 px-4">
                                 <div>Compounded Balance</div>
-                                <div>{displayUnits(token.totalBalance, token.decimals)}</div>
+                                <div>{displayUnits8(token.totalBalance, token.decimals)}</div>
                             </div>
                             <div className="mb-2 flex items-center justify-start p-2 px-4">
                                 <a
@@ -161,10 +161,10 @@ export default function PortfolioSection() {
                                         </div>
                                     </td>
                                     <td className="py-4 px-6 text-center dark:text-gray-200">
-                                        {displayUnits(token.balance, token.decimals)}
+                                        {displayUnits8(token.balance, token.decimals)}
                                     </td>
                                     <td className="py-4 px-6 text-center dark:text-gray-200">
-                                        {displayUnits(token.totalBalance, token.decimals)}
+                                        {displayUnits8(token.totalBalance, token.decimals)}
                                     </td>
                                     <td className="py-4 px-6 text-center dark:text-gray-200">
                                         <a

@@ -88,7 +88,7 @@ export default function ViewProposal({ loanProposal, canVote, canQueue, canExecu
                         {isPublished(loanProposal) && canExecute?.() && (
                             <ExecutePropoposalDialog
                                 loanProposal={loanProposal}
-                                onQueuedSuccess={() => window.location.reload(false)}
+                                onExecutedSuccess={() => window.location.reload(false)}
                             />
                         )}
                     </div>

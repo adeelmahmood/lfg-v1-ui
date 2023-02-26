@@ -127,8 +127,7 @@ export default function Home() {
                                     exercitationem praesentium nihil."
                                 imgSrc="/images/moneyjar.jpg"
                                 imgAltText="Earn yield"
-                                tags={["Aave", "Compound"]}
-                                status={true}
+                                tags={["Aave"]}
                             />
 
                             <HeroCard
@@ -189,7 +188,6 @@ export default function Home() {
                                 imgSrc="/images/proposal.jpg"
                                 imgAltText="Create Proposals"
                                 tags={["Loan Proposal"]}
-                                status={true}
                             />
 
                             <HeroCard
@@ -197,7 +195,7 @@ export default function Home() {
                                 description="Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                                     Voluptatibus quia, nulla! Maiores et perferendis eaque,
                                     exercitationem praesentium nihil."
-                                imgSrc="/images/chilling.jpg"
+                                imgSrc="/images/money.jpg"
                                 imgAltText="Earn yield"
                                 tags={["Conventional Lending"]}
                             />

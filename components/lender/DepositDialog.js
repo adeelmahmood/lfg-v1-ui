@@ -14,7 +14,7 @@ import { erc20ABI } from "wagmi";
 import { findEvent, saveEvent } from "../../utils/Events";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import DialogComponent from "../DialogComponent";
-import { displayUnits } from "../../utils/Math";
+import { displayUnits, displayUnits8 } from "../../utils/Math";
 
 export default function DepositDialog({ isModelOpen, modelCloseHandler, token }) {
     let [isOpen, setIsOpen] = useState(isModelOpen || false);
@@ -45,7 +45,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
         functionName: "balanceOf",
         args: [address],
         onSuccess(data) {
-            const balance = displayUnits(data);
+            const balance = displayUnits8(data);
             setTokenBalance(balance);
         },
         onError(err) {

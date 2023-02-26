@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useAccount, useContractRead } from "wagmi";
 import addresses from "../../constants/contract.json";
 import abi from "../../constants/LendPool.json";
-import { displayPercent, displayRay, displayUnits } from "../../utils/Math";
+import { displayPercent, displayRay, displayUnits, displayUnits8 } from "../../utils/Math";
 import { addTokenToMetaMask } from "../../utils/Metamask";
 
 export default function TellUsAboutYourself({ loanProposal, setLoanProposal, handle, ...rest }) {
@@ -38,7 +38,6 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
         abi,
         functionName: "getBorrowToken",
         onSuccess(data) {
-            console.log(data);
             setIsLoading(false);
             setVariableRate(data.variableBorrowRate);
         },
@@ -49,7 +48,7 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
     });
 
     const borrowLimit = () => {
-        return displayUnits(liquidityData?.availableToBorrow?.mul(10).div(100));
+        return displayUnits8(liquidityData?.availableToBorrow?.mul(10).div(100));
     };
 
     useEffect(() => {
@@ -71,13 +70,13 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                     <div className="mt-2 flex max-w-md items-center justify-between rounded-lg border border-gray-300 px-4 py-4 text-gray-800 dark:text-gray-200">
                         <div>Current Pool Capacity:</div>
                         <div className="ml-1 font-semibold">
-                            {displayUnits(liquidityData.availableToBorrow)} eth
+                            {displayUnits8(liquidityData.availableToBorrow)} eth
                         </div>
                     </div>
                     <p className="mt-2 max-w-md text-sm text-gray-500 dark:text-gray-400">
                         We limit indivudual borrowers to a max of
                         <span className="ml-1 font-semibold">10%</span> of the available borrowing
-                        power.
+                        power
                     </p>
 
                     <div className="mt-4 flex max-w-md  items-center justify-between rounded-lg border border-gray-300 px-4 py-4 text-gray-800 dark:text-gray-200">
@@ -87,8 +86,8 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                         </div>
                     </div>
                     <p className="mt-2 max-w-md text-sm text-gray-500 dark:text-gray-400">
-                        The limit is suggested because the pool liquidity may change by the time
-                        this proposal is published.
+                        The is a suggested limit but the pool liquidity may change by the time this
+                        proposal is published. You can adjust until the proposal is published
                     </p>
 
                     <div className="mt-4 flex max-w-md  items-center justify-between rounded-lg border border-gray-300 px-4 py-4 text-gray-800 dark:text-gray-200">
@@ -100,7 +99,7 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                     <p className="mt-2 max-w-md text-sm text-gray-500 dark:text-gray-400">
                         We currently only offer
                         <span className="ml-1 underline">variable interest rate</span> for all
-                        borrowers.
+                        borrowers
                     </p>
 
                     <div className="mt-10 flex items-center">
