@@ -72,8 +72,12 @@ export default function LoanProposal() {
 
     const [propNotPubHeaderExp, setPropNotPubHeaderExp] = useState(false);
 
+    const canDelegate = () => {
+        return governanceState == 0;
+    };
+
     const canVote = () => {
-        return governanceState == 0 || governanceState == 1;
+        return governanceState == 1;
     };
 
     const canQueue = () => {
@@ -153,6 +157,7 @@ export default function LoanProposal() {
                     <>
                         <ViewProposal
                             loanProposal={loanProposal}
+                            canDelegate={canDelegate}
                             canVote={canVote}
                             canQueue={canQueue}
                             canExecute={canExecute}

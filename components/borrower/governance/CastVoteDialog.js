@@ -25,7 +25,7 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
 
     const isMounted = useIsMounted();
     const [isLoading, setIsLoading] = useState(false);
-    const [isDelegated, setIsDelegated] = useState(false);
+    const [hasDelegated, setHasDelegated] = useState(false);
     const [hasVoted, setHasVoted] = useState(false);
     const [votingPower, setVotingPower] = useState();
     const [totalVotingPower, setTotalVotingPower] = useState();
@@ -54,6 +54,20 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
     ];
     const [description, setDescription] = useState("");
     const [vote, setVote] = useState(1);
+
+    useContractRead({
+        address: govTokenAddress,
+        abi: govTokenAbi,
+        functionName: "delegates",
+        args: [address],
+        onSuccess(data) {
+            if (data && data != "0x0000000000000000000000000000000000000000") setHasDelegated(true);
+        },
+        onError(err) {
+            console.log("gov token balance contract read error", err.message);
+        },
+        enabled: isConnected,
+    });
 
     useContractRead({
         address: govTokenAddress,
@@ -99,39 +113,6 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
     });
 
     const {
-        config: delegateConfig,
-        error: delegatePrepareError,
-        isError: isDelegatePrepareError,
-    } = usePrepareContractWrite({
-        address: govTokenAddress,
-        abi: govTokenAbi,
-        functionName: "delegate",
-        args: [address],
-        enabled: isConnected && !hasVoted,
-        onError(err) {
-            console.log("delegate prepare error", err);
-        },
-    });
-
-    const {
-        write: handleDelegate,
-        data: delegateData,
-        error: delegateError,
-        isLoading: isDelegateLoading,
-        isError: isDelegateError,
-    } = useContractWrite(delegateConfig);
-
-    const { isLoading: isDelegateTxLoading, isSuccess: isDelegateSuccess } = useWaitForTransaction({
-        hash: delegateData?.hash,
-        onSuccess(data) {
-            setIsDelegated(true);
-        },
-        onError(err) {
-            console.log("Delegate tx error", err);
-        },
-    });
-
-    const {
         config,
         error: prepareError,
         isError: isPrepareError,
@@ -140,7 +121,7 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
         abi: governorAbi,
         functionName: "castVoteWithReason",
         args: [loanProposal.onchain_proposal_id, vote, description],
-        enabled: isDelegated,
+        enabled: isConnected && !hasVoted,
         onError(err) {
             console.log("prepare error", err);
         },
@@ -185,8 +166,8 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
     };
 
     useEffect(() => {
-        setIsLoading(isDelegateLoading || isDelegateTxLoading || isVoteLoading || isVoteTxLoading);
-    }, [isDelegateLoading, isDelegateTxLoading, isVoteLoading || isVoteTxLoading]);
+        setIsLoading(isVoteLoading || isVoteTxLoading);
+    }, [isVoteLoading || isVoteTxLoading]);
 
     return (
         <>
@@ -248,53 +229,7 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
                         </div>
                     </div>
 
-                    <p className="mt-4 text-center text-lg dark:text-gray-200">Step 1</p>
-                    <p className="mt-2 text-center dark:text-gray-200">
-                        Assign a delegate for voting
-                    </p>
-
-                    <div className="mt-2 flex w-full items-center">
-                        <button
-                            className="btn-secondary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
-                            onClick={() => handleDelegate?.()}
-                            disabled={!isConnected || isLoading || isDelegated}
-                        >
-                            Self Delegate
-                            {isMounted() && isLoading && !isDelegated ? (
-                                <svg
-                                    className="text-indigo ml-3 h-6 w-6 animate-spin dark:text-gray-200"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <circle
-                                        className="opacity-25"
-                                        cx="12"
-                                        cy="12"
-                                        r="10"
-                                        stroke="currentColor"
-                                        strokeWidth="4"
-                                    ></circle>
-                                    <path
-                                        className="opacity-75"
-                                        fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                    ></path>
-                                </svg>
-                            ) : null}
-                        </button>
-                    </div>
-
-                    <div className="mt-10 flex items-center">
-                        <div className="flex-grow border-t border-gray-400"></div>
-                        <span className="mx-4 flex-shrink text-gray-400 dark:text-gray-200">
-                            And
-                        </span>
-                        <div className="flex-grow border-t border-gray-400"></div>
-                    </div>
-
-                    <p className="mt-6 text-center text-lg dark:text-gray-200">Step 2</p>
-                    <p className="mt-2 text-center dark:text-gray-200">
+                    <p className="mt-8 mb-4 text-lg dark:text-gray-200">
                         Make your voting selections
                     </p>
 
@@ -372,10 +307,10 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
                         type="button"
                         className="btn-secondary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
                         onClick={() => handleVote?.()}
-                        disabled={!isConnected || isLoading || !isDelegated}
+                        disabled={!isConnected || isLoading}
                     >
                         Vote
-                        {isMounted() && isLoading && isDelegated ? (
+                        {isMounted() && isLoading ? (
                             <svg
                                 className="text-indigo ml-3 h-6 w-6 animate-spin"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -400,14 +335,9 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
                     </button>
                 </div>
 
-                {(isPrepareError || isError || isDelegatePrepareError || isDelegateError) && (
+                {(isPrepareError || isError) && (
                     <div className="mt-4">
-                        <div className="text-red-500">
-                            {
-                                (prepareError || error || delegateError || delegatePrepareError)
-                                    ?.message
-                            }
-                        </div>
+                        <div className="text-red-500">{(prepareError || error)?.message}</div>
                     </div>
                 )}
                 {isSuccess && (

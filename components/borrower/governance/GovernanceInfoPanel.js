@@ -1,15 +1,15 @@
 import { useAccount, useBlockNumber, useContractRead, useProvider } from "wagmi";
 import addresses from "../../../constants/contract.json";
 import governorAbi from "../../../constants/LoanGovernor.json";
-import { Fragment, useEffect, useState } from "react";
-import { displayUnits, displayUnits8 } from "../../../utils/Math";
+import { useEffect, useState } from "react";
+import { displayUnits8 } from "../../../utils/Math";
 import prettyMilliseconds from "pretty-ms";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS } from "../../../utils/Constants";
 import { ChevronDoubleDownIcon, ChevronDoubleUpIcon } from "@heroicons/react/24/solid";
 import { Transition } from "@headlessui/react";
 
-export default function GovernanceInfoPanel({ loanProposal, canVote, canQueue, canExecute }) {
+export default function GovernanceInfoPanel({ loanProposal, canExecute }) {
     const [proposalState, setProposalState] = useState("Not Governable");
     const [proposalId, setProposalId] = useState(loanProposal?.onchain_proposal_id);
 
@@ -36,14 +36,14 @@ export default function GovernanceInfoPanel({ loanProposal, canVote, canQueue, c
     const [againstVotesExpanded, setAgainstVotesExpanded] = useState(true);
 
     const states = [
-        "Voting In Progress", //"Pending",
+        "Voting Not Started Yet", //"Pending",
         "Voting In Progress", //"Active",
         "Canceled",
-        "Rejected", //"Defeated",
-        "Succeeded",
-        "Queued",
+        "Proposal Failed", //"Defeated",
+        "Proposal Passed", //"Succeeded",
+        "Queued To Be Executed", //"Queued",
         "Expired",
-        "Executed",
+        "Proposal Executed", // "Executed",
     ];
 
     useEffect(() => {
@@ -77,7 +77,7 @@ export default function GovernanceInfoPanel({ loanProposal, canVote, canQueue, c
         onError(err) {
             console.log("governor proposalDeadline contract read error", err.message);
         },
-        enabled: isConnected && proposalId && canVote?.() === true,
+        enabled: isConnected && proposalId && canExecute?.() === false,
     });
 
     useContractRead({

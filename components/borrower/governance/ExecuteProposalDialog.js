@@ -87,7 +87,7 @@ export default function ExecutePropoposalDialog({ loanProposal, onExecutedSucces
                 events.map((event) => saveEvent(supabase, event));
                 if (events && events.length > 0) {
                     const proposalId = events[0].event_data["proposalId"];
-                    handleQueued(proposalId);
+                    handleExecuted(proposalId);
                 }
             });
         },
@@ -96,7 +96,7 @@ export default function ExecutePropoposalDialog({ loanProposal, onExecutedSucces
         },
     });
 
-    const handleQueued = async (proposalId) => {
+    const handleExecuted = async (proposalId) => {
         const { error: er } = await supabase.from(SUPABASE_TABLE_LOAN_PROPOSALS_STATUS).insert({
             status: "Executed",
             proposal_id: loanProposal.id,

@@ -5,8 +5,16 @@ import QueuePropoposalDialog from "./governance/QueuePropoposalDialog";
 import ExecutePropoposalDialog from "./governance/ExecuteProposalDialog";
 import LikeProposal from "./LikePropoposal";
 import AskQuestion from "./AskQuestion";
+import DelegateDialog from "./governance/DelegateDialog";
 
-export default function ViewProposal({ loanProposal, canVote, canQueue, canExecute, ...rest }) {
+export default function ViewProposal({
+    loanProposal,
+    canDelegate,
+    canVote,
+    canQueue,
+    canExecute,
+    ...rest
+}) {
     const supabase = useSupabaseClient();
     const user = useUser();
 
@@ -71,6 +79,13 @@ export default function ViewProposal({ loanProposal, canVote, canQueue, canExecu
                     </div>
                     <div className="flex flex-col items-end justify-center space-y-2">
                         <LikeProposal loanProposal={loanProposal} setLoanProposal={null} />
+                        {isPublished(loanProposal) && canDelegate?.() && (
+                            <DelegateDialog
+                                loanProposal={loanProposal}
+                                onDelegateSuccess={() => window.location.reload(false)}
+                            />
+                        )}
+
                         {isPublished(loanProposal) && canVote?.() && (
                             <CastVoteDialog
                                 loanProposal={loanProposal}
@@ -95,12 +110,7 @@ export default function ViewProposal({ loanProposal, canVote, canQueue, canExecu
                 </div>
                 {isPublished(loanProposal) && (
                     <div className="mt-4">
-                        <GovernanceInfoPanel
-                            loanProposal={loanProposal}
-                            canVote={canVote}
-                            canQueue={canQueue}
-                            canExecute={canExecute}
-                        />
+                        <GovernanceInfoPanel loanProposal={loanProposal} canExecute={canExecute} />
                     </div>
                 )}
                 <div className="mt-6">
