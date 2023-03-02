@@ -294,7 +294,7 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
 
                 <div className="mt-4 w-full max-w-md">
                     <textarea
-                        className="w-full rounded-lg border-gray-300 text-gray-800 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-200"
+                        className="w-full rounded-lg border-gray-300 text-gray-800 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-200 dark:focus:border-teal-500 dark:focus:ring-teal-500"
                         rows={4}
                         placeholder="Provide a reasoning for your vote"
                         onChange={(e) => setDescription(e.target.value)}

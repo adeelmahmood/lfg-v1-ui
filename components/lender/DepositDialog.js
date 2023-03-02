@@ -85,6 +85,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
         hash: approveData?.hash,
         onSuccess(data) {
             setIsApproved(true);
+            handleDeposit?.();
         },
         onError(err) {
             console.log("Approve tx error", err);
@@ -176,10 +177,10 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                 <div className="mt-4 mb-4 w-full max-w-md">
                     <div className="rounded-lg border border-gray-500 px-4 py-4">
                         <div className="flex items-center justify-between">
-                            <div className="font-semibold text-gray-800 dark:text-gray-200">
+                            <div className="font-semibold text-gray-700 dark:text-gray-200">
                                 Your {token?.tokenSymbol} Balance
                             </div>
-                            <div className="font-semibold text-gray-800 dark:text-gray-200">
+                            <div className="font-semibold text-gray-700 dark:text-gray-200">
                                 {tokenBalance}
                             </div>
                         </div>
@@ -190,12 +191,11 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                         tokens to deposit in the contract
                     </p> */}
 
-                    <p className="mt-4 text-center text-lg dark:text-gray-200">Step 1</p>
-                    <p className="mt-2 text-center dark:text-gray-200">
-                        Specify amount and approve the transfer
+                    <p className="mt-8 text-lg font-semibold text-gray-800 dark:text-gray-200">
+                        Amount To Deposit
                     </p>
 
-                    <div className="mt-3">
+                    <div className="mt-2">
                         <input
                             type="number"
                             placeholder="0.1"
@@ -205,57 +205,16 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                         />
                     </div>
 
-                    <div className="mt-2 flex w-full items-center">
+                    <div className="mt-4 flex w-full items-center">
                         <button
                             type="button"
                             className="btn-secondary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
                             onClick={() => handleApprove?.()}
-                            disabled={!isConnected || isLoading || isApproved}
+                            disabled={!isConnected || isLoading}
                         >
-                            Approve
-                            {isMounted() && isLoading && !isApproved ? (
-                                <svg
-                                    className="text-indigo ml-3 h-6 w-6 animate-spin"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <circle
-                                        className="opacity-25"
-                                        cx="12"
-                                        cy="12"
-                                        r="10"
-                                        stroke="currentColor"
-                                        strokeWidth="4"
-                                    ></circle>
-                                    <path
-                                        className="opacity-75"
-                                        fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                    ></path>
-                                </svg>
-                            ) : null}
-                        </button>
-                    </div>
-
-                    <div className="mt-10 flex items-center">
-                        <div className="flex-grow border-t border-gray-400"></div>
-                        <span className="mx-4 flex-shrink text-gray-400">And</span>
-                        <div className="flex-grow border-t border-gray-400"></div>
-                    </div>
-
-                    <p className="mt-6 text-center text-lg dark:text-gray-200">Step 2</p>
-                    <p className="mt-2 text-center dark:text-gray-200">Finalize deposit</p>
-
-                    <div className="mt-2 flex w-full items-center">
-                        <button
-                            type="button"
-                            className="btn-secondary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
-                            onClick={() => handleDeposit?.()}
-                            disabled={!isConnected || isLoading || !isApproved}
-                        >
-                            Deposit
-                            {isMounted() && isLoading && isApproved ? (
+                            {!isApproved && "Approve [1/2]"}
+                            {isApproved && "Deposit [2/2]"}
+                            {isMounted() && isLoading ? (
                                 <svg
                                     className="text-indigo ml-3 h-6 w-6 animate-spin"
                                     xmlns="http://www.w3.org/2000/svg"

@@ -74,16 +74,34 @@ export default function TokensMarketDataSection({ setTokenMarketDataForCaller })
             )}
 
             <div className="mb-4 flex items-center">
-                <Switch
-                    checked={isShowZeroBalanceTokens}
-                    onChange={setIsShowZeroBalanceTokens}
-                    className={`${
-                        isShowZeroBalanceTokens ? "bg-indigo-600 dark:bg-green-500" : "bg-gray-300"
-                    } h-5 w-5 rounded`}
-                />
-                <div className="ml-2 text-gray-600 dark:text-gray-200">
-                    Show tokens with zero balance in wallet
-                </div>
+                <Switch.Group>
+                    <Switch
+                        checked={isShowZeroBalanceTokens}
+                        onChange={setIsShowZeroBalanceTokens}
+                        className={`${
+                            isShowZeroBalanceTokens
+                                ? "bg-indigo-600 dark:bg-teal-500"
+                                : "bg-indigo-500 dark:bg-teal-700"
+                        }
+          relative inline-flex h-[24px] w-[40px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+                    >
+                        <span className="sr-only">Use setting</span>
+                        <span
+                            aria-hidden="true"
+                            className={`${
+                                isShowZeroBalanceTokens ? "translate-x-4" : "translate-x-0"
+                            }
+            pointer-events-none inline-block h-[20px] w-[20px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+                        />
+                    </Switch>
+                    <Switch.Label className="ml-2 cursor-pointer text-gray-600 dark:text-gray-200">
+                        Show tokens with zero balance in wallet
+                    </Switch.Label>
+                </Switch.Group>
+
+                {/* <label for="toggleZeroBalTokens" className="ml-2 text-gray-600 dark:text-gray-200"> */}
+
+                {/* </label> */}
             </div>
 
             <div className="grid grid-cols-1 gap-y-4 sm:hidden">

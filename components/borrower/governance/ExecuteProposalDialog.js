@@ -14,7 +14,7 @@ import {
 import { useEffect, useState } from "react";
 import useIsMounted from "../../../hooks/useIsMounted";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { BoltIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
+import { BoltIcon } from "@heroicons/react/24/solid";
 import DialogComponent from "../../DialogComponent";
 import { findEvent, saveEvent } from "../../../utils/Events";
 

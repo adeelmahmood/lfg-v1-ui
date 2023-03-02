@@ -11,7 +11,7 @@ import { Transition } from "@headlessui/react";
 
 export default function GovernanceInfoPanel({ loanProposal, canExecute }) {
     const [proposalState, setProposalState] = useState("Not Governable");
-    const [proposalStateInfo, setProposalStateInfo] = useState("");
+    const [proposalStateInfo, setProposalStateInfo] = useState("Nothing to do");
     const [proposalId, setProposalId] = useState(loanProposal?.onchain_proposal_id);
 
     const supabase = useSupabaseClient();
@@ -55,11 +55,11 @@ export default function GovernanceInfoPanel({ loanProposal, canExecute }) {
         },
         {
             state: "Proposal Passed", //"Succeeded",
-            info: "",
+            info: "Proposal can now be queued for execution",
         },
         {
             state: "Queued To Be Executed", //"Queued",
-            info: "Currently waiting on this proposal to be queued",
+            info: "Currently waiting before the proposal can be executed",
         },
         {
             state: "Proposal Expired", //"Expired"
@@ -222,7 +222,7 @@ export default function GovernanceInfoPanel({ loanProposal, canExecute }) {
                     isDetailsOpen={statusExpanded}
                     content={
                         <div className="flex flex-1 flex-col">
-                            <div className="flex items-center justify-between text-gray-200">
+                            <div className="flex items-center justify-between text-gray-800 dark:text-gray-200">
                                 <div>
                                     {/* <span className="mr-1 hidden md:inline">State:</span> */}
                                     <span className="font-semibold">{proposalState}</span>

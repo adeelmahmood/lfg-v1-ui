@@ -180,9 +180,7 @@ export default function DelegateDialog({ loanProposal, onDelegateSuccess, forceL
                         </div>
                     </div>
 
-                    <p className="mt-8 mb-4 text-lg dark:text-gray-200">
-                        Assign a delegate for voting
-                    </p>
+                    <p className="mt-8 text-lg dark:text-gray-200">Assign a delegate for voting</p>
 
                     <div className="mt-2 flex w-full items-center">
                         <button
@@ -216,7 +214,7 @@ export default function DelegateDialog({ loanProposal, onDelegateSuccess, forceL
                         </button>
                     </div>
 
-                    <div className="mt-10 flex items-center">
+                    {/* <div className="mt-10 flex items-center">
                         <div className="flex-grow border-t border-gray-400"></div>
                         <span className="mx-4 flex-shrink text-gray-400">OR</span>
                         <div className="flex-grow border-t border-gray-400"></div>
@@ -261,6 +259,12 @@ export default function DelegateDialog({ loanProposal, onDelegateSuccess, forceL
                             ) : null}
                         </button>
                     </div>
+
+                    <div className="mt-4">
+                        <p className="text-sm dark:text-gray-200">
+                            The above address will be able to vote on this proposal on your behalf
+                        </p>
+                    </div> */}
                 </div>
 
                 {(isPrepareError || isError) && (
