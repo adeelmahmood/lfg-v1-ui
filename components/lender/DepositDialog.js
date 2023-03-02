@@ -105,7 +105,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
             token?.token,
             parseUnits(parsedAmount?.toString(), token?.tokenDecimals?.toNumber()),
         ],
-        enabled: isApproved && parsedAmount > 0,
+        enabled: parsedAmount > 0,
         onError(err) {
             console.log("Deposit prepare error", err);
             setOtherError(err);
