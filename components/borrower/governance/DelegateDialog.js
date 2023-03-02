@@ -148,7 +148,7 @@ export default function DelegateDialog({ loanProposal, onDelegateSuccess, forceL
                                 !forceLong && "hidden"
                             }`}
                         >
-                            Assign Delegate For Voting
+                            Assign Delegate
                         </span>
                     </button>
                 </div>
@@ -191,6 +191,52 @@ export default function DelegateDialog({ loanProposal, onDelegateSuccess, forceL
                             disabled={!isConnected || isLoading}
                         >
                             Self Delegate
+                            {isMounted() && isLoading ? (
+                                <svg
+                                    className="text-indigo ml-3 h-6 w-6 animate-spin dark:text-gray-200"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                    ></circle>
+                                    <path
+                                        className="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                    ></path>
+                                </svg>
+                            ) : null}
+                        </button>
+                    </div>
+
+                    <div className="mt-10 flex items-center">
+                        <div className="flex-grow border-t border-gray-400"></div>
+                        <span className="mx-4 flex-shrink text-gray-400">OR</span>
+                        <div className="flex-grow border-t border-gray-400"></div>
+                    </div>
+
+                    <div className="mt-6 flex flex-col space-y-2">
+                        <p className="text-lg dark:text-gray-200">
+                            Pass voting rights to another address
+                        </p>
+                        <input
+                            type="text"
+                            placeholder="0x Delegate Address"
+                            className="w-full appearance-none rounded-lg border-gray-300 accent-red-500 shadow-sm outline-none focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:bg-gray-200 dark:text-gray-800 dark:focus:border-slate-600 dark:focus:ring-slate-600"
+                        />
+                        <button
+                            className="btn-secondary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+                            onClick={() => handle?.()}
+                            disabled={!isConnected || isLoading}
+                        >
+                            Delegate To
                             {isMounted() && isLoading ? (
                                 <svg
                                     className="text-indigo ml-3 h-6 w-6 animate-spin dark:text-gray-200"

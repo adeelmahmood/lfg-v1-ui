@@ -11,6 +11,7 @@ import { Transition } from "@headlessui/react";
 
 export default function GovernanceInfoPanel({ loanProposal, canExecute }) {
     const [proposalState, setProposalState] = useState("Not Governable");
+    const [proposalStateInfo, setProposalStateInfo] = useState("");
     const [proposalId, setProposalId] = useState(loanProposal?.onchain_proposal_id);
 
     const supabase = useSupabaseClient();
@@ -36,14 +37,38 @@ export default function GovernanceInfoPanel({ loanProposal, canExecute }) {
     const [againstVotesExpanded, setAgainstVotesExpanded] = useState(true);
 
     const states = [
-        "Voting Not Started Yet", //"Pending",
-        "Voting In Progress", //"Active",
-        "Canceled",
-        "Proposal Failed", //"Defeated",
-        "Proposal Passed", //"Succeeded",
-        "Queued To Be Executed", //"Queued",
-        "Expired",
-        "Proposal Executed", // "Executed",
+        {
+            state: "Voting Starts In", //"Pending",
+            info: "To participate in voting, you must assign a delegate",
+        },
+        {
+            state: "Voting In Progress", //"Active",
+            info: "You can vote on this proposal",
+        },
+        {
+            state: "Proposal Canceled", //"Cancelled"
+            info: "",
+        },
+        {
+            state: "Proposal Failed", //"Defeated",
+            info: "",
+        },
+        {
+            state: "Proposal Passed", //"Succeeded",
+            info: "",
+        },
+        {
+            state: "Queued To Be Executed", //"Queued",
+            info: "Currently waiting on this proposal to be queued",
+        },
+        {
+            state: "Proposal Expired", //"Expired"
+            info: "",
+        },
+        {
+            state: "Proposal Executed", // "Executed",
+            info: "",
+        },
     ];
 
     useEffect(() => {
@@ -100,7 +125,9 @@ export default function GovernanceInfoPanel({ loanProposal, canExecute }) {
         functionName: "state",
         args: [proposalId],
         onSuccess(data) {
-            setProposalState(states[data]);
+            const state = states[data];
+            setProposalState(state?.state);
+            setProposalStateInfo(state?.info);
         },
         onError(err) {
             console.log("governor state contract read error", err.message);
@@ -194,16 +221,21 @@ export default function GovernanceInfoPanel({ loanProposal, canExecute }) {
                     handleToggle={() => setStatusExpanded(!statusExpanded)}
                     isDetailsOpen={statusExpanded}
                     content={
-                        <div className="flex w-full items-center justify-between">
-                            <div>
-                                <span className="mr-1 hidden md:inline">State:</span>
-                                <span className="font-semibold">{proposalState}</span>
-                            </div>
-                            {timeLeft && (
+                        <div className="flex flex-1 flex-col">
+                            <div className="flex items-center justify-between text-gray-200">
                                 <div>
-                                    <span className="mr-1">Time Left:</span>
-                                    <span className="font-semibold">{timeLeft}</span>
+                                    {/* <span className="mr-1 hidden md:inline">State:</span> */}
+                                    <span className="font-semibold">{proposalState}</span>
                                 </div>
+                                {timeLeft && (
+                                    <div>
+                                        {/* <span className="mr-1">Time Left:</span> */}
+                                        <span className="font-semibold">{timeLeft}</span>
+                                    </div>
+                                )}
+                            </div>
+                            {proposalStateInfo && (
+                                <p className="mt-2 text-start text-gray-400">{proposalStateInfo}</p>
                             )}
                         </div>
                     }

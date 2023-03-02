@@ -9,7 +9,6 @@ import { useAccount, useContractRead } from "wagmi";
 import { useState } from "react";
 import addresses from "../constants/contract.json";
 import abi from "../constants/LendPool.json";
-import { displayUnits } from "../utils/Math";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +22,11 @@ export default function Home() {
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const lendingPoolAddress = addresses[chainId].LendPool;
+
+    let USDollar = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+    });
 
     useContractRead({
         address: lendingPoolAddress,
@@ -66,32 +70,39 @@ export default function Home() {
                                 </div>
 
                                 <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2">
-                                    <div className="flex flex-col items-center justify-between space-y-4 rounded-lg py-4 px-6 text-center shadow-md dark:bg-gray-800">
+                                    <div className="flex flex-col items-center justify-between rounded-lg py-4 px-6 text-center shadow-md dark:bg-gray-800">
                                         <p className="text-lg leading-8 text-gray-600 dark:text-gray-300">
                                             Earn interest and participate in the governance. Explore
                                             and vote on upcoming proposals.
                                         </p>
-                                        <Link href="/dashboard" className="btn-primary">
-                                            Become a Lender
-                                        </Link>
-                                        <div className="text-center text-gray-600 dark:text-gray-300">
+                                        <div className="mt-3">
+                                            <Link href="/dashboard" className="btn-primary">
+                                                Become a Lender
+                                            </Link>
+                                        </div>
+                                        <div className="mt-6 text-center text-gray-600 dark:text-gray-300 ">
                                             <div className="text-3xl font-bold tracking-wide">
-                                                {displayUnits(liquidityData.totalCollateral)} ETH
+                                                {USDollar.format(liquidityData.totalCollateral)}
                                             </div>
                                             <h2 className="text-2xl">Deposited Collateral</h2>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col items-center justify-between space-y-4 rounded-lg py-4 px-6 text-center shadow-md dark:bg-gray-800">
+                                    <div className="flex flex-col items-center justify-between rounded-lg py-4 px-6 text-center shadow-md dark:bg-gray-800">
                                         <p className="text-lg leading-8 text-gray-600 dark:text-gray-300">
                                             Interact with a community of crypto lenders to get
                                             access to uncollateralized loans.
                                         </p>
-                                        <Link href="/borrower/dashboard" className="btn-primary">
-                                            Become a Borrower
-                                        </Link>
-                                        <div className="text-center text-gray-600 dark:text-gray-300">
+                                        <div className="mt-3">
+                                            <Link
+                                                href="/borrower/dashboard"
+                                                className="btn-primary"
+                                            >
+                                                Become a Borrower
+                                            </Link>
+                                        </div>
+                                        <div className="mt-6 text-center text-gray-600 dark:text-gray-300">
                                             <div className="text-3xl font-bold tracking-wide">
-                                                {displayUnits(liquidityData.availableToBorrow)} ETH
+                                                {USDollar.format(liquidityData.availableToBorrow)}
                                             </div>
                                             <div className="text-2xl">Availabe to Borrow</div>
                                         </div>

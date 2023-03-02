@@ -135,7 +135,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
             });
         },
         onError(err) {
-            console.log("Deposit tx error", err);
+            console.log("Deposit tx error", err.message);
             setOtherError(err.message);
         },
     });
