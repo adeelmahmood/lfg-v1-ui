@@ -42,7 +42,7 @@ export default function LoanProposal() {
         banner_image: "https://source.unsplash.com/random",
         banner_image_metadata: {},
         identity_verification_requested: false,
-        amount: 5000,
+        amount: 5,
         recipientAddress: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
     });
 

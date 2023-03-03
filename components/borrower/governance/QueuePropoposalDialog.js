@@ -92,6 +92,7 @@ export default function QueuePropoposalDialog({ loanProposal, onQueuedSuccess })
             });
         },
         onError(err) {
+            setDbError(err);
             console.log("tx error", err);
         },
     });

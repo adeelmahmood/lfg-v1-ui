@@ -8,7 +8,7 @@ import addresses from "../../../constants/contract.json";
 import governorAbi from "../../../constants/LoanGovernor.json";
 import lendPoolAbi from "../../../constants/LendPool.json";
 import { ethers } from "ethers";
-import { parseEther } from "ethers/lib/utils.js";
+import { parseEther, parseUnits } from "ethers/lib/utils.js";
 import {
     SUPABASE_TABLE_LOAN_PROPOSALS,
     SUPABASE_TABLE_LOAN_PROPOSALS_STATUS,
@@ -35,12 +35,13 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
     const lendPoolAddress = addresses[chainId].LendPool;
     const governorFunctionName = "propose";
 
-    const daiAddress = addresses[chainId].DAI;
+    const borrowTokenAddress = addresses[chainId].borrowToken;
+    const borrowTokenDecimals = addresses[chainId].borrowTokenDecimals;
 
     const proposeFunctionName = "borrow";
     const proposeFunctionArgs = [
-        daiAddress,
-        parseEther(String(loanProposal.amount)),
+        borrowTokenAddress,
+        parseUnits(String(loanProposal.amount), borrowTokenDecimals),
         loanProposal.recipientAddress,
     ];
     const proposeDescription = `@@Borrow Proposal {{${loanProposal.id}}}@@`;

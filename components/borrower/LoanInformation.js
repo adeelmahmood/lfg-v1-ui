@@ -17,7 +17,8 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const lendingPoolAddress = addresses[chainId].LendPool;
-    const borrowToken = addresses[chainId].DAI;
+    const borrowToken = addresses[chainId].borrowToken;
+    const borrowTokenDecimals = addresses[chainId].borrowTokenDecimals;
 
     let USDollar = new Intl.NumberFormat("en-US", {
         style: "currency",
@@ -157,7 +158,8 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                             e.preventDefault();
                             addTokenToMetaMask({
                                 token: borrowToken,
-                                tokenSymbol: "DAI",
+                                tokenSymbol: "USDC",
+                                tokenDecimals: borrowTokenDecimals,
                             });
                         }}
                     >
