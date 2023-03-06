@@ -282,7 +282,7 @@ export default function BorrowerDashboard() {
                                         <td className="py-4 px-6" colSpan={2}>
                                             <div className="flex">
                                                 <img
-                                                    className="h-28 w-44 rounded-lg object-cover object-center"
+                                                    className="h-28 w-44 flex-shrink-0 rounded-lg object-cover object-center"
                                                     src={p.banner_image}
                                                     alt=""
                                                 />
@@ -319,7 +319,7 @@ export default function BorrowerDashboard() {
                                                 <span>Submitted</span>
                                             ) : (
                                                 <button
-                                                    className="btn-clear"
+                                                    className="btn-clear font-semibold"
                                                     onClick={() => handleVerification(p)}
                                                     disabled={verifying == p.id}
                                                 >
@@ -334,7 +334,7 @@ export default function BorrowerDashboard() {
                                                 <span>Submitted</span>
                                             ) : (
                                                 <button
-                                                    className="btn-clear"
+                                                    className="btn-clear font-semibold"
                                                     onClick={() => handleSignAgreement(p)}
                                                     disabled={signing === p.id}
                                                 >
@@ -345,7 +345,7 @@ export default function BorrowerDashboard() {
                                         <td className="py-4 px-6 text-center">
                                             <Link
                                                 href={`/borrower/proposals/${p.id}`}
-                                                className="btn-primary flex items-center justify-center rounded-full py-1.5 text-sm font-semibold"
+                                                className="btn-primary text-sm "
                                             >
                                                 View
                                             </Link>
@@ -357,7 +357,7 @@ export default function BorrowerDashboard() {
                                                         `/borrower/proposals/create?id=${p.id}`
                                                     )
                                                 }
-                                                className="btn-primary flex items-center justify-center rounded-full py-1.5 text-sm font-semibold"
+                                                className="btn-primary text-sm"
                                                 disabled={isPublished(p)}
                                             >
                                                 Edit
@@ -366,7 +366,7 @@ export default function BorrowerDashboard() {
                                         <td className="py-4 px-6 text-center">
                                             <button
                                                 href="#"
-                                                className="btn-clear flex items-center justify-center rounded-full py-1.5 text-sm font-semibold"
+                                                className="btn-primary text-sm"
                                                 disabled={isPublished(p)}
                                                 onClick={() => {
                                                     deleteProposal(p);
@@ -392,7 +392,7 @@ export default function BorrowerDashboard() {
                                 <div>
                                     <div className="flex px-4 pt-4">
                                         <img
-                                            className="h-24 w-24 rounded-full object-cover object-center"
+                                            className="h-24 w-24 flex-shrink-0 rounded-full object-cover object-center"
                                             src={p.banner_image}
                                             alt=""
                                         />

@@ -80,9 +80,11 @@ export default function Home() {
                                                 Become a Lender
                                             </Link>
                                         </div>
-                                        <div className="mt-6 text-center text-gray-600 dark:text-gray-300 ">
+                                        <div className="mt-4 text-center text-gray-600 dark:text-gray-300 ">
                                             <div className="text-3xl font-bold tracking-wide">
-                                                {USDollar.format(liquidityData.totalCollateral)}
+                                                {USDollar.format(
+                                                    liquidityData.totalCollateral || 0
+                                                )}
                                             </div>
                                             <h2 className="text-2xl">Deposited Collateral</h2>
                                         </div>
@@ -100,9 +102,11 @@ export default function Home() {
                                                 Become a Borrower
                                             </Link>
                                         </div>
-                                        <div className="mt-6 text-center text-gray-600 dark:text-gray-300">
+                                        <div className="mt-4 text-center text-gray-600 dark:text-gray-300">
                                             <div className="text-3xl font-bold tracking-wide">
-                                                {USDollar.format(liquidityData.availableToBorrow)}
+                                                {USDollar.format(
+                                                    liquidityData.availableToBorrow || 0
+                                                )}
                                             </div>
                                             <div className="text-2xl">Availabe to Borrow</div>
                                         </div>

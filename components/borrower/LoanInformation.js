@@ -54,7 +54,7 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
     });
 
     const borrowLimit = () => {
-        return USDollar.format(liquidityData?.availableToBorrow?.mul(10).div(100));
+        return USDollar.format(liquidityData?.availableToBorrow?.mul(10).div(100) || 0);
     };
 
     useEffect(() => {
@@ -73,10 +73,10 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                     <h2 className="text-xl font-bold text-gray-500 dark:text-gray-300">
                         How much can I borrow?
                     </h2>
-                    <div className="mt-2 flex max-w-md items-center justify-between rounded-lg border border-gray-300 px-4 py-4 text-gray-800 dark:text-gray-200">
+                    <div className="mt-2 flex max-w-md items-center justify-between rounded-lg border border-gray-200 px-4 py-4 text-gray-800 dark:border-gray-600 dark:text-gray-200">
                         <div>Current Pool Capacity:</div>
                         <div className="ml-1 font-semibold">
-                            {USDollar.format(liquidityData.availableToBorrow)}
+                            {USDollar.format(liquidityData.availableToBorrow || 0)}
                         </div>
                     </div>
                     <p className="mt-2 max-w-md text-sm text-gray-500 dark:text-gray-400">
@@ -85,7 +85,7 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                         power
                     </p>
 
-                    <div className="mt-4 flex max-w-md  items-center justify-between rounded-lg border border-gray-300 px-4 py-4 text-gray-800 dark:text-gray-200">
+                    <div className="mt-4 flex max-w-md items-center justify-between rounded-lg border border-gray-200 px-4 py-4 text-gray-800 dark:border-gray-600 dark:text-gray-200">
                         <div>Your Borrowing Limit (suggested):</div>
                         <div className="ml-1 font-semibold">
                             {liquidityData ? borrowLimit() : "0"}
@@ -96,7 +96,7 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                         proposal is published. You can adjust until the proposal is published
                     </p>
 
-                    <div className="mt-4 flex max-w-md  items-center justify-between rounded-lg border border-gray-300 px-4 py-4 text-gray-800 dark:text-gray-200">
+                    <div className="mt-4 flex max-w-md items-center justify-between rounded-lg border border-gray-200 px-4 py-4 text-gray-800 dark:border-gray-600 dark:text-gray-200">
                         <div>Interest Rate (variable):</div>
                         <div className="ml-1 font-semibold">
                             {displayPercent(displayRay(variableRate))}%
@@ -107,14 +107,6 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                         <span className="ml-1 underline">variable interest rate</span> for all
                         borrowers
                     </p>
-
-                    <div className="mt-10 flex items-center">
-                        <div className="flex-grow border-t border-gray-400"></div>
-                        <span className="mx-4 flex-shrink text-gray-400">
-                            Provide Loan Information
-                        </span>
-                        <div className="flex-grow border-t border-gray-400"></div>
-                    </div>
 
                     <label className="mt-8 mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">
                         Requested Amount
@@ -135,7 +127,7 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                     />
 
                     <label className="mt-8 mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">
-                        Disburse To Wallet Address
+                        Where To Send Money
                     </label>
                     <input
                         className="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-blue-600 dark:focus:ring-blue-400"

@@ -5,22 +5,14 @@ import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useState } from "react";
 import AvatarMenu from "./AvatarMenu";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
-import useIsMounted from "../hooks/useIsMounted";
+import ThemeSelector from "./ThemeSelector";
 
 const Navbar = ({}) => {
     const supabase = useSupabaseClient();
     const user = useUser();
     const router = useRouter();
-    const { theme, setTheme } = useTheme();
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-    const isMounted = useIsMounted();
-
-    const toggleTheme = () => {
-        setTheme(theme === "dark" ? "light" : "dark");
-    };
 
     return (
         <>
@@ -109,13 +101,7 @@ const Navbar = ({}) => {
                                             </p>
                                         </div>
                                     </div>
-                                    <button onClick={toggleTheme}>
-                                        {theme === "dark" ? (
-                                            <MoonIcon className="h-5 w-5 fill-current text-gray-300 focus:outline-none dark:text-gray-200" />
-                                        ) : (
-                                            <SunIcon className="h-5 w-5 fill-current text-indigo-500 focus:outline-none dark:text-gray-200" />
-                                        )}
-                                    </button>
+                                    <ThemeSelector />
                                 </div>
                                 <button
                                     href="#"
@@ -133,20 +119,11 @@ const Navbar = ({}) => {
                 </nav>
                 {/* TODO: MoonIcon throwing a SVG error fill-rule */}
                 <div className="hidden items-center space-x-4 lg:flex">
-                    <button onClick={toggleTheme}>
-                        {theme === "dark" ? (
-                            <MoonIcon className="h-5 w-5 fill-current text-gray-300 focus:outline-none dark:text-gray-200" />
-                        ) : (
-                            <SunIcon className="h-5 w-5 fill-current text-indigo-500 focus:outline-none dark:text-gray-200" />
-                        )}
-                    </button>
+                    <ThemeSelector />
                     {user ? (
                         <AvatarMenu />
                     ) : (
-                        <a
-                            href="/login"
-                            className="rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700 dark:bg-slate-800 dark:ring-slate-700 dark:hover:bg-slate-700 dark:hover:ring-slate-800 lg:block"
-                        >
+                        <a href="/login" className="btn-primary">
                             Login
                         </a>
                     )}

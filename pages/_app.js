@@ -3,7 +3,12 @@ import "@rainbow-me/rainbowkit/styles.css";
 
 import Head from "next/head";
 
-import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import {
+    getDefaultWallets,
+    RainbowKitProvider,
+    darkTheme,
+    lightTheme,
+} from "@rainbow-me/rainbowkit";
 import { configureChains, createClient, WagmiConfig } from "wagmi";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
@@ -62,12 +67,15 @@ export default function App({ Component, pageProps }) {
                 ></meta>
             </Head>
             <WagmiConfig client={wagmiClient}>
-                <RainbowKitProvider chains={chains}>
+                <RainbowKitProvider
+                    chains={chains}
+                    theme={{ lightMode: lightTheme(), darkMode: darkTheme() }}
+                >
                     <SessionContextProvider
                         supabaseClient={supabase}
                         initialSession={pageProps.initialSession}
                     >
-                        <ThemeProvider attribute="class" defaultTheme="dark">
+                        <ThemeProvider attribute="class" defaultTheme="system" enableSystem={true}>
                             <Component {...pageProps} />
                         </ThemeProvider>
                     </SessionContextProvider>
