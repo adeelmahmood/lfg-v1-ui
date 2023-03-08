@@ -209,11 +209,10 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                         <button
                             type="button"
                             className="btn-secondary inline-flex w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
-                            onClick={() => handleApprove?.()}
+                            onClick={() => (!isApproved ? handleApprove?.() : handleDeposit?.())}
                             disabled={!isConnected || isLoading}
                         >
-                            {!isApproved && "Approve [1/2]"}
-                            {isApproved && "Deposit [2/2]"}
+                            {!isApproved ? "Approve (1/2)" : "Deposit (2/2)"}
                             {isMounted() && isLoading ? (
                                 <svg
                                     className="text-indigo ml-3 h-6 w-6 animate-spin"
