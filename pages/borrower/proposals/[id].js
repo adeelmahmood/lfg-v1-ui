@@ -2,8 +2,6 @@ import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../../../utils/Constants";
-import addresses from "../../../constants/contract.json";
-import governorAbi from "../../../constants/LoanGovernor.json";
 import ViewProposal from "../../../components/borrower/ViewProposal";
 import TopGradient from "../../../components/TopGradient";
 import Navbar from "../../../components/Navbar";
@@ -15,7 +13,6 @@ import {
     ExclamationTriangleIcon,
 } from "@heroicons/react/24/solid";
 import PublishLoanDialog from "../../../components/borrower/governance/PublishLoanDialog";
-import { useAccount, useContractRead } from "wagmi";
 import { isPublished, isSigned, isVerified } from "../../../utils/ProposalChecks";
 
 export default function LoanProposal() {
@@ -25,28 +22,8 @@ export default function LoanProposal() {
     const supabase = useSupabaseClient();
     const user = useUser();
 
-    const { isConnected } = useAccount();
-    const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
-    const governorAddress = addresses[chainId].LoanGovernor;
-
-    const [governanceState, setGovernanceState] = useState(-1);
-
     const [loanProposal, setLoanProposal] = useState();
     const [published, setPublished] = useState(true);
-
-    useContractRead({
-        address: governorAddress,
-        abi: governorAbi,
-        functionName: "state",
-        args: [loanProposal?.onchain_proposal_id],
-        onSuccess(data) {
-            setGovernanceState(data);
-        },
-        onError(err) {
-            console.log("governor state contract read error", err.message);
-        },
-        enabled: isConnected && loanProposal?.onchain_proposal_id != null,
-    });
 
     useEffect(() => {
         async function fetchProposal(pid) {
@@ -71,22 +48,6 @@ export default function LoanProposal() {
     }, [user, router.isReady]);
 
     const [propNotPubHeaderExp, setPropNotPubHeaderExp] = useState(false);
-
-    const canDelegate = () => {
-        return governanceState == 0;
-    };
-
-    const canVote = () => {
-        return governanceState == 1;
-    };
-
-    const canQueue = () => {
-        return governanceState == 4;
-    };
-
-    const canExecute = () => {
-        return governanceState == 5;
-    };
 
     return (
         <>
@@ -155,13 +116,7 @@ export default function LoanProposal() {
             <div className="container mx-auto max-w-2xl p-6">
                 {loanProposal && (
                     <>
-                        <ViewProposal
-                            loanProposal={loanProposal}
-                            canDelegate={canDelegate}
-                            canVote={canVote}
-                            canQueue={canQueue}
-                            canExecute={canExecute}
-                        />
+                        <ViewProposal loanProposal={loanProposal} />
                     </>
                 )}
             </div>

@@ -7,7 +7,7 @@ export const isVerified = (p) => {
 };
 
 export const isPublished = (p) => {
-    return p?.loan_proposals_status?.find((s) => s.status == "Published");
+    return p?.onchain_proposal_id && p?.loan_proposals_status?.find((s) => s.status == "Published");
 };
 
 export const isSignSubmitted = (p) => {

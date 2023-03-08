@@ -1,170 +1,28 @@
-import { useAccount, useBlockNumber, useContractRead, useProvider } from "wagmi";
-import addresses from "../../../constants/contract.json";
-import governorAbi from "../../../constants/LoanGovernor.json";
-import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
+import { useState } from "react";
 import { displayUnits8 } from "../../../utils/Math";
-import prettyMilliseconds from "pretty-ms";
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS } from "../../../utils/Constants";
 import { ChevronDoubleDownIcon, ChevronDoubleUpIcon } from "@heroicons/react/24/solid";
 import { Transition } from "@headlessui/react";
 
-export default function GovernanceInfoPanel({ loanProposal, canExecute }) {
-    const [proposalState, setProposalState] = useState("Not Governable");
-    const [proposalStateInfo, setProposalStateInfo] = useState("Nothing to do");
-    const [proposalId, setProposalId] = useState(loanProposal?.onchain_proposal_id);
-
-    const supabase = useSupabaseClient();
-    const user = useUser();
-
-    const { isConnected } = useAccount();
-    const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
-    const governorAddress = addresses[chainId].LoanGovernor;
-    const blockTime = chainId == "80001" ? 2 : 12;
-
-    const { data: currentBlock } = useBlockNumber();
-    const [timeLeft, setTimeLeft] = useState();
-
-    const provider = useProvider();
-    const [proposalEta, setProposalEta] = useState();
-
-    const [forVotes, setForVote] = useState([]);
-    const [againstVotes, setAgainstVotes] = useState([]);
-    const [voteCounts, setVoteCounts] = useState();
+export default function GovernanceInfoPanel({
+    loanProposal,
+    proposalState,
+    forVotes,
+    againstVotes,
+    voteCounts,
+    timeLeft,
+}) {
+    const { address } = useAccount();
 
     const [statusExpanded, setStatusExpanded] = useState(false);
     const [forVotesExpanded, setForVotesExpanded] = useState(true);
     const [againstVotesExpanded, setAgainstVotesExpanded] = useState(true);
 
-    const states = [
-        {
-            state: "Voting Starts In", //"Pending",
-            info: "To participate in voting, you must assign a delegate",
-        },
-        {
-            state: "Voting In Progress", //"Active",
-            info: "You can vote on this proposal",
-        },
-        {
-            state: "Proposal Canceled", //"Cancelled"
-            info: "",
-        },
-        {
-            state: "Proposal Failed", //"Defeated",
-            info: "",
-        },
-        {
-            state: "Proposal Passed", //"Succeeded",
-            info: "Proposal can now be queued for execution",
-        },
-        {
-            state: "Queued To Be Executed", //"Queued",
-            info: "Currently waiting before the proposal can be executed",
-        },
-        {
-            state: "Proposal Expired", //"Expired"
-            info: "",
-        },
-        {
-            state: "Proposal Executed", // "Executed",
-            info: "",
-        },
-    ];
-
-    useEffect(() => {
-        async function getVotesBySupport(mode, setData) {
-            const { data, error } = await supabase
-                .from(SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS)
-                .select("*")
-                .eq("proposal_id", loanProposal.id)
-                .eq("event_data->>support", mode);
-            if (error) {
-                console.log(error.message);
-            }
-            setData?.(data);
-        }
-
-        getVotesBySupport(1, setForVote);
-        getVotesBySupport(0, setAgainstVotes);
-    }, []);
-
-    useContractRead({
-        address: governorAddress,
-        abi: governorAbi,
-        functionName: "proposalDeadline",
-        args: [proposalId],
-        onSuccess(data) {
-            const blocksLeft = data - currentBlock + 1; //plus one coz voting ends after last block
-            if (blocksLeft > 0) {
-                setTimeLeft(prettyMilliseconds(blocksLeft * blockTime * 1000)); //~12 sec per block, sec to ms
-            }
-        },
-        onError(err) {
-            console.log("governor proposalDeadline contract read error", err.message);
-        },
-        enabled: isConnected && proposalId && canExecute?.() === false,
-    });
-
-    useContractRead({
-        address: governorAddress,
-        abi: governorAbi,
-        functionName: "proposalEta",
-        args: [proposalId],
-        onSuccess(data) {
-            setProposalEta(data);
-        },
-        onError(err) {
-            console.log("governor proposalDeadline contract read error", err.message);
-        },
-        enabled: isConnected && proposalId && canExecute?.() === true,
-    });
-
-    useContractRead({
-        address: governorAddress,
-        abi: governorAbi,
-        functionName: "state",
-        args: [proposalId],
-        onSuccess(data) {
-            const state = states[data];
-            setProposalState(state?.state);
-            setProposalStateInfo(state?.info);
-        },
-        onError(err) {
-            console.log("governor state contract read error", err.message);
-        },
-        enabled: isConnected && proposalId,
-    });
-
-    useContractRead({
-        address: governorAddress,
-        abi: governorAbi,
-        functionName: "proposalVotes",
-        args: [proposalId],
-        onSuccess(data) {
-            setVoteCounts(data);
-        },
-        onError(err) {
-            console.log("governor proposalVotes contract read error", err.message);
-        },
-        enabled: isConnected && proposalId,
-    });
-
-    const trimAddress = (addr) => {
-        return addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
+    const showAddr = (addr) => {
+        return addr == address
+            ? "You"
+            : addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
     };
-
-    useEffect(() => {
-        async function translateProposalEtaToTimeLeft() {
-            const block = await provider.getBlock(currentBlock);
-            const timestamp = block.timestamp;
-            const secsLeft = proposalEta - timestamp;
-            if (secsLeft > 0) {
-                setTimeLeft(prettyMilliseconds(secsLeft * 1000)); //sec to ms
-            }
-        }
-
-        if (proposalEta) translateProposalEtaToTimeLeft();
-    }, [proposalEta]);
 
     const ToggleDetailsComp = ({
         handleToggle,
@@ -225,7 +83,7 @@ export default function GovernanceInfoPanel({ loanProposal, canExecute }) {
                             <div className="flex items-center justify-between text-gray-800 dark:text-gray-200">
                                 <div>
                                     {/* <span className="mr-1 hidden md:inline">State:</span> */}
-                                    <span className="font-semibold">{proposalState}</span>
+                                    <span className="font-semibold">{proposalState?.state}</span>
                                 </div>
                                 {timeLeft && (
                                     <div>
@@ -234,8 +92,10 @@ export default function GovernanceInfoPanel({ loanProposal, canExecute }) {
                                     </div>
                                 )}
                             </div>
-                            {proposalStateInfo && (
-                                <p className="mt-2 text-start text-gray-400">{proposalStateInfo}</p>
+                            {proposalState?.info && (
+                                <p className="mt-2 text-start text-gray-400">
+                                    {proposalState?.info}
+                                </p>
                             )}
                         </div>
                     }
@@ -299,7 +159,7 @@ export default function GovernanceInfoPanel({ loanProposal, canExecute }) {
                                     className="flex items-center justify-between border-t border-gray-300 px-4 py-2 pt-2"
                                 >
                                     <div>
-                                        <span className="">{trimAddress(data.voter)}</span>
+                                        <span className="">{showAddr(data.voter)}</span>
                                     </div>
                                     <div>{displayUnits8(data.weight)}</div>
                                 </div>
@@ -339,7 +199,7 @@ export default function GovernanceInfoPanel({ loanProposal, canExecute }) {
                                     className="flex items-center justify-between border-t border-gray-300 px-4 py-2 pt-2"
                                 >
                                     <div>
-                                        <span className="">{trimAddress(data.voter)}</span>
+                                        <span>{trimAddress(data.voter)}</span>
                                     </div>
                                     <div>{displayUnits8(data.weight)}</div>
                                 </div>

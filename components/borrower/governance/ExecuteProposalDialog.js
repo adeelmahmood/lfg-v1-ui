@@ -135,7 +135,9 @@ export default function ExecutePropoposalDialog({ loanProposal, onExecutedSucces
                     <p className="text-sm text-gray-500 dark:text-gray-200">
                         The proposal is all set. Execute this proposal to disburse the funds to the
                         loan requestor.
-                        <div className="mt-4 mb-4 font-semibold">This action cannot be undone!</div>
+                        <span className="mt-4 mb-4 block font-semibold">
+                            This action cannot be undone!
+                        </span>
                     </p>
                 </div>
 

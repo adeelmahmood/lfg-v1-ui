@@ -6,15 +6,19 @@ import ExecutePropoposalDialog from "./governance/ExecuteProposalDialog";
 import LikeProposal from "./LikePropoposal";
 import AskQuestion from "./AskQuestion";
 import DelegateDialog from "./governance/DelegateDialog";
+import governorAbi from "../../constants/LoanGovernor.json";
+import { useEffect, useState } from "react";
+import {
+    BLOCK_TIMES,
+    PROPOSAL_STATES,
+    SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS,
+} from "../../utils/Constants";
+import addresses from "../../constants/contract.json";
+import { useAccount, useBlockNumber, useContractRead, useProvider } from "wagmi";
+import { isPublished } from "../../utils/ProposalChecks";
+import prettyMilliseconds from "pretty-ms";
 
-export default function ViewProposal({
-    loanProposal,
-    canDelegate,
-    canVote,
-    canQueue,
-    canExecute,
-    ...rest
-}) {
+export default function ViewProposal({ loanProposal, ...rest }) {
     const supabase = useSupabaseClient();
     const user = useUser();
 
@@ -22,6 +26,148 @@ export default function ViewProposal({
         style: "currency",
         currency: "USD",
     });
+
+    const [proposalState, setProposalState] = useState();
+    const [proposalId, setProposalId] = useState(loanProposal?.onchain_proposal_id);
+
+    const { isConnected, address } = useAccount();
+    const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
+    const governorAddress = addresses[chainId].LoanGovernor;
+    const blockTime = BLOCK_TIMES[chainId];
+
+    const { data: currentBlock } = useBlockNumber();
+    const [timeLeft, setTimeLeft] = useState();
+
+    const provider = useProvider();
+    const [votingEnds, setVotingEnds] = useState();
+    const [votingDelay, setVotingDelay] = useState();
+    const [proposalEta, setProposalEta] = useState();
+    const [executeReady, setExecuteReady] = useState(false);
+
+    const [forVotes, setForVote] = useState([]);
+    const [againstVotes, setAgainstVotes] = useState([]);
+    const [voteCounts, setVoteCounts] = useState();
+
+    useContractRead({
+        address: governorAddress,
+        abi: governorAbi,
+        functionName: "state",
+        args: [proposalId],
+        onSuccess(data) {
+            const state = PROPOSAL_STATES[data];
+            setProposalState(state);
+        },
+        onError(err) {
+            console.log("governor state contract read error", err.message);
+        },
+        enabled: isConnected && proposalId,
+    });
+
+    useEffect(() => {
+        async function getVotesBySupport(mode, setData) {
+            const { data, error } = await supabase
+                .from(SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS)
+                .select("*")
+                .eq("proposal_id", loanProposal.id)
+                .eq("event_data->>support", mode);
+            if (error) {
+                console.log(error.message);
+            }
+            setData?.(data);
+        }
+
+        getVotesBySupport(1, setForVote);
+        getVotesBySupport(0, setAgainstVotes);
+    }, []);
+
+    // voting delay is applicable when the proposal is in pending state
+    useContractRead({
+        address: governorAddress,
+        abi: governorAbi,
+        functionName: "votingDelay",
+        args: [],
+        onSuccess(data) {
+            setVotingDelay(data);
+        },
+        onError(err) {
+            console.log("governor proposalDeadline contract read error", err.message);
+        },
+        enabled: isConnected && proposalId && proposalState?.key == "Pending",
+    });
+
+    // deadline is applicable once voting has started
+    useContractRead({
+        address: governorAddress,
+        abi: governorAbi,
+        functionName: "proposalDeadline",
+        args: [proposalId],
+        onSuccess(data) {
+            setVotingEnds(data);
+        },
+        onError(err) {
+            console.log("governor proposalDeadline contract read error", err.message);
+        },
+        enabled: isConnected && proposalId && proposalState?.key == "Active",
+    });
+
+    // eta applicable once the proposal has been queued
+    useContractRead({
+        address: governorAddress,
+        abi: governorAbi,
+        functionName: "proposalEta",
+        args: [proposalId],
+        onSuccess(data) {
+            setProposalEta(data);
+        },
+        onError(err) {
+            console.log("governor proposalDeadline contract read error", err.message);
+        },
+        enabled: isConnected && proposalId && proposalState?.key == "Queued",
+    });
+
+    useContractRead({
+        address: governorAddress,
+        abi: governorAbi,
+        functionName: "proposalVotes",
+        args: [proposalId],
+        onSuccess(data) {
+            setVoteCounts(data);
+        },
+        onError(err) {
+            console.log("governor proposalVotes contract read error", err.message);
+        },
+        enabled: isConnected && proposalId,
+    });
+
+    useEffect(() => {
+        async function translateProposalEtaToTimeLeft() {
+            const block = await provider.getBlock(currentBlock);
+            const timestamp = block.timestamp;
+            const secsLeft = proposalEta - timestamp;
+            if (secsLeft > 0) {
+                setTimeLeft(prettyMilliseconds(secsLeft * 1000)); //sec to ms
+            }
+            // mark ready for execution once the queue time is over
+            setExecuteReady(secsLeft <= 0);
+        }
+
+        let blocksLeft;
+
+        // waiting for voting to start
+        if (proposalState?.key == "Pending" && votingDelay && !votingDelay.isZero()) {
+            blocksLeft = votingDelay.toNumber() + 1;
+        }
+        // voting in progress
+        else if (proposalState?.key == "Active" && votingEnds && !votingEnds.isZero()) {
+            blocksLeft = votingEnds.toNumber() - currentBlock + 1;
+        }
+
+        if (blocksLeft > 0) {
+            setTimeLeft(prettyMilliseconds(blocksLeft * blockTime * 1000)); //~12 sec per block, sec to ms
+        }
+
+        if (proposalEta && !proposalEta.isZero()) translateProposalEtaToTimeLeft();
+    }, [votingDelay, votingEnds, proposalState, proposalEta]);
 
     const getSelected = (value, genValue, manFlag, genFlag) => {
         if (genFlag) return genValue;
@@ -35,12 +181,6 @@ export default function ViewProposal({
             month: "short",
             day: "numeric",
         });
-    };
-
-    const isPublished = (p) => {
-        return (
-            p.onchain_proposal_id && p?.loan_proposals_status?.find((s) => s.status == "Published")
-        );
     };
 
     return (
@@ -79,38 +219,48 @@ export default function ViewProposal({
                     </div>
                     <div className="flex flex-col items-end justify-center space-y-2">
                         <LikeProposal loanProposal={loanProposal} setLoanProposal={null} />
-                        {isPublished(loanProposal) && canDelegate?.() && (
+
+                        {isPublished(loanProposal) && proposalState?.key == "Pending" && (
                             <DelegateDialog
                                 loanProposal={loanProposal}
                                 onDelegateSuccess={() => window.location.reload(false)}
                             />
                         )}
 
-                        {isPublished(loanProposal) && canVote?.() && (
+                        {isPublished(loanProposal) && proposalState?.key == "Active" && (
                             <CastVoteDialog
                                 loanProposal={loanProposal}
                                 onVoteSuccess={() => window.location.reload(false)}
                             />
                         )}
 
-                        {isPublished(loanProposal) && canQueue?.() && (
+                        {isPublished(loanProposal) && proposalState?.key == "Succeeded" && (
                             <QueuePropoposalDialog
                                 loanProposal={loanProposal}
                                 onQueuedSuccess={() => window.location.reload(false)}
                             />
                         )}
 
-                        {isPublished(loanProposal) && canExecute?.() && (
-                            <ExecutePropoposalDialog
-                                loanProposal={loanProposal}
-                                onExecutedSuccess={() => window.location.reload(false)}
-                            />
-                        )}
+                        {isPublished(loanProposal) &&
+                            proposalState?.key == "Queued" &&
+                            executeReady && (
+                                <ExecutePropoposalDialog
+                                    loanProposal={loanProposal}
+                                    onExecutedSuccess={() => window.location.reload(false)}
+                                />
+                            )}
                     </div>
                 </div>
                 {isPublished(loanProposal) && (
                     <div className="mt-4">
-                        <GovernanceInfoPanel loanProposal={loanProposal} canExecute={canExecute} />
+                        <GovernanceInfoPanel
+                            loanProposal={loanProposal}
+                            proposalState={proposalState}
+                            forVotes={forVotes}
+                            againstVotes={againstVotes}
+                            voteCounts={voteCounts}
+                            timeLeft={timeLeft}
+                        />
                     </div>
                 )}
                 <div className="mt-6">

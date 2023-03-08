@@ -132,7 +132,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
                 data.logs.filter((log) => log.address == lendingPoolAddress)
             ).then((events) => {
                 events.map((event) => saveEvent(supabase, event));
-                closeModal();
+                closeModal(true);
             });
         },
         onError(err) {

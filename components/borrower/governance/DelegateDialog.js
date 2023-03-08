@@ -82,7 +82,7 @@ export default function DelegateDialog({ loanProposal, onDelegateSuccess, forceL
         abi: govTokenAbi,
         functionName: "delegate",
         args: [address],
-        enabled: isConnected,
+        enabled: isConnected && !hasDelegated,
         onError(err) {
             console.log("delegate prepare error", err);
         },
