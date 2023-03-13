@@ -1,15 +1,7 @@
-import { useEffect, useState } from "react";
-import InputWithAISuggestedOption from "./InputWithAISuggestedOption";
+import { useState } from "react";
 
 export default function GetStarted({ loanProposal, setLoanProposal, handle, ...rest }) {
     const [isCompleted, setIsCompleted] = useState(true);
-
-    const [data, setData] = useState({
-        title: "",
-        genTitle: "",
-        manual_title_picked: false,
-        gen_title_picked: false,
-    });
 
     return (
         <>

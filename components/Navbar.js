@@ -5,7 +5,7 @@ import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useState } from "react";
 import AvatarMenu from "./AvatarMenu";
 import { useRouter } from "next/router";
-import ThemeSelector from "./ThemeSelector";
+import ThemeSelector from "./ui/ThemeSelector";
 
 const Navbar = ({}) => {
     const supabase = useSupabaseClient();
@@ -48,21 +48,21 @@ const Navbar = ({}) => {
                         >
                             Lend
                         </a>
-                        <span className="mx-2 hidden w-0.5 bg-gray-600/25 sm:block"></span>
+                        <span className="mx-2 hidden w-0.5 bg-gray-600/25 dark:bg-gray-400/25 sm:block"></span>
                         <a
                             href="/borrower/dashboard"
                             className="block rounded px-2 py-1 font-semibold text-indigo-600 hover:bg-indigo-500 hover:text-white dark:text-gray-300 dark:hover:bg-slate-900"
                         >
                             Borrow
                         </a>
-                        <span className="mx-2 hidden w-0.5 bg-gray-600/25 sm:block"></span>
+                        <span className="mx-2 hidden w-0.5 bg-gray-600/25 dark:bg-gray-400/25 sm:block"></span>
                         <a
                             href="/proposals"
                             className="block rounded px-2 py-1 font-semibold text-indigo-600 hover:bg-indigo-500 hover:text-white dark:text-gray-300 dark:hover:bg-slate-900"
                         >
                             Explore
                         </a>
-                        <span className="mx-2 hidden w-0.5 bg-gray-600/25 sm:block"></span>
+                        <span className="mx-2 hidden w-0.5 bg-gray-600/25 dark:bg-gray-400/25 sm:block"></span>
                         <a
                             href="#"
                             className="block rounded px-2 py-1 font-semibold text-indigo-600 hover:bg-indigo-500 hover:text-white dark:text-gray-300 dark:hover:bg-slate-900"

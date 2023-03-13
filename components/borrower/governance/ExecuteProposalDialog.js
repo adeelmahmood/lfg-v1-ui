@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import useIsMounted from "../../../hooks/useIsMounted";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { BoltIcon } from "@heroicons/react/24/solid";
-import DialogComponent from "../../DialogComponent";
+import DialogComponent from "../../ui/DialogComponent";
 import { findEvent, saveEvent } from "../../../utils/Events";
 
 export default function ExecutePropoposalDialog({ loanProposal, onExecutedSuccess }) {

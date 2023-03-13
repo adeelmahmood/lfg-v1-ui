@@ -14,7 +14,7 @@ import {
 import { useEffect, useState } from "react";
 import useIsMounted from "../../../hooks/useIsMounted";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import DialogComponent from "../../DialogComponent";
+import DialogComponent from "../../ui/DialogComponent";
 import { findEvent, saveEvent } from "../../../utils/Events";
 import { QueueListIcon } from "@heroicons/react/24/solid";
 

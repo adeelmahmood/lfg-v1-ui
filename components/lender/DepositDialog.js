@@ -13,7 +13,7 @@ import useIsMounted from "../../hooks/useIsMounted";
 import { erc20ABI } from "wagmi";
 import { findEvent, saveEvent } from "../../utils/Events";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import DialogComponent from "../DialogComponent";
+import DialogComponent from "../ui/DialogComponent";
 import { displayUnits, displayUnits8 } from "../../utils/Math";
 
 export default function DepositDialog({ isModelOpen, modelCloseHandler, token }) {

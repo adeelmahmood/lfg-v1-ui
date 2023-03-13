@@ -12,7 +12,7 @@ import { Listbox, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
 import useIsMounted from "../../../hooks/useIsMounted";
 import { CheckIcon, ChevronUpDownIcon, EnvelopeOpenIcon } from "@heroicons/react/24/solid";
-import DialogComponent from "../../DialogComponent";
+import DialogComponent from "../../ui/DialogComponent";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { findEvent, saveEvent } from "../../../utils/Events";
 import { displayUnits } from "../../../utils/Math";

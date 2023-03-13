@@ -4,7 +4,7 @@ import addresses from "../../constants/contract.json";
 import abi from "../../constants/LendPool.json";
 import { displayUnits, displayUnits8 } from "../../utils/Math";
 import WithdrawDialog from "./WithdrawDialog";
-import ImageWithFallback from "../ImageWithFallback";
+import ImageWithFallback from "../ui/ImageWithFallback";
 import { addTokenToMetaMask } from "../../utils/Metamask";
 
 export default function PortfolioSection() {

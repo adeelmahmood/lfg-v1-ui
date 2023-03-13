@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../../../utils/Constants";
 import ViewProposal from "../../../components/borrower/ViewProposal";
-import TopGradient from "../../../components/TopGradient";
+import TopGradient from "../../../components/ui/TopGradient";
 import Navbar from "../../../components/Navbar";
 import {
     CheckCircleIcon,

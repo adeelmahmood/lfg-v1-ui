@@ -9,7 +9,7 @@ import {
     displayUnits,
     displayUnits8,
 } from "../../utils/Math";
-import ImageWithFallback from "../ImageWithFallback";
+import ImageWithFallback from "../ui/ImageWithFallback";
 import { Switch } from "@headlessui/react";
 import DepositDialog from "./DepositDialog";
 

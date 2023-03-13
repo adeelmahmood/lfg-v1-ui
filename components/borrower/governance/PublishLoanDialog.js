@@ -8,7 +8,7 @@ import addresses from "../../../constants/contract.json";
 import governorAbi from "../../../constants/LoanGovernor.json";
 import lendPoolAbi from "../../../constants/LendPool.json";
 import { ethers } from "ethers";
-import { parseEther, parseUnits } from "ethers/lib/utils.js";
+import { parseUnits } from "ethers/lib/utils.js";
 import {
     SUPABASE_TABLE_LOAN_PROPOSALS,
     SUPABASE_TABLE_LOAN_PROPOSALS_STATUS,
@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import useIsMounted from "../../../hooks/useIsMounted";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { RocketLaunchIcon } from "@heroicons/react/24/solid";
-import DialogComponent from "../../DialogComponent";
+import DialogComponent from "../../ui/DialogComponent";
 import { findEvent, saveEvent } from "../../../utils/Events";
 
 export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {

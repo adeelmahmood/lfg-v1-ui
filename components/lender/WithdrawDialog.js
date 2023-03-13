@@ -10,7 +10,7 @@ import addresses from "../../constants/contract.json";
 import abi from "../../constants/LendPool.json";
 import { parseEther, parseUnits } from "ethers/lib/utils.js";
 import useIsMounted from "../../hooks/useIsMounted";
-import DialogComponent from "../DialogComponent";
+import DialogComponent from "../ui/DialogComponent";
 
 export default function WithdrawDialog({ isModelOpen, modelCloseHandler, token }) {
     let [isOpen, setIsOpen] = useState(isModelOpen || false);

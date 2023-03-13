@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import Navbar from "../components/Navbar";
-import TopGradient from "../components/TopGradient";
+import TopGradient from "../components/ui/TopGradient";
 import Link from "next/link";
 import useIsMounted from "../hooks/useIsMounted";
 

@@ -10,7 +10,7 @@ import govTokenAbi from "../../../constants/GovToken.json";
 import { useEffect, useState } from "react";
 import useIsMounted from "../../../hooks/useIsMounted";
 import { CheckIcon, UserCircleIcon } from "@heroicons/react/24/solid";
-import DialogComponent from "../../DialogComponent";
+import DialogComponent from "../../ui/DialogComponent";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { displayUnits } from "../../../utils/Math";
 

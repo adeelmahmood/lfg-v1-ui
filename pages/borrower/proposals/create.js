@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../../components/Navbar";
-import TopGradient from "../../../components/TopGradient";
+import TopGradient from "../../../components/ui/TopGradient";
 import VerifyIdentity from "../../../components/borrower/VerifyIdentity";
 import LoanInformation from "../../../components/borrower/LoanInformation";
 import GetStarted from "../../../components/borrower/GetStarted";
@@ -41,9 +41,10 @@ export default function LoanProposal() {
         banner_image: "",
         banner_image_metadata: {},
         amount: 0,
-        recipientAddress: "",
         identity_verification_requested: false,
         agreement_signed: false,
+        payout_mode: "",
+        payout_data: {},
     });
 
     async function loadProposal() {

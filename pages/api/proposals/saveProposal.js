@@ -3,10 +3,18 @@ import {
     SUPABASE_TABLE_LOAN_PROPOSALS,
     SUPABASE_TABLE_LOAN_PROPOSALS_STATUS,
 } from "../../../utils/Constants";
+import addresses from "../../../constants/contract.json";
+
+const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
+const baseUrl = process.env.VERCEL_URL
+    ? "https://" + process.env.VERCEL_URL
+    : "http://localhost:3000";
 
 export default async function handler(req, res) {
     const supabase = createServerSupabaseClient({ req, res });
     const { loanProposal } = req.body;
+
+    const borrowTokens = addresses[chainId].borrowTokens;
 
     const validate = async (p) => {
         // make sure proposal hasnt been published yet
@@ -47,6 +55,29 @@ export default async function handler(req, res) {
             loan_agreement_signatures,
             ...lp
         } = loanProposal;
+
+        // get a circle wallet address if payout mode is fiat
+        if (lp.payout_mode === "fiat" && !lp.payout_data?.cirleWalletAddress) {
+            const response = await fetch(`${baseUrl}/api/circle/createWallet`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: lp.id }),
+            });
+
+            const data = await response.json();
+            if (response.status !== 200) {
+                res.status(500).json({
+                    failedAt: "getting fiat payout wallet address from circle",
+                    error: data.error,
+                });
+                return;
+            }
+
+            // set token
+            lp.payout_data.fiatPayoutToken = borrowTokens.find((t) => t.fiatPayout)?.token;
+            // set wallet address
+            lp.payout_data.fiatToCryptoWalletAddress = data.data?.address;
+        }
 
         const { data, error } = await supabase
             .from(SUPABASE_TABLE_LOAN_PROPOSALS)

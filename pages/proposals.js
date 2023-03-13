@@ -1,5 +1,5 @@
-import TopGradient from "../components/TopGradient";
-import BottomGradient from "../components/BottomGradient";
+import TopGradient from "../components/ui/TopGradient";
+import BottomGradient from "../components/ui/BottomGradient";
 import Navbar from "../components/Navbar";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";

@@ -4,9 +4,18 @@ import {
     SUPABASE_TABLE_LOAN_PROPOSALS,
     SUPABASE_TABLE_LOAN_PROPOSALS_STATUS,
 } from "../../../utils/Constants";
+import { useRouter } from "next/router";
+import addresses from "../../../constants/contract.json";
 
 export default function LoanProposal() {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    const router = useRouter();
+    const { type } = router.query;
+
+    const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
+    const borrowTokens = addresses[chainId].borrowTokens;
+    const fiatBorrowToken = borrowTokens.find((t) => t.fiatPayout);
 
     function s(words, chars) {
         let result = "";
@@ -43,36 +52,75 @@ export default function LoanProposal() {
         banner_image_metadata: {},
         identity_verification_requested: false,
         amount: 5,
-        recipientAddress: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
     });
 
     const supabase = useSupabaseClient();
     const user = useUser();
 
     useEffect(() => {
-        if (user) save();
-    }, [user]);
+        async function saveP() {
+            const id = await save();
 
-    const save = async () => {
-        const { data, error } = await supabase
+            if (type == "crypto-payout") {
+                const payoutData = {
+                    id,
+                    payout_mode: "crypto",
+                    payout_data: {
+                        token: fiatBorrowToken.token,
+                        walletAddress: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+                    },
+                };
+
+                await save(payoutData);
+            } else if (type == "fiat-payout") {
+                const response = await fetch("/api/circle/createWallet", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id }),
+                });
+                const data = await response.json();
+
+                const payoutData = {
+                    id,
+                    payout_mode: "fiat",
+                    payout_data: {
+                        fiatPayoutToken: fiatBorrowToken.token,
+                        fiatToCryptoWalletAddress: data.data?.address,
+                    },
+                };
+                await save(payoutData);
+            }
+
+            router.push("/borrower/dashboard");
+        }
+
+        if (user && router.isReady) {
+            saveP();
+        }
+    }, [user, router.isReady]);
+
+    const save = async (moreData) => {
+        console.log("saving lp", loanProposal);
+        const { data } = await supabase
             .from(SUPABASE_TABLE_LOAN_PROPOSALS)
-            .insert({
+            .upsert({
                 ...loanProposal,
+                ...moreData,
                 user_id: user.id,
             })
             .select("id")
             .single();
-        console.log(data, error);
 
         // add status entry
-        const { data: statusData, error: statusError } = await supabase
-            .from(SUPABASE_TABLE_LOAN_PROPOSALS_STATUS)
-            .insert({
+        if (!loanProposal.id && data?.id) {
+            await supabase.from(SUPABASE_TABLE_LOAN_PROPOSALS_STATUS).insert({
                 status: "Created",
-                proposal_id: data?.id,
+                proposal_id: data.id,
             });
-        console.log(statusData, statusError);
+        }
+
+        return data.id;
     };
 
-    return <>done</>;
+    return <>Creating fake data...</>;
 }

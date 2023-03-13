@@ -1,7 +1,7 @@
 import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
-import BottomGradient from "../components/BottomGradient";
+import BottomGradient from "../components/ui/BottomGradient";
 import Navbar from "../components/Navbar";
-import TopGradient from "../components/TopGradient";
+import TopGradient from "../components/ui/TopGradient";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 

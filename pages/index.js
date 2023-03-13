@@ -1,9 +1,9 @@
 import { Inter } from "@next/font/google";
 import Link from "next/link";
-import TopGradient from "../components/TopGradient";
-import BottomGradient from "../components/BottomGradient";
+import TopGradient from "../components/ui/TopGradient";
+import BottomGradient from "../components/ui/BottomGradient";
 import Navbar from "../components/Navbar";
-import HeroCard from "../components/HeroCard";
+import HeroCard from "../components/ui/HeroCard";
 import { useUser } from "@supabase/auth-helpers-react";
 import { useAccount, useContractRead } from "wagmi";
 import { useState } from "react";

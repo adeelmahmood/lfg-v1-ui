@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useIsMounted from "../../hooks/useIsMounted";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import DialogComponent from "../DialogComponent";
+import DialogComponent from "../ui/DialogComponent";
 import { HandThumbUpIcon } from "@heroicons/react/24/solid";
 
 export default function LikeProposal({ loanProposal, setLoanProposal }) {

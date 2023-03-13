@@ -1,6 +1,6 @@
 import Navbar from "../components/Navbar";
-import TopGradient from "../components/TopGradient";
-import BottomGradient from "../components/BottomGradient";
+import TopGradient from "../components/ui/TopGradient";
+import BottomGradient from "../components/ui/BottomGradient";
 
 import { useState } from "react";
 import SendEthToWethDialog from "../components/lender/SendEthToWethDialog";
