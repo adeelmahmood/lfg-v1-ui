@@ -12,7 +12,7 @@ import useIsMounted from "../../../hooks/useIsMounted";
 import { CheckIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import DialogComponent from "../../ui/DialogComponent";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import { displayUnits } from "../../../utils/Math";
+import { displayUnits, displayUnits8 } from "../../../utils/Math";
 
 export default function DelegateDialog({ loanProposal, onDelegateSuccess, forceLong = false }) {
     let [delegateModalOpen, setDelegateModalOpen] = useState();
@@ -50,7 +50,7 @@ export default function DelegateDialog({ loanProposal, onDelegateSuccess, forceL
         functionName: "balanceOf",
         args: [address],
         onSuccess(data) {
-            const balance = displayUnits(data);
+            const balance = displayUnits8(data);
             setVotingPower(balance);
         },
         onError(err) {

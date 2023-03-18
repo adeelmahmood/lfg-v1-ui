@@ -46,6 +46,14 @@ export default function ApprovedProposalsListing({}) {
         return text && text.length > limit ? text.substring(0, limit) + " ..." : text;
     };
 
+    const getStatus = (p) => {
+        if (p.payout_mode == "crypto") {
+            return "Loan Approved";
+        } else {
+            return "Ready for Settlement";
+        }
+    };
+
     return (
         <>
             <div className="mt-4 hidden overflow-x-auto rounded-lg shadow-md sm:flex">
@@ -56,7 +64,13 @@ export default function ApprovedProposalsListing({}) {
                                 Approved Proposal
                             </th>
                             <th scope="col" className="py-3 px-6 text-center">
-                                Start Payout
+                                Payout Status
+                            </th>
+                            <th scope="col" className="py-3 px-6 text-center">
+                                Payout Mode
+                            </th>
+                            <th scope="col" className="py-3 px-6 text-center">
+                                Actions
                             </th>
                         </tr>
                     </thead>
@@ -85,7 +99,7 @@ export default function ApprovedProposalsListing({}) {
                                                 alt=""
                                             />
                                             <div className="ml-5">
-                                                <div className="mb-2 text-xl font-bold dark:text-gray-300">
+                                                <div className="mb-2 max-w-2xl text-xl font-bold dark:text-gray-300">
                                                     {getSelected(
                                                         p.business_title,
                                                         p.business_tagline,
@@ -93,7 +107,7 @@ export default function ApprovedProposalsListing({}) {
                                                         p.tagline_gen_picked
                                                     )}
                                                 </div>
-                                                <p className="text-base text-gray-700 dark:text-gray-400">
+                                                <p className="max-w-2xl text-base text-gray-700 dark:text-gray-400">
                                                     {trimText(
                                                         getSelected(
                                                             p.business_description,
@@ -108,15 +122,19 @@ export default function ApprovedProposalsListing({}) {
                                         </div>
                                     </td>
                                     <td className="py-4 px-6 text-center">
-                                        <button
-                                            href="#"
-                                            className="btn-primary text-sm"
-                                            onClick={() => {
-                                                console.log("do it");
-                                            }}
-                                        >
-                                            Issue Payout
-                                        </button>
+                                        <span className="uppercase dark:text-gray-300">
+                                            {getStatus(p)}
+                                        </span>
+                                    </td>
+                                    <td className="py-4 px-6 text-center dark:text-gray-400">
+                                        <span className="uppercase">{p.payout_mode}</span>
+                                    </td>
+                                    <td className="py-4 px-6 text-center">
+                                        {p.payout_mode === "fiat" && (
+                                            <button className="btn-clear">
+                                                Initiate Settlement
+                                            </button>
+                                        )}
                                     </td>
                                 </tr>
                             );

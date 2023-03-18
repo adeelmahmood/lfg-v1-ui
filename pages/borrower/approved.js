@@ -13,16 +13,16 @@ export default function BorrowerDashboard() {
                 <div className="flex items-center">
                     <a
                         href="/borrower/dashboard"
-                        className="block rounded px-4 py-2 font-semibold text-indigo-600 hover:bg-indigo-500 hover:text-white  dark:text-gray-300 dark:hover:bg-slate-600"
+                        className="mr-2 block rounded px-4 py-2 font-semibold text-indigo-600 hover:bg-indigo-500 hover:text-white  dark:text-gray-300 dark:hover:bg-slate-600"
                     >
                         All Propopsals
                     </a>
-                    <span className="mx-4 hidden w-0.5 bg-gray-600/25 dark:bg-gray-400/25 sm:block">
+                    <span className="hidden w-0.5 bg-gray-600/25 dark:bg-gray-400/25 sm:block">
                         &nbsp;
                     </span>
                     <a
                         href="/borrower/approved"
-                        className="block  rounded bg-indigo-200 px-4 py-2 font-semibold text-indigo-600 hover:bg-indigo-500 hover:text-white dark:bg-slate-800 dark:text-gray-300 dark:hover:bg-slate-600"
+                        className="ml-2 block rounded bg-indigo-200 px-4 py-2 font-semibold text-indigo-600 hover:bg-indigo-500 hover:text-white dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-600"
                     >
                         Approved Loans
                     </a>

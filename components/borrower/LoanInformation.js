@@ -34,8 +34,6 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
         currency: "USD",
     });
 
-    console.log(loanProposal);
-
     useContractRead({
         address: lendingPoolAddress,
         abi,
@@ -59,12 +57,13 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
             setBorrowTokensMD(data);
 
             const selectedToken = loanProposal.payout_data?.payoutToken
-                ? data.find((d) => d.token === loanProposal.payout_data?.payoutToken)
+                ? data.find((d) => d.token === loanProposal.payout_data?.payoutToken.address)
                 : data[0];
             setPayoutData({
                 ...payoutData,
                 payoutToken: selectedToken ?? data[0],
             });
+            console.log(data[0]);
         },
         onError(err) {
             console.log(err);
@@ -98,14 +97,19 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
     }, [loanProposal.amount, loanProposal.payout_mode, payoutData]);
 
     const handleNext = async () => {
-        setLoanProposal({
-            ...loanProposal,
-            payout_data: {
-                ...payoutData,
-                payoutToken: payoutData.payoutToken.token,
-                walletAddress: payoutData.walletAddress,
-            },
-        });
+        if (loanProposal.payout_mode === "crypto") {
+            setLoanProposal({
+                ...loanProposal,
+                payout_data: {
+                    ...payoutData,
+                    payoutToken: {
+                        address: payoutData.payoutToken.token,
+                        decimals: payoutData.payoutToken.tokenDecimals.toNumber(),
+                    },
+                    walletAddress: payoutData.walletAddress,
+                },
+            });
+        }
 
         handle?.();
     };

@@ -17,7 +17,7 @@ export default function BorrowerDashboard() {
                 <div className="flex items-center">
                     <a
                         href="/borrower/dashboard"
-                        className="mr-2 block rounded bg-indigo-200 px-4 py-2 font-semibold text-indigo-600 hover:bg-indigo-500 hover:text-white dark:bg-slate-800 dark:text-gray-300 dark:hover:bg-slate-600"
+                        className="mr-2 block rounded bg-indigo-200 px-4 py-2 font-semibold text-indigo-600 hover:bg-indigo-500 hover:text-white dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-600"
                     >
                         All Propopsals
                     </a>
@@ -47,7 +47,7 @@ export default function BorrowerDashboard() {
                     to see if it gets approved.
                 </p>
 
-                <div className="mt-4 flex flex-col space-y-2 lg:flex-row lg:space-y-0 lg:space-x-4">
+                <div className="mt-4 flex flex-col space-y-2 text-center lg:flex-row lg:space-y-0 lg:space-x-4">
                     <a href="/borrower/proposals/create" className="btn-primary">
                         Create New Loan Proposal
                     </a>

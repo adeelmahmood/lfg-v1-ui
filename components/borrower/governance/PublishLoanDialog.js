@@ -35,14 +35,25 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
     const lendPoolAddress = addresses[chainId].LendPool;
     const governorFunctionName = "propose";
 
-    const borrowTokenAddress = addresses[chainId].borrowToken;
-    const borrowTokenDecimals = addresses[chainId].borrowTokenDecimals;
+    let borrowTokenAddress;
+    let borrowTokenDecimals;
+    let recipientAddress;
+
+    if (loanProposal.payout_mode === "crypto") {
+        borrowTokenAddress = loanProposal.payout_data?.payoutToken?.address;
+        borrowTokenDecimals = loanProposal.payout_data?.payoutToken?.decimals;
+        recipientAddress = loanProposal.payout_data?.walletAddress;
+    } else if (loanProposal.payout_mode === "fiat") {
+        borrowTokenAddress = loanProposal.payout_data?.fiatPayoutToken?.address;
+        borrowTokenDecimals = loanProposal.payout_data?.fiatPayoutToken?.decimals;
+        recipientAddress = loanProposal.payout_data?.fiatToCryptoWalletAddress;
+    }
 
     const proposeFunctionName = "borrow";
     const proposeFunctionArgs = [
         borrowTokenAddress,
         parseUnits(String(loanProposal.amount), borrowTokenDecimals),
-        loanProposal.recipientAddress,
+        recipientAddress,
     ];
     const proposeDescription = `@@Borrow Proposal {{${loanProposal.id}}}@@`;
 

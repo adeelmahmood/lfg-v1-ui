@@ -265,7 +265,7 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                 )}
                 <div className="mt-6">
                     <h3 className="text-3xl text-gray-400 dark:text-gray-400">Who Are We</h3>
-                    <p className="mt-3 text-gray-800 dark:text-gray-200">
+                    <p className="prose mt-3 text-gray-800 dark:text-gray-200">
                         {getSelected(
                             loanProposal.business_description,
                             loanProposal.business_gen_description,
@@ -286,7 +286,7 @@ export default function ViewProposal({ loanProposal, ...rest }) {
                     <h3 className="text-3xl text-gray-400 dark:text-gray-400">
                         How will we use the Funds
                     </h3>
-                    <p className="mt-3 text-gray-800 dark:text-gray-200">
+                    <p className="prose mt-3 text-gray-800 dark:text-gray-200">
                         {getSelected(
                             loanProposal.loan_reasoning,
                             loanProposal.loan_gen_reasoning,

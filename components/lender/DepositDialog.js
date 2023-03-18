@@ -45,7 +45,7 @@ export default function DepositDialog({ isModelOpen, modelCloseHandler, token })
         functionName: "balanceOf",
         args: [address],
         onSuccess(data) {
-            const balance = displayUnits8(data);
+            const balance = displayUnits8(data, token.tokenDecimals);
             setTokenBalance(balance);
         },
         onError(err) {

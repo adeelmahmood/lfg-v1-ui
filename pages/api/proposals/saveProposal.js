@@ -12,7 +12,7 @@ const baseUrl = process.env.VERCEL_URL
 
 export default async function handler(req, res) {
     const supabase = createServerSupabaseClient({ req, res });
-    const { loanProposal } = req.body;
+    const { loanProposal, address: recipientAddress } = req.body;
 
     const borrowTokens = addresses[chainId].borrowTokens;
 
@@ -57,7 +57,7 @@ export default async function handler(req, res) {
         } = loanProposal;
 
         // get a circle wallet address if payout mode is fiat
-        if (lp.payout_mode === "fiat" && !lp.payout_data?.cirleWalletAddress) {
+        if (lp.payout_mode === "fiat" && !lp.payout_data?.fiatToCryptoWalletAddress) {
             const response = await fetch(`${baseUrl}/api/circle/createWallet`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -74,9 +74,15 @@ export default async function handler(req, res) {
             }
 
             // set token
-            lp.payout_data.fiatPayoutToken = borrowTokens.find((t) => t.fiatPayout)?.token;
-            // set wallet address
-            lp.payout_data.fiatToCryptoWalletAddress = data.data?.address;
+            const bt = borrowTokens.find((t) => t.fiatPayout);
+            lp.payout_data = {
+                fiatPayoutToken: {
+                    address: bt?.address,
+                    decimals: bt?.decimals,
+                },
+                fiatToCryptoWalletAddress: data.data?.address,
+                recipientAddress,
+            };
         }
 
         const { data, error } = await supabase

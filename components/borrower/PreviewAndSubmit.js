@@ -3,12 +3,15 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import ViewProposal from "./ViewProposal";
 import { isPublished } from "../../utils/ProposalChecks";
+import { useAccount } from "wagmi";
 
 export default function PreviewAndSubmit({ loanProposal, setLoanProposal, handle, ...rest }) {
     const supabase = useSupabaseClient();
     const user = useUser();
 
     const router = useRouter();
+
+    const { address } = useAccount();
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
@@ -23,7 +26,7 @@ export default function PreviewAndSubmit({ loanProposal, setLoanProposal, handle
         const response = await fetch("/api/proposals/saveProposal", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ loanProposal: loanProposal }),
+            body: JSON.stringify({ loanProposal: loanProposal, address: address }),
         });
 
         const data = await response.json();
