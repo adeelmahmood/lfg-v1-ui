@@ -44,7 +44,8 @@ export default function LoanProposal() {
         identity_verification_requested: false,
         agreement_signed: false,
         payout_mode: "",
-        payout_data: {},
+        payout_token: "",
+        payout_address: "",
     });
 
     async function loadProposal() {

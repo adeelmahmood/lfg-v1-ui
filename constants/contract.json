@@ -25,29 +25,25 @@
             {
                 "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
                 "decimals": 6,
-                "symbol": "USDC",
-                "fiatPayout": true
+                "symbol": "USDC"
             },
             {
                 "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
                 "decimals": 18,
-                "symbol": "DAI",
-                "fiatPayout": false
+                "symbol": "DAI"
             }
         ]
     },
     "80001": {
-        "LendPool": "0x0621dDE6658eb7aaB231b2e5348C0b60139f0De1",
-        "LendPoolCore": "0x837EA2009d1D58B9e1F04AcCED3904a30bf65322",
-        "SwapRouter": "0x89B65ecac5A42E2865eC6074b1D535bFc6883c11",
-        "GovToken": "0x567383C3728596e40e5a665616D0E529227dFBfE",
-        "GovTokenHandler": "0x7dCDDb0Ed32776A7700d8911B25229a12092Df21",
-        "LoanTimeLock": "0xD88EABd22E8CAA38AF54CED5346E1A5deeDf0238",
-        "LoanGovernor": "0x65C43fd3Ed65e74e6B057F3c7A3EF718c3a30B7e",
+        "LendPool": "0xF0624F0e1b5E1d5ceF4916b3f4db0F7a021D7D96",
+        "LendPoolCore": "0xc1643288A548D14ea875cF2B5194C43ca8F868F0",
+        "SwapRouter": "0xB4ad934521592082e5aff00098651a83be866b66",
+        "GovToken": "0x5496d62a1669834F880d2f9688870066826AC2b1",
+        "GovTokenHandler": "0x5c3A71A6732019a53518f3457cc4Ff5AB10E71aD",
+        "LoanTimeLock": "0x20F287FA43417425e26A2439C196cE6E3224cFE0",
+        "LoanGovernor": "0x838f0cEb923d6797e505CA8357c5dc5EBd781502",
         "DAI": "0xF14f9596430931E177469715c591513308244e8F",
         "WETH": "0xf237dE5664D3c2D2545684E76fef02A3A58A364c",
-        "borrowToken": "0xe9DcE89B076BA6107Bb64EF30678efec11939234",
-        "borrowTokenDecimals": 6,
         "borrowTokens": [
             {
                 "address": "0xe9DcE89B076BA6107Bb64EF30678efec11939234",
@@ -62,8 +58,8 @@
                 "fiatPayout": false
             }
         ],
-        "payoutToken": {
-            "address": "0xe9DcE89B076BA6107Bb64EF30678efec11939234",
+        "fiatPayoutToken": {
+            "address": "0x0FA8781a83E46826621b3BC094Ea2A0212e71B23",
             "decimals": 6,
             "symbol": "USDC"
         }

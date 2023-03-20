@@ -19,15 +19,16 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const lendingPoolAddress = addresses[chainId].LendPool;
+    const fiatPayoutToken = addresses[chainId].borrowTokens.find((t) => t.fiatPayout);
 
-    const [borrowTokensMD, setBorrowTokensMD] = useState();
+    const [borrowTokens, setBorrowTokens] = useState();
+    const [selectedBorrowToken, setSelectedBorrowToken] = useState({});
 
-    const [payoutData, setPayoutData] = useState(
-        loanProposal.payout_data || {
-            payoutToken: "",
-            walletAddress: "",
-        }
+    const [payoutMode, setPayoutMode] = useState(loanProposal.payout_mode || "fiat");
+    const [payoutToken, setPayoutToken] = useState(
+        loanProposal.payout_token || fiatPayoutToken.address
     );
+    const [payoutAddress, setPayoutAddress] = useState(loanProposal.payout_address || address);
 
     let USDollar = new Intl.NumberFormat("en-US", {
         style: "currency",
@@ -54,21 +55,13 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
         functionName: "getBorrowTokens",
         onSuccess(data) {
             setIsLoading(false);
-            setBorrowTokensMD(data);
-
-            const selectedToken = loanProposal.payout_data?.payoutToken
-                ? data.find((d) => d.token === loanProposal.payout_data?.payoutToken.address)
-                : data[0];
-            setPayoutData({
-                ...payoutData,
-                payoutToken: selectedToken ?? data[0],
-            });
-            console.log(data[0]);
+            setBorrowTokens(data);
+            setSelectedBorrowToken(data.find((d) => d.token === payoutToken));
         },
         onError(err) {
             console.log(err);
         },
-        enabled: isConnected && loanProposal?.payout_mode === "crypto",
+        enabled: isConnected,
     });
 
     const borrowLimit = () => {
@@ -80,36 +73,23 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
     };
 
     useEffect(() => {
-        if (payoutData && payoutData.payoutToken) {
-            setVariableRate(payoutData.payoutToken.variableBorrowRate);
+        if (selectedBorrowToken) {
+            setVariableRate(selectedBorrowToken.variableBorrowRate);
         }
-    }, [payoutData]);
+    }, [selectedBorrowToken]);
 
     useEffect(() => {
-        let completed = true;
-        if (!loanProposal.amount || !loanProposal.payout_mode) completed = false;
-        else {
-            if (loanProposal.payout_mode == "crypto") {
-                completed = payoutData.payoutToken && payoutData.walletAddress;
-            }
-        }
-        setIsCompleted(completed);
-    }, [loanProposal.amount, loanProposal.payout_mode, payoutData]);
+        setIsCompleted(loanProposal.amount > 0 && payoutMode && payoutToken && payoutAddress);
+    }, [loanProposal.amount, payoutMode, payoutToken, payoutAddress]);
 
     const handleNext = async () => {
-        if (loanProposal.payout_mode === "crypto") {
-            setLoanProposal({
-                ...loanProposal,
-                payout_data: {
-                    ...payoutData,
-                    payoutToken: {
-                        address: payoutData.payoutToken.token,
-                        decimals: payoutData.payoutToken.tokenDecimals.toNumber(),
-                    },
-                    walletAddress: payoutData.walletAddress,
-                },
-            });
-        }
+        setLoanProposal({
+            ...loanProposal,
+            payout_mode: payoutMode,
+            payout_token:
+                payoutMode === "fiat" ? fiatPayoutToken.address : selectedBorrowToken.token,
+            payout_address: payoutAddress,
+        });
 
         handle?.();
     };
@@ -177,10 +157,8 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                     />
 
                     <RadioGroupComponent
-                        value={loanProposal.payout_mode}
-                        setValue={(value) =>
-                            setLoanProposal({ ...loanProposal, payout_mode: value })
-                        }
+                        value={payoutMode}
+                        setValue={setPayoutMode}
                         label="Choose how to receive borrowed money"
                         options={[
                             {
@@ -196,19 +174,17 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                         ]}
                     />
 
-                    {loanProposal.payout_mode === "crypto" && (
+                    {loanProposal.payout_mode && (
                         <div className="mt-8 mb-2">
                             <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">
                                 Choose which stable coin to receive borrowed amount in
                             </label>
 
                             <ListBoxComponent
-                                value={payoutData.payoutToken}
-                                setValue={(value) =>
-                                    setPayoutData({ ...payoutData, payoutToken: value })
-                                }
+                                value={selectedBorrowToken}
+                                setValue={setSelectedBorrowToken}
                                 valueDisplay={tokenDisplay}
-                                options={borrowTokensMD}
+                                options={borrowTokens}
                             />
 
                             <a
@@ -217,9 +193,9 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                                 onClick={(e) => {
                                     e.preventDefault();
                                     addTokenToMetaMask({
-                                        token: payoutData.payoutToken?.token,
-                                        tokenSymbol: payoutData.payoutToken?.tokenSymbol,
-                                        tokenDecimals: payoutData.payoutToken?.tokenDecimals,
+                                        token: selectedBorrowToken?.token,
+                                        tokenSymbol: selectedBorrowToken?.tokenSymbol,
+                                        tokenDecimals: selectedBorrowToken?.tokenDecimals,
                                     });
                                 }}
                             >
@@ -234,13 +210,8 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                                 id="walletAddress"
                                 type="text"
                                 placeholder="0x Wallet Address"
-                                onChange={(e) => {
-                                    setPayoutData({
-                                        ...payoutData,
-                                        walletAddress: e.target.value,
-                                    });
-                                }}
-                                value={payoutData.walletAddress}
+                                onChange={(e) => setPayoutAddress(e.target.value)}
+                                value={payoutAddress}
                                 required
                             />
                         </div>

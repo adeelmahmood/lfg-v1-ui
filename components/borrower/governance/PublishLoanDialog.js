@@ -1,5 +1,6 @@
 import {
     useAccount,
+    useContractRead,
     useContractWrite,
     usePrepareContractWrite,
     useWaitForTransaction,
@@ -29,44 +30,65 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
 
     const [dbError, setDbError] = useState(false);
 
-    const { address, isConnected } = useAccount();
+    const { isConnected } = useAccount();
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const governorAddress = addresses[chainId].LoanGovernor;
     const lendPoolAddress = addresses[chainId].LendPool;
     const governorFunctionName = "propose";
 
+    const [encodedFunctionCall, setEncodedFunctionCall] = useState();
+    const proposeDescription = `@@Borrow Proposal {{${loanProposal.id}}}@@`;
+
+    const borrowFiatToken = addresses[chainId].borrowTokens.find((t) => t.fiatPayout);
+    const fiatPayoutToken = addresses[chainId].fiatPayoutToken;
+
     let borrowTokenAddress;
     let borrowTokenDecimals;
     let recipientAddress;
 
-    if (loanProposal.payout_mode === "crypto") {
-        borrowTokenAddress = loanProposal.payout_data?.payoutToken?.address;
-        borrowTokenDecimals = loanProposal.payout_data?.payoutToken?.decimals;
-        recipientAddress = loanProposal.payout_data?.walletAddress;
-    } else if (loanProposal.payout_mode === "fiat") {
-        borrowTokenAddress = loanProposal.payout_data?.fiatPayoutToken?.address;
-        borrowTokenDecimals = loanProposal.payout_data?.fiatPayoutToken?.decimals;
-        recipientAddress = loanProposal.payout_data?.fiatToCryptoWalletAddress;
-    }
+    const isSetupForSettlement = (lp) => {
+        const isFiat = lp.payout_mode === "fiat";
+        const isSettlementAddressSetup = lp.fiat_settlement_address != null;
+        const isBorrowAndPayoutTokensSame = borrowFiatToken.address == fiatPayoutToken.address;
 
-    const proposeFunctionName = "borrow";
-    const proposeFunctionArgs = [
-        borrowTokenAddress,
-        parseUnits(String(loanProposal.amount), borrowTokenDecimals),
-        recipientAddress,
-    ];
-    const proposeDescription = `@@Borrow Proposal {{${loanProposal.id}}}@@`;
+        return isFiat && isSettlementAddressSetup && isBorrowAndPayoutTokensSame;
+    };
 
-    const [encodedFunctionCall, setEncodedFunctionCall] = useState();
+    useContractRead({
+        address: lendPoolAddress,
+        abi: lendPoolAbi,
+        functionName: "getBorrowTokens",
+        onSuccess(data) {
+            const selectedToken = data.find((d) => d.token === loanProposal.payout_token);
 
-    useEffect(() => {
-        if (!encodedFunctionCall) {
+            // prepare borrow parameters
+            borrowTokenAddress = selectedToken.token;
+            borrowTokenDecimals = selectedToken.tokenDecimals;
+            recipientAddress = loanProposal.payout_address;
+
+            // for fiat payments
+            if (isSetupForSettlement(loanProposal)) {
+                recipientAddress = loanProposal.fiat_settlement_address;
+            }
+
+            // set propose params with borrow data
+            const proposeFunctionName = "borrow";
+            const proposeFunctionArgs = [
+                borrowTokenAddress,
+                parseUnits(String(loanProposal.amount), borrowTokenDecimals),
+                recipientAddress,
+            ];
+
             const lendPoolIface = new ethers.utils.Interface(lendPoolAbi);
             setEncodedFunctionCall(
                 lendPoolIface.encodeFunctionData(proposeFunctionName, proposeFunctionArgs)
             );
-        }
-    }, []);
+        },
+        onError(err) {
+            console.log(err);
+        },
+        enabled: isConnected && loanProposal.payout_token && encodedFunctionCall == null,
+    });
 
     const {
         config,
@@ -76,8 +98,8 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
         address: governorAddress,
         abi: governorAbi,
         functionName: governorFunctionName,
-        enabled: encodedFunctionCall,
         args: [[lendPoolAddress], [0], [encodedFunctionCall], proposeDescription],
+        enabled: isConnected && encodedFunctionCall != null,
         onError(err) {
             console.log("prepare error", err);
         },

@@ -2,13 +2,13 @@ import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../../utils/Constants";
 import { isExecuted } from "../../utils/ProposalChecks";
+import PayoutActions from "./PayoutActions";
 
 export default function ApprovedProposalsListing({}) {
     const supabase = useSupabaseClient();
     const user = useUser();
 
     const [isLoading, setIsLoading] = useState(false);
-
     const [proposals, setProposals] = useState([]);
 
     const fetchProposals = async () => {
@@ -28,7 +28,7 @@ export default function ApprovedProposalsListing({}) {
         if (error) {
             setError(error.message);
         } else {
-            setProposals(data.filter((p) => isExecuted(p)));
+            setProposals(data.filter((p) => !isExecuted(p)));
             // setExecutedProposals(data.filter((p) => isExecuted(p)));
         }
     };
@@ -81,7 +81,7 @@ export default function ApprovedProposalsListing({}) {
                                     colSpan={3}
                                     className="py-4 px-6 font-semibold dark:text-gray-200"
                                 >
-                                    No Approved Propopsals Yet
+                                    No Approved Proposals Yet
                                 </td>
                             </tr>
                         )}
@@ -122,19 +122,13 @@ export default function ApprovedProposalsListing({}) {
                                         </div>
                                     </td>
                                     <td className="py-4 px-6 text-center">
-                                        <span className="uppercase dark:text-gray-300">
-                                            {getStatus(p)}
-                                        </span>
+                                        <span className="dark:text-gray-300">{getStatus(p)}</span>
                                     </td>
                                     <td className="py-4 px-6 text-center dark:text-gray-400">
-                                        <span className="uppercase">{p.payout_mode}</span>
+                                        <span className="">{p.payout_mode}</span>
                                     </td>
                                     <td className="py-4 px-6 text-center">
-                                        {p.payout_mode === "fiat" && (
-                                            <button className="btn-clear">
-                                                Initiate Settlement
-                                            </button>
-                                        )}
+                                        <PayoutActions loanProposal={p} />
                                     </td>
                                 </tr>
                             );

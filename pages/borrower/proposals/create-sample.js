@@ -14,7 +14,7 @@ export default function LoanProposal() {
 
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
     const borrowTokens = addresses[chainId].borrowTokens;
-    const fiatBorrowToken = borrowTokens.find((t) => t.fiatPayout);
+    const fiatPayoutToken = addresses[chainId].fiatPayoutToken;
 
     function s(words, chars) {
         let result = "";
@@ -57,19 +57,18 @@ export default function LoanProposal() {
 
     useEffect(() => {
         async function saveP() {
-            console.log(fiatBorrowToken);
             let payoutData;
             if (type == "crypto-payout") {
                 payoutData = {
                     payout_mode: "crypto",
-                    payout_data: {
-                        token: fiatBorrowToken.address,
-                        walletAddress: address,
-                    },
+                    payout_token: borrowTokens[0].address,
+                    payout_address: address,
                 };
             } else if (type == "fiat-payout") {
                 payoutData = {
                     payout_mode: "fiat",
+                    payout_token: fiatPayoutToken.address,
+                    payout_address: address,
                 };
             }
 

@@ -229,7 +229,7 @@ export default function AllProposalsListing({}) {
                                     colSpan={5}
                                     className="py-4 px-6 font-semibold dark:text-gray-200"
                                 >
-                                    No Propopsals Yet
+                                    No Proposals Yet
                                 </td>
                             </tr>
                         )}

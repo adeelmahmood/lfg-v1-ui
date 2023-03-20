@@ -3,7 +3,6 @@ import {
     SUPABASE_TABLE_LOAN_PROPOSALS,
     SUPABASE_TABLE_LOAN_PROPOSALS_STATUS,
 } from "../../../utils/Constants";
-import addresses from "../../../constants/contract.json";
 
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
 const baseUrl = process.env.VERCEL_URL
@@ -13,8 +12,6 @@ const baseUrl = process.env.VERCEL_URL
 export default async function handler(req, res) {
     const supabase = createServerSupabaseClient({ req, res });
     const { loanProposal, address: recipientAddress } = req.body;
-
-    const borrowTokens = addresses[chainId].borrowTokens;
 
     const validate = async (p) => {
         // make sure proposal hasnt been published yet
@@ -57,11 +54,12 @@ export default async function handler(req, res) {
         } = loanProposal;
 
         // get a circle wallet address if payout mode is fiat
-        if (lp.payout_mode === "fiat" && !lp.payout_data?.fiatToCryptoWalletAddress) {
-            const response = await fetch(`${baseUrl}/api/circle/createWallet`, {
+        console.log("generating wallet");
+        if (lp.payout_mode === "fiat" && !lp.fiat_settlement_address) {
+            const response = await fetch(`${baseUrl}/api/circle/createWalletAndAddress`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id: lp.id }),
+                body: JSON.stringify({ id: session?.user.id }),
             });
 
             const data = await response.json();
@@ -73,16 +71,8 @@ export default async function handler(req, res) {
                 return;
             }
 
-            // set token
-            const bt = borrowTokens.find((t) => t.fiatPayout);
-            lp.payout_data = {
-                fiatPayoutToken: {
-                    address: bt?.address,
-                    decimals: bt?.decimals,
-                },
-                fiatToCryptoWalletAddress: data.data?.address,
-                recipientAddress,
-            };
+            lp.fiat_settlement_wallet = data.wallet?.walletId;
+            lp.fiat_settlement_address = data.address?.address;
         }
 
         const { data, error } = await supabase
