@@ -174,7 +174,7 @@ export default function TellUsAboutYourself({ loanProposal, setLoanProposal, han
                         ]}
                     />
 
-                    {loanProposal.payout_mode && (
+                    {payoutMode === "crypto" && (
                         <div className="mt-8 mb-2">
                             <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">
                                 Choose which stable coin to receive borrowed amount in

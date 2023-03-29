@@ -163,7 +163,8 @@ export default function ({ loanProposal }) {
                     isModelOpen={transferModal}
                     modelCloseHandler={() => {
                         setTransferModal(false);
-                        window.location.reload(false);
+                        // sorta refresh
+                        getPayoutStatuses();
                     }}
                     loanProposal={loanProposal}
                 />
