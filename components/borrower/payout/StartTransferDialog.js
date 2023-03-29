@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import useIsMounted from "../../hooks/useIsMounted";
+import useIsMounted from "../../../hooks/useIsMounted";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import DialogComponent from "../ui/DialogComponent";
-import addresses from "../../constants/contract.json";
+import DialogComponent from "../../ui/DialogComponent";
+import addresses from "../../../constants/contract.json";
 import {
     erc20ABI,
     useAccount,
@@ -11,8 +11,9 @@ import {
     useWaitForTransaction,
 } from "wagmi";
 import { parseUnits } from "ethers/lib/utils.js";
+import { SUPABASE_TABLE_PAYOUTS } from "../../../utils/Constants";
 
-export default function InitiatePayoutDialog({ isModelOpen, modelCloseHandler, loanProposal }) {
+export default function StartTransferDialog({ isModelOpen, modelCloseHandler, loanProposal }) {
     let [isOpen, setIsOpen] = useState(isModelOpen || false);
 
     const { isConnected } = useAccount();
@@ -57,6 +58,9 @@ export default function InitiatePayoutDialog({ isModelOpen, modelCloseHandler, l
     const { isLoading: isTransferTxLoading, isSuccess } = useWaitForTransaction({
         hash: data?.hash,
         onSuccess(data) {
+            // TODO this is gonna happen in background
+            updatePayoutStatus("Sent");
+
             closeModal();
         },
         onError(err) {
@@ -73,6 +77,17 @@ export default function InitiatePayoutDialog({ isModelOpen, modelCloseHandler, l
         modelCloseHandler?.();
     }
 
+    async function updatePayoutStatus(status) {
+        const { error } = await supabase.from(SUPABASE_TABLE_PAYOUTS).insert({
+            status,
+            proposal_id: loanProposal.id,
+            user_id: user.id,
+        });
+        if (error) {
+            console.log("error in updating payout status", error);
+        }
+    }
+
     useEffect(() => {
         setIsOpen(isModelOpen);
     }, [isModelOpen]);
@@ -87,8 +102,8 @@ export default function InitiatePayoutDialog({ isModelOpen, modelCloseHandler, l
             >
                 <div className="mt-2">
                     <p className="text-sm text-gray-500 dark:text-gray-200">
-                        Keep in mind there will be a 3% settlment fee in addition to the transaction
-                        fees
+                        Send borrowed USDC (Circle) tokens to the settlement service for a payout in
+                        USD
                     </p>
 
                     <div className="mt-6 flex w-full items-center">

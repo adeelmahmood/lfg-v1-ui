@@ -2,7 +2,7 @@ import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { SUPABASE_TABLE_LOAN_PROPOSALS } from "../../utils/Constants";
 import { isExecuted } from "../../utils/ProposalChecks";
-import PayoutActions from "./PayoutActions";
+import Link from "next/link";
 
 export default function ApprovedProposalsListing({}) {
     const supabase = useSupabaseClient();
@@ -18,6 +18,7 @@ export default function ApprovedProposalsListing({}) {
             .select(
                 `*, 
                 loan_proposals_status (*), 
+                payouts (*),
                 user_identity_verifications ( verification_status, verification_message),
                 loan_agreement_signatures ( signature_request_id, status, signed_at)`
             )
@@ -28,13 +29,12 @@ export default function ApprovedProposalsListing({}) {
         if (error) {
             setError(error.message);
         } else {
-            setProposals(data.filter((p) => !isExecuted(p)));
-            // setExecutedProposals(data.filter((p) => isExecuted(p)));
+            setProposals(data.filter((p) => isExecuted(p)));
         }
     };
 
     useEffect(() => {
-        if (user) fetchProposals();
+        if (user && proposals.length == 0) fetchProposals();
     }, [user]);
 
     const getSelected = (value, genValue, manFlag, genFlag) => {
@@ -46,12 +46,10 @@ export default function ApprovedProposalsListing({}) {
         return text && text.length > limit ? text.substring(0, limit) + " ..." : text;
     };
 
-    const getStatus = (p) => {
-        if (p.payout_mode == "crypto") {
-            return "Loan Approved";
-        } else {
-            return "Ready for Settlement";
-        }
+    const getLatestPayoutStatus = (lp) => {
+        const payouts = lp.payouts;
+        payouts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        return payouts.length > 0 ? payouts[0].status : "";
     };
 
     return (
@@ -65,9 +63,6 @@ export default function ApprovedProposalsListing({}) {
                             </th>
                             <th scope="col" className="py-3 px-6 text-center">
                                 Payout Status
-                            </th>
-                            <th scope="col" className="py-3 px-6 text-center">
-                                Payout Mode
                             </th>
                             <th scope="col" className="py-3 px-6 text-center">
                                 Actions
@@ -121,20 +116,91 @@ export default function ApprovedProposalsListing({}) {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="py-4 px-6 text-center">
-                                        <span className="dark:text-gray-300">{getStatus(p)}</span>
-                                    </td>
                                     <td className="py-4 px-6 text-center dark:text-gray-400">
-                                        <span className="">{p.payout_mode}</span>
+                                        <span className="uppercase">
+                                            {p.payout_mode === "crypto"
+                                                ? "Tokens Sent"
+                                                : getLatestPayoutStatus(p)}
+                                        </span>
                                     </td>
                                     <td className="py-4 px-6 text-center">
-                                        <PayoutActions loanProposal={p} />
+                                        {p.payout_mode === "fiat" && (
+                                            <Link
+                                                href={`/borrower/payouts/${p.id}`}
+                                                className="btn-clear"
+                                            >
+                                                Payout Details
+                                            </Link>
+                                        )}
                                     </td>
                                 </tr>
                             );
                         })}
                     </tbody>
                 </table>
+            </div>
+
+            <div className="mt-10 grid grid-cols-1 gap-14 sm:hidden md:grid-cols-2 lg:grid-cols-3">
+                {proposals?.map((p, i) => {
+                    return (
+                        <div
+                            key={i}
+                            className="relative w-full space-y-5 overflow-hidden rounded-xl bg-gray-50 shadow-lg dark:bg-gray-800"
+                        >
+                            <div>
+                                <div className="flex px-4 pt-4">
+                                    <img
+                                        className="h-24 w-24 flex-shrink-0 rounded-full object-cover object-center"
+                                        src={p.banner_image}
+                                        alt=""
+                                    />
+                                    <div className="ml-5">
+                                        <div className="mb-2 text-xl font-bold dark:text-gray-200">
+                                            {getSelected(
+                                                p.business_title,
+                                                p.business_tagline,
+                                                p.tagline_manual_picked,
+                                                p.tagline_gen_picked
+                                            )}
+                                        </div>
+                                        <p className="text-base text-gray-700 dark:text-gray-400">
+                                            {trimText(
+                                                getSelected(
+                                                    p.business_description,
+                                                    p.business_gen_description,
+                                                    p.description_manual_picked,
+                                                    p.description_gen_picked
+                                                ),
+                                                100
+                                            )}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex flex-col px-4 pb-4">
+                                <div className="flex items-center justify-between">
+                                    <div>Payout Status:</div>
+                                    <div className="font-semibold">
+                                        {p.payout_mode === "crypto"
+                                            ? "Tokens Sent"
+                                            : getLatestPayoutStatus(p)}
+                                    </div>
+                                </div>
+
+                                <div className="mt-4">
+                                    {p.payout_mode === "fiat" && (
+                                        <Link
+                                            href={`/borrower/payouts/${p.id}`}
+                                            className="btn-clear"
+                                        >
+                                            Payout Details
+                                        </Link>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
         </>
     );

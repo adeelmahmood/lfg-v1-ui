@@ -4,7 +4,7 @@ export default async function handler(req, res) {
     try {
         const { id, walletId } = req.body;
 
-        const results = createAddress(id, walletId);
+        const results = await createAddress(id, walletId);
         if (results?.data) {
             res.status(200).json(results);
         } else {

@@ -50,7 +50,7 @@ export default function LoanProposal() {
         banner_image: "https://source.unsplash.com/random",
         banner_image_metadata: {},
         identity_verification_requested: false,
-        amount: 5,
+        amount: 1,
     });
 
     const user = useUser();

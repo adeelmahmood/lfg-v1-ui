@@ -38,7 +38,7 @@ export default function BorrowerDashboard() {
                     </h2>
                 </div>
 
-                <h3 className="mt-6 text-3xl font-bold text-gray-700 dark:text-gray-200">
+                <h3 className="mt-6 text-3xl font-bold text-gray-700 dark:text-gray-300">
                     Approved Loans
                 </h3>
                 <p className="mt-2 text-left leading-8 text-gray-600 dark:text-gray-300">

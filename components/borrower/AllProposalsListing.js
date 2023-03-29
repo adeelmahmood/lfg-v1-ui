@@ -355,7 +355,7 @@ export default function AllProposalsListing({}) {
                                         alt=""
                                     />
                                     <div className="ml-5">
-                                        <div className="mb-2 text-xl font-bold dark:text-gray-300">
+                                        <div className="mb-2 text-xl font-bold dark:text-gray-200">
                                             {getSelected(
                                                 p.business_title,
                                                 p.business_tagline,
