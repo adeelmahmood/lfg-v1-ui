@@ -59,8 +59,6 @@ export default function StartTransferDialog({ isModelOpen, modelCloseHandler, lo
         hash: data?.hash,
         onSuccess(data) {
             // TODO this is gonna happen in background
-            updatePayoutStatus("Sent");
-
             closeModal();
         },
         onError(err) {
@@ -72,8 +70,9 @@ export default function StartTransferDialog({ isModelOpen, modelCloseHandler, lo
         setIsLoading(isTransferLoading || isTransferTxLoading);
     }, [isTransferLoading || isTransferTxLoading]);
 
-    function closeModal() {
+    async function closeModal() {
         setIsOpen(false);
+        updatePayoutStatus("Sent");
         modelCloseHandler?.();
     }
 
