@@ -119,11 +119,13 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
                 data.logs.filter((log) => log.address == governorAddress),
                 { proposal_id: loanProposal.id }
             ).then((events) => {
-                events.map((event) => saveEvent(supabase, event));
-                if (events && events.length > 0) {
-                    const proposalId = events[0].event_data["proposalId"];
-                    handlePublished(proposalId);
-                }
+                const promises = events.map((event) => saveEvent(supabase, event));
+                Promise.all(promises).then(() => {
+                    if (events && events.length > 0) {
+                        const proposalId = events[0].event_data["proposalId"];
+                        handlePublished(proposalId);
+                    }
+                });
             });
         },
         onError(err) {
