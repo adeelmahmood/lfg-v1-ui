@@ -138,7 +138,6 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
     const { isLoading: isVoteTxLoading, isSuccess: isSuccess } = useWaitForTransaction({
         hash: data?.hash,
         onSuccess(data) {
-            console.log("datA", data);
             const abi = [
                 "event VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 weight, string reason)",
             ];
@@ -147,10 +146,11 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
                 data.logs.filter((log) => log.address == governorAddress),
                 { proposal_id: loanProposal.id }
             ).then((events) => {
-                console.log("events", events);
-                events.map((event) => saveEvent(supabase, event));
-                closeModal();
-                onVoteSuccess?.();
+                const promises = events.map((event) => saveEvent(supabase, event));
+                Promise.all(promises).then(() => {
+                    closeModal();
+                    onVoteSuccess?.();
+                });
             });
         },
         onError(err) {
