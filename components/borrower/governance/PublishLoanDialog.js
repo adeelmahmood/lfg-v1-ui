@@ -162,7 +162,7 @@ export default function PublishLoanDialog({ loanProposal, onPublishSuccess }) {
         <>
             <button
                 className="btn-primary text-base"
-                disabled={!isVerified(loanProposal) || !isSigned(loanProposal)}
+                // disabled={!isVerified(loanProposal) || !isSigned(loanProposal)}
                 onClick={(e) => {
                     e.preventDefault();
                     setPublishModalOpen(true);

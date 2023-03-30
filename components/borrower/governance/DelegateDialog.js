@@ -36,6 +36,7 @@ export default function DelegateDialog({ loanProposal, onDelegateSuccess, forceL
         functionName: "delegates",
         args: [address],
         onSuccess(data) {
+            console.log(data);
             if (data && data != "0x0000000000000000000000000000000000000000") setHasDelegated(true);
         },
         onError(err) {

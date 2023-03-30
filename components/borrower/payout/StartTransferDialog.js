@@ -58,7 +58,6 @@ export default function StartTransferDialog({ isModelOpen, modelCloseHandler, lo
     const { isLoading: isTransferTxLoading, isSuccess } = useWaitForTransaction({
         hash: data?.hash,
         onSuccess(data) {
-            // TODO this is gonna happen in background
             closeModal(true);
         },
         onError(err) {
