@@ -153,7 +153,7 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
                 Promise.all(promises).then(() => {
                     console.log("all events saved, now refreshing");
                     closeModal();
-                    onVoteSuccess?.();
+                    // onVoteSuccess?.();
                 });
             });
         },
