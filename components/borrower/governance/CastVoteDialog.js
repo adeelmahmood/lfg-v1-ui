@@ -146,8 +146,12 @@ export default function CastVoteDialog({ loanProposal, onVoteSuccess, forceLong 
                 data.logs.filter((log) => log.address == governorAddress),
                 { proposal_id: loanProposal.id }
             ).then((events) => {
-                const promises = events.map((event) => saveEvent(supabase, event));
+                const promises = events.map((event, i) => {
+                    console.log("processing event ", i);
+                    return saveEvent(supabase, event);
+                });
                 Promise.all(promises).then(() => {
+                    console.log("all events saved, now refreshing");
                     closeModal();
                     onVoteSuccess?.();
                 });
