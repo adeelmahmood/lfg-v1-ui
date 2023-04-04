@@ -27,19 +27,18 @@ export const findEvent = (abi, logs, moreData) => {
     });
 };
 
-export const saveEvent = async (supabase, event) => {
-    console.log("in save event");
+export const saveEvent = (supabase, event) => {
     return new Promise((resolve, reject) => {
-        console.log("in save event promise");
-        const { error } = supabase.from(SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS).insert(event);
-        console.log("insert function completed");
-        if (error) {
-            console.log(error.message);
-            console.log("rejecting");
-            reject();
-        }
+        (async () => {
+            const { data, error } = await supabase
+                .from(SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS)
+                .insert(event)
+                .select();
+            if (error) {
+                return reject(error);
+            }
 
-        console.log("resolving");
-        resolve();
+            return resolve(data);
+        })();
     });
 };

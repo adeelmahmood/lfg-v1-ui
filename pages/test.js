@@ -3,37 +3,28 @@ import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import { useAccount } from "wagmi";
 import { saveEvent } from "../utils/Events";
+import { SUPABASE_TABLE_LOAN_PROPOSALS_EVENTS } from "../utils/Constants";
 
-export default function LoanProposal() {
+export default function Testt() {
     const router = useRouter();
     const { type } = router.query;
 
     const { address } = useAccount();
     const supabase = useSupabaseClient();
 
-    const chainId = process.env.NEXT_PUBLIC_CHAIN_ID || "31337";
-
     const user = useUser();
 
-    useEffect(() => {
-        if (user) {
-            const events = [];
-            for (let i = 100; i < 200; i++) {
-                events.push({
-                    event_type: "test" + i,
-                    event_data: JSON.stringify({ a: "b", c: "d", e: "f" }),
-                    address: address,
-                });
-            }
+    const save = async () => {
+        saveEvent(supabase, {});
+    };
 
-            const promises = events.map((event, i) => {
-                return saveEvent(supabase, event);
-            });
-            Promise.all(promises).then(() => {
-                console.log("ALL DONE");
-            });
-        }
-    }, [user, router.isReady]);
+    return (
+        <div className="container mx-auto p-8">
+            <h2 className="text-5xl">Test Page</h2>
 
-    return <>Testing...</>;
+            <button className="btn-primary mt-8" onClick={save}>
+                Save Event
+            </button>
+        </div>
+    );
 }
